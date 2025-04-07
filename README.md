@@ -30,6 +30,19 @@
 - Infrastructure — безопасность, репозитории, конфиги
 - Presentation — контроллеры
 
+## 📂 Модули (будущие микросервисы)
+
+- User Service
+- Account Service
+- Transaction Service
+- Notification Service
+- Audit Service
+- KYC Service
+- Loan Service
+- Fraud Detection
+- Security (SOWA-lite)
+- API Gateway
+
 ## 🧭 Архитектура микросервисов
 
 ![Архитектура микросервисов](./docs/scheme_bank.png)
