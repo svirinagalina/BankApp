@@ -1,0 +1,13 @@
+stages:
+  - check
+
+checkstyle:
+  stage: check
+  image: gradle:8.5-jdk21
+  script:
+    - gradle checkstyleMain checkstyleTest
+  artifacts:
+    when: always
+    paths:
+      - build/reports/checkstyle
+    expose_as: 'Checkstyle HTML Report'
