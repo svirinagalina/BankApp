@@ -1,6 +1,6 @@
 # 📦 Domain Models + DTO — структура и назначения
 
-## 👤 User (domain.entity.User)
+## 👤 User (domain.entity.User) — mutable Entity
 
 +-----------------------------+
 |         User                |
@@ -13,7 +13,7 @@
 | LocalDateTime createdAt    | // Дата и время регистрации
 +-----------------------------+
 
-## 💳 Account (domain.entity.Account)
+## 💳 Account (domain.entity.Account) — mutable Entity
 
 +------------------------------+
 |         Account              |
@@ -27,7 +27,7 @@
 | LocalDateTime createdAt     | // Когда счёт был открыт
 +------------------------------+
 
-## 📧 Email (domain.valueobject.Email)
+## 📧 Email (domain.valueobject.Email) — ✅ immutable VO
 
 +-------------------------+
 |        Email            |
@@ -37,7 +37,7 @@
 | boolean isValid()       |
 +-------------------------+
 
-## 💰 Money (domain.valueobject.Money)
+## 💰 Money (domain.valueobject.Money) — ✅ immutable VO
 
 +-------------------------------+
 |           Money               |
@@ -49,7 +49,7 @@
 | Money subtract(Money)        |
 +-------------------------------+
 
-## 💱 Currency (domain.valueobject.Currency)
+## 💱 Currency (domain.valueobject.Currency) — ✅ immutable VO
 
 +-----------------------------+
 |         Currency            |
@@ -59,7 +59,7 @@
 | int scale                   | // Кол-во знаков после запятой (например 2)
 +-----------------------------+
 
-## 🏦 AccountNumber (domain.valueobject.AccountNumber)
+## 🏦 AccountNumber (domain.valueobject.AccountNumber) — ✅ immutable VO
 
 +-------------------------------+
 |       AccountNumber           |
@@ -69,7 +69,7 @@
 | boolean isValid()            |
 +-------------------------------+
 
-## 📤 DTO: UserDto
+## 📤 DTO: UserDto — ✅ immutable DTO
 
 +-----------------------------+
 |       UserDto              |
@@ -80,7 +80,7 @@
 | String role                | // USER / ADMIN
 +-----------------------------+
 
-## 📥 DTO: RegisterUserCommand
+## 📥 DTO: RegisterUserCommand — ✅ immutable DTO
 
 +-----------------------------+
 | RegisterUserCommand         |
