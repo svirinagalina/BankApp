@@ -56,6 +56,8 @@
 
 - [Подготовка к клонированию репозитория](https://gitlab.com/katacademy-group/banking-projects/bank-app/-/wikis/setup-before-cloning)
 
+и другие руководства
+
 ## 🚀 Как запустить
 
 ```bash
