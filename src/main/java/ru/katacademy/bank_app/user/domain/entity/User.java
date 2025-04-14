@@ -1,22 +1,9 @@
 package ru.katacademy.bank_app.user.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
-import ru.katacademy.bank_app.user.domain.valueobject.Email;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Представляет пользователя системы.
@@ -26,39 +13,51 @@ import java.time.LocalDateTime;
  * - id: уникальный идентификатор
  * - role: роль пользователя (USER, ADMIN)
  * - fullName: полное имя пользователя
- * - email: Value Object с валидацией email
+ * - email: (Пока не добавил)
  * - passwordHash: хеш пароля
  * - createdAt: Дата и время регистрации
  * <p>
  * Автор: Бачагов В.О.
  * Дата: 2025-04-14
  */
-@Entity
-@Table(name = "users")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private final Long id;
+    private final UserRole role;
+    private final String fullName;
+    private final String passwordHash;
+    private final LocalDateTime createdAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;
+    public User(Long id,
+                UserRole role,
+                String fullName,
+                String passwordHash,
+                LocalDateTime createdAt) {
+        this.id = Objects.requireNonNull(id, "id must not be null");
+        this.role = Objects.requireNonNull(role, "role must not be null");
+        this.fullName = Objects.requireNonNull(fullName, "fullName must not be null");
+        this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash must not be null");
+        this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
+    }
 
-    @Column(nullable = false)
-    private String fullName;
+    public Long getId() {
+        return id;
+    }
 
-    @Column(nullable = false, unique = true)
-    private Email email;
+    public UserRole getRole() {
+        return role;
+    }
 
-    @Column(nullable = false)
-    private String passwordHash;
+    public String getFullName() {
+        return fullName;
+    }
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
     /**
      * Проверяет, является ли пользователь администратором
