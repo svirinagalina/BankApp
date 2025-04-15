@@ -1,6 +1,8 @@
 package ru.katacademy.bank_app.user.domain.entity;
 
+import org.springframework.security.core.SpringSecurityCoreVersion;
 import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
+import ru.katacademy.bank_app.shared.valueobject.Email;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -13,7 +15,7 @@ import java.util.Objects;
  * - id: уникальный идентификатор
  * - role: роль пользователя (USER, ADMIN)
  * - fullName: полное имя пользователя
- * - email: (Пока не добавил)
+ * - email: email как value object с валидацией
  * - passwordHash: хеш пароля
  * - createdAt: Дата и время регистрации
  * <p>
@@ -24,17 +26,20 @@ public class User {
     private final Long id;
     private final UserRole role;
     private final String fullName;
+    private final Email email;
     private final String passwordHash;
     private final LocalDateTime createdAt;
 
     public User(Long id,
                 UserRole role,
                 String fullName,
+                Email email,
                 String passwordHash,
                 LocalDateTime createdAt) {
         this.id = Objects.requireNonNull(id, "id must not be null");
         this.role = Objects.requireNonNull(role, "role must not be null");
         this.fullName = Objects.requireNonNull(fullName, "fullName must not be null");
+        this.email = Objects.requireNonNull(email, "email must not be null");
         this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash must not be null");
         this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
     }
@@ -49,6 +54,10 @@ public class User {
 
     public String getFullName() {
         return fullName;
+    }
+
+    public Email getEmail() {
+        return email;
     }
 
     public String getPasswordHash() {
