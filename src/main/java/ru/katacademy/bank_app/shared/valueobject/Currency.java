@@ -11,7 +11,6 @@ import java.util.Objects;
  * @param code  ISO 4217 код валюты (например, "USD", "EUR", "RUB").
  * @param name  Человекочитаемое название валюты (например, "US Dollar").
  * @param scale Количество знаков после запятой (например, 2 для USD).
- *
  * @author [Твоё имя]
  */
 public record Currency(
@@ -28,13 +27,13 @@ public record Currency(
      * </ul>
      */
     public Currency {
-        if (code == null || code.isBlank()) {
-            throw new IllegalArgumentException("Код валюты не должен быть пустым");
+        if (code == null || code.isBlank ()) {
+            throw new IllegalArgumentException ("Код валюты не должен быть пустым");
         }
         if (scale < 0) {
-            throw new IllegalArgumentException("Количество знаков после запятой не может быть отрицательным");
+            throw new IllegalArgumentException ("Количество знаков после запятой не может быть отрицательным");
         }
-        code = code.toUpperCase();
+        code = code.toUpperCase ();
     }
 
     /**
@@ -46,7 +45,7 @@ public record Currency(
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Currency currency)) return false;
-        return Objects.equals(code, currency.code);
+        return Objects.equals (code, currency.code);
     }
 
     /**
@@ -56,6 +55,6 @@ public record Currency(
      */
     @Override
     public int hashCode() {
-        return Objects.hashCode(code);
+        return Objects.hashCode (code);
     }
 }
