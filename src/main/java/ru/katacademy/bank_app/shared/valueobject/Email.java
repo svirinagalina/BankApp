@@ -5,7 +5,6 @@ package ru.katacademy.bank_app.shared.valueobject;
  * Валидирует корректность email-адреса при создании.
  *
  * @param value строковое представление email-адреса
- * @throws IllegalArgumentException если email некорректен
  */
 public record Email(String value) {
     public Email {
