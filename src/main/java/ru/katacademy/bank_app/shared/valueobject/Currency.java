@@ -11,7 +11,7 @@ import java.util.Objects;
  * @param code  ISO 4217 код валюты (например, "USD", "EUR", "RUB").
  * @param name  Человекочитаемое название валюты (например, "US Dollar").
  * @param scale Количество знаков после запятой (например, 2 для USD).
- * @author [Твоё имя]
+ * @author Sheffy
  */
 public record Currency(
         String code,
