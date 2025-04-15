@@ -7,9 +7,22 @@ package ru.katacademy.bank_app.shared.valueobject;
  * @param value строковое представление email-адреса
  */
 public record Email(String value) {
+
+    private static final String EMAIL_REGEX = "^[\\w-.]+@[\\w-]+\\.[a-zA-Z]{2,}$";
+
     public Email {
-        if (value == null || !value.matches("^[\\w-.]+@[\\w-]+\\.[a-zA-Z]{2,}$")) {
+        if (!isValid(value)) {
             throw new IllegalArgumentException("Invalid email format: " + value);
         }
+    }
+
+    /**
+     * Проверяет, валиден ли переданный email.
+     *
+     * @param email email-строка
+     * @return true, если формат корректный
+     */
+    public static boolean isValid(String email) {
+        return email != null && email.matches(EMAIL_REGEX);
     }
 }
