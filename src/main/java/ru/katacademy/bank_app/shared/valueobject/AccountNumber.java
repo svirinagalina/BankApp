@@ -34,4 +34,14 @@ public record AccountNumber(String accountNumber) {
     public String value() {
         return accountNumber;
     }
+
+    /**
+     * Возвращает строку только с номером счёта
+     *
+     * @return String строку номера счета
+     */
+    @Override
+    public String toString() {
+        return accountNumber;
+    }
 }
