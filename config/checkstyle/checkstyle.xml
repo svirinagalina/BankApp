@@ -4,21 +4,13 @@
         "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
-  <!-- Проверка отступов -->
-  <module name="Indentation">
-    <property name="basicOffset" value="4"/>
-    <property name="braceAdjustment" value="0"/>
-    <property name="lineWrappingIndentation" value="8"/>
-    <property name="tabWidth" value="4"/>
+
+  <!-- LineLength — вне TreeWalker -->
+  <module name="LineLength">
+    <property name="max" value="120"/>
   </module>
 
-  <!-- Проверка пустых строк -->
-  <module name="EmptyLineSeparator">
-    <property name="allowNoEmptyLineBetweenFields" value="true"/>
-    <property name="tokens" value="CLASS_DEF, INTERFACE_DEF, METHOD_DEF, CTOR_DEF, STATIC_INIT"/>
-  </module>
-
-  <!-- Остальные базовые правила -->
+  <!-- TreeWalker + его вложенные проверки -->
   <module name="TreeWalker">
     <module name="WhitespaceAfter"/>
     <module name="FinalLocalVariable"/>
@@ -33,9 +25,6 @@
     <module name="ModifierOrder"/>
     <module name="RedundantModifier"/>
     <module name="OuterTypeFilename"/>
-    <module name="LineLength">
-      <property name="max" value="120"/>
-    </module>
     <module name="MethodLength">
       <property name="max" value="50"/>
     </module>
