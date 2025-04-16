@@ -1,12 +1,12 @@
 package ru.katacademy.bank_app.user.domain.entity;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.shared.valueobject.Email;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Представляет пользователя системы.
@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
  * Дата: 2025-04-14
  */
 @Getter
-@RequiredArgsConstructor
 public class User {
     private final Long id;
     private final UserRole role;
@@ -32,6 +31,20 @@ public class User {
     private final Email email;
     private final String passwordHash;
     private final LocalDateTime createdAt;
+
+    public User(Long id,
+                UserRole role,
+                String fullName,
+                Email email,
+                String passwordHash,
+                LocalDateTime createdAt) {
+        this.id = Objects.requireNonNull(id, "id must not be null");
+        this.role = Objects.requireNonNull(role, "role must not be null");
+        this.fullName = Objects.requireNonNull(fullName, "fullName must not be null");
+        this.email = Objects.requireNonNull(email, "email must not be null");
+        this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash must not be null");
+        this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
+    }
 
     /**
      * Проверяет, является ли пользователь администратором
