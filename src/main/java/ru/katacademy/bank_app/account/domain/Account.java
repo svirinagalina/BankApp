@@ -32,24 +32,20 @@ public class Account {
      * Пополняет баланс
      *
      * @param money объект предоставляющий сумму валюты и вид валюты
-     * @return Money c пополненным балансом
      */
-    public Money deposit(Money money) {
+    public void deposit(Money money) {
         this.money = this.money.add(money);
-        return this.money;
     }
 
     /**
      * Вычитает баланс
      *
      * @param money объект предоставляющий сумму валюты и вид валюты
-     * @return Money с вычтенным балансом
      * @throws InsufficientFundsException если баланс меньше вычитаемой суммы
      */
-    public Money withdraw(Money money) {
-        if (this.money.amount().compareTo(money.amount()) >= 0) {
+    public void withdraw(Money money) {
+        if (this.money.amount().compareTo(money.amount()) < 0) {
             this.money = this.money.subtract(money);
-            return this.money;
         } else {
             throw new InsufficientFundsException("Недостаточно средств для снятия.");
         }
