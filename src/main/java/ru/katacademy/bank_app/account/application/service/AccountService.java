@@ -3,7 +3,7 @@ package ru.katacademy.bank_app.account.application.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.katacademy.bank_app.account.domain.Account;
+import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
