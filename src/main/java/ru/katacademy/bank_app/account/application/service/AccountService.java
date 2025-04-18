@@ -3,6 +3,8 @@ package ru.katacademy.bank_app.account.application.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.katacademy.bank_app.account.domain.entity.Account;
+import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
+import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
 /**
@@ -22,20 +24,18 @@ public class AccountService {
      * @param accountFrom аккаунт отправителя
      * @param accountTo   аккаунт получателя
      * @param amount      сумма перевода (объект {@link Money})
-     * @throws IllegalStateException если возникает ошибка при списании или зачислении средств
+     * @throws AccountInactiveException   если аккаунт одной из сторон не активен
+     * @throws InsufficientFundsException если на счёте отправителя недостаточно денег
      */
     @Transactional
     public void transfer(Account accountFrom, Account accountTo, Money amount) {
-        try {
-            accountFrom.withdraw(amount);
-        } catch (Exception e) {
-            throw new IllegalStateException("Ошибка при списании средств со счёта отправителя", e);
+        if (!accountFrom.isActive()) {
+            throw new AccountInactiveException("Аккаунт отправителя неактивен");
         }
-
-        try {
-            accountTo.deposit(amount);
-        } catch (Exception e) {
-            throw new IllegalStateException("Ошибка при зачислении средств на счёт получателя", e);
+        if (!accountTo.isActive()) {
+            throw new AccountInactiveException("Аккаунт получателя неактивен");
         }
+        accountFrom.withdraw(amount);
+        accountTo.deposit(amount);
     }
 }

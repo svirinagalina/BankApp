@@ -1,6 +1,7 @@
 package ru.katacademy.bank_app.account.domain.entity;
 
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
+import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
@@ -49,29 +50,40 @@ public class Account {
 
     /**
      * Пополняет баланс на указанную сумму
+     * <p>
+     * Если аккаунт не активен выбрасывает исключение {@link AccountInactiveException}
+     * </p>
      *
      * @param money объект предоставляющий сумму валюты и вид валюты
+     * @throws AccountInactiveException если аккаунт неактивен и операция невозможна.
      */
     public void deposit(Money money) {
+        if (!isActive()) {
+            throw new AccountInactiveException("Невозможно пополнить: аккаунт неактивен.");
+        }
         this.money = this.money.add(money);
     }
 
     /**
-     * Вычитает баланс
+     * Вычитает баланс на указанную сумму.
      * <p>
-     * Если на счете недостаточно средств для выполнения операции, выбрасывается исключение
+     * Если аккаунт неактивен, выбрасывает исключение {@link AccountInactiveException}.
+     * Если на счете недостаточно средств для выполнения операции, выбрасывает исключение
      * {@link InsufficientFundsException}.
      * </p>
      *
      * @param money объект предоставляющий сумму валюты и вид валюты
-     * @throws InsufficientFundsException если баланс меньше вычитаемой суммы
+     * @throws AccountInactiveException   если аккаунт неактивен и операция невозможна.
+     * @throws InsufficientFundsException если на счете недостаточно средств для выполнения операции.
      */
     public void withdraw(Money money) {
-        if (this.money.amount().compareTo(money.amount()) < 0) {
-            this.money = this.money.subtract(money);
-        } else {
-            throw new InsufficientFundsException("Недостаточно средств для снятия.");
+        if (!isActive()) {
+            throw new AccountInactiveException("Невозможно снять средства: аккаунт неактивен.");
         }
+        if (this.money.amount().compareTo(money.amount()) < 0) {
+            throw new InsufficientFundsException("Недостаточно средств для снятия со счета.");
+        }
+        this.money = this.money.subtract(money);
     }
 
     /**
