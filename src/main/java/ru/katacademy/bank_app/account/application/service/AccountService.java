@@ -1,20 +1,15 @@
 package ru.katacademy.bank_app.account.application.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.katacademy.bank_app.account.domain.entity.Account;
-import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
 /**
  * Сервис для выполнения операций со счетами.
  */
 @Service
-@RequiredArgsConstructor
 public class AccountService {
-    private final AccountRepository accountRepository;
-
     /**
      * Переводит денежные средства от одного аккаунта к другому.
      * Сначала выполняется списание средств с аккаунта отправителя,
