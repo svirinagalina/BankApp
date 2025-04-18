@@ -2,6 +2,7 @@ package ru.katacademy.bank_app.account.infrastructure.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.katacademy.bank_app.account.domain.entity.Account;
+import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
 
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ import java.util.Optional;
  * @see JpaRepository
  * @see Account
  */
-public interface JpaAccountRepository extends JpaRepository<Account, Long> {
+public interface JpaAccountRepository extends JpaRepository<AccountEntity, Long> {
 
     /**
      * Находит счет по номеру.
@@ -29,5 +30,5 @@ public interface JpaAccountRepository extends JpaRepository<Account, Long> {
      * @return {@link Optional} с найденным счетом или {@link Optional#empty()}, если счет не существует
      * @throws org.springframework.dao.DataAccessException при ошибках доступа к данным
      */
-    Optional<Account> findByAccountNumber(String accountNumber);
+    Optional<AccountEntity> findByAccountNumber(String accountNumber);
 }

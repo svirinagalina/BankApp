@@ -1,6 +1,7 @@
 package ru.katacademy.bank_app.account.domain.repository;
 
 import ru.katacademy.bank_app.account.domain.entity.Account;
+import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 
 import java.util.Optional;
@@ -16,7 +17,7 @@ public interface AccountRepository {
      * @param accountNumber номер счета аккаунта
      * @return Optional с найденным аккаунтом, если он есть
      */
-    Optional<Account> findByAccountNumber(AccountNumber accountNumber);
+    Optional<AccountEntity> findByAccountNumber(AccountNumber accountNumber);
 
     /**
      * Сохраняет аккаунт в репозитории.
@@ -27,5 +28,5 @@ public interface AccountRepository {
      *
      * @param account объект аккаунта для сохранения
      */
-    void save(Account account);
+    Account save(Account account);
 }

@@ -1,10 +1,14 @@
 package ru.katacademy.bank_app.account.infrastructure.repository;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
+import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
+import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -46,27 +50,29 @@ public class AccountRepositoryImpl implements AccountRepository {
      * @throws IllegalArgumentException если accountNumber == null
      */
     @Override
-    public Optional<Account> findByAccountNumber(AccountNumber accountNumber) {
-        if (accountNumber == null) {
-            throw new IllegalArgumentException("AccountNumber не может быть null");
-        }
+    public Optional<AccountEntity> findByAccountNumber(AccountNumber accountNumber) {
         return jpaAccountRepository.findByAccountNumber(accountNumber.value());
     }
 
+
     /**
-     * Сохраняет или обновляет счет.
+     * Сохраняет или обновляет банковский счет в репозитории.
      * <p>
-     * Делегирует операцию сохранения JPA-репозиторию.
+     * Преобразует доменную модель в JPA-сущность, сохраняет её и возвращает
+     * обновленную доменную модель с актуальными данными.
      * </p>
      *
-     * @param account сохраняемый счет (не должен быть null)
-     * @throws IllegalArgumentException если account == null
+     * @param account доменная модель счета для сохранения (не null)
+     * @return сохраненная доменная модель с актуальными данными
+     * @throws IllegalArgumentException если переданный account == null
+     * @throws DataAccessException при ошибках доступа к данным
+     * @author Sheffy
      */
     @Override
-    public void save(Account account) {
-        if (account == null) {
-            throw new IllegalArgumentException("Account не может быть null");
-        }
-        jpaAccountRepository.save(account);
+    public Account save(Account account) {
+        Objects.requireNonNull(account, "Account не может быть null");
+        AccountEntity accountEntity = AccountEntityMapper.toAccountEntity(account);
+        AccountEntity savedEntity = jpaAccountRepository.save(accountEntity);
+        return AccountEntityMapper.toAccount(savedEntity);
     }
 }
