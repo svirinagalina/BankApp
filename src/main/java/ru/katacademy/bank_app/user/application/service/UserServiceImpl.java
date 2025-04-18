@@ -1,9 +1,9 @@
-package ru.katacademy.bank_app.account.application.service;
+package ru.katacademy.bank_app.user.application.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.katacademy.bank_app.account.application.port.UserRepository;
+import ru.katacademy.bank_app.user.application.port.UserRepository;
 import ru.katacademy.bank_app.shared.exception.UserNotFoundException;
 import ru.katacademy.bank_app.shared.valueobject.Email;
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;

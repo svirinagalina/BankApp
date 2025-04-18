@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.account.application.port;
+package ru.katacademy.bank_app.user.application.port;
 
 import ru.katacademy.bank_app.shared.valueobject.Email;
 import ru.katacademy.bank_app.user.domain.entity.User;

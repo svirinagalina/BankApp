@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.account.application.service;
+package ru.katacademy.bank_app.user.application.service;
 
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.user.application.dto.UserDto;
