@@ -80,7 +80,7 @@ public class Account {
         if (!isActive()) {
             throw new AccountInactiveException("Невозможно снять средства: аккаунт неактивен.");
         }
-        if (this.money.amount().compareTo(money.amount()) >= 0) {
+        if (this.money.amount().compareTo(money.amount()) < 0) {
             throw new InsufficientFundsException("Недостаточно средств для снятия со счета.");
         }
         this.money = this.money.subtract(money);
