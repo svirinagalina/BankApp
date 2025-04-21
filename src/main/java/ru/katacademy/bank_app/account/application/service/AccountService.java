@@ -28,7 +28,6 @@ import java.util.Objects;
 public class AccountService {
     private final AccountRepository accountRepository;
 
-
     /**
      * Переводит денежные средства от одного аккаунта к другому.
      * Сначала выполняется списание средств с аккаунта отправителя,
@@ -46,12 +45,7 @@ public class AccountService {
      */
     @Transactional
     public void transfer(Account accountFrom, Account accountTo, Money amount) {
-        if (!accountFrom.isActive()) {
-            throw new AccountInactiveException("Аккаунт отправителя неактивен");
-        }
-        if (!accountTo.isActive()) {
-            throw new AccountInactiveException("Аккаунт получателя неактивен");
-        }
+        accountFrom.validateTransferTo(accountTo, amount);
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
     }

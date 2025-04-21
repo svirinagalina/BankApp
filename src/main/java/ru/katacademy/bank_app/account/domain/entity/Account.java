@@ -2,6 +2,7 @@ package ru.katacademy.bank_app.account.domain.entity;
 
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
+import ru.katacademy.bank_app.shared.exception.BusinessRuleViolationException;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
@@ -116,6 +117,51 @@ public class Account {
      */
     public void closeAccount() {
         status = AccountStatus.CLOSE;
+    }
+
+    public boolean canWithdraw(Money money) {
+        if (!isActive()) {
+            throw new BusinessRuleViolationException("Невозможно снять средства: аккаунт неактивен.");
+        }
+        if (this.money.amount().compareTo(money.amount()) < 0) {
+            throw new BusinessRuleViolationException("Недостаточно средств");
+        }
+        return true;
+    }
+
+    /**
+     * Проверяет возможность перевода средств на указанный аккаунт.
+     * <p>
+     * Выбрасывает {@link BusinessRuleViolationException}, если целевой аккаунт не активен.
+     * </p>
+     *
+     * @param account аккаунт получателя
+     * @return true если аккаунт активен и перевод возможен
+     */
+    public boolean canTransferTo(Account account) {
+        if (!account.isActive()) {
+            throw new BusinessRuleViolationException("Аккаунт неактивен");
+        }
+        return true;
+    }
+
+    /**
+     * Проверяет возможность перевода указанной суммы на другой аккаунт.
+     * <p>
+     * Делегирует проверки:
+     * <ul>
+     *     <li>{@link #canWithdraw(Money)} — проверка достаточности средств и активности текущего аккаунта</li>
+     *     <li>{@link #canTransferTo(Account)} — проверка активности аккаунта получателя</li>
+     * </ul>
+     * </p>
+     *
+     * @param target аккаунт получателя
+     * @param amount сумма для снятия
+     * @throws BusinessRuleViolationException если нарушены бизнес-ограничения
+     */
+    public void validateTransferTo(Account target, Money amount) {
+        canTransferTo(target);
+        canWithdraw(amount);
     }
 
     /**
