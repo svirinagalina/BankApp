@@ -42,7 +42,7 @@ public record Money(BigDecimal amount, Currency currency) {
      * @param other объект Money для сравнения
      * @throws IllegalArgumentException если результат будет отрицательным
      */
-    private void checkSubtractionAllowed(Money other) {
+    public void checkSubtractionAllowed(Money other) {
         if (this.amount.compareTo(other.amount) < 0) {
             throw new IllegalArgumentException("Resulting amount must not be negative.");
         }

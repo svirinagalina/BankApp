@@ -1,5 +1,6 @@
 package ru.katacademy.bank_app.account.domain.entity;
 
+import lombok.Getter;
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
@@ -21,6 +22,7 @@ import java.util.Objects;
  *
  * @author Rizvan Gunaev
  */
+@Getter
 public class Account {
     /**
      * Номер счета текущего аккаунта

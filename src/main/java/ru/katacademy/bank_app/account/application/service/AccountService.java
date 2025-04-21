@@ -38,22 +38,35 @@ public class AccountService {
      * если одна из операций завершится с ошибкой, изменения будут откатаны.
      * </p>
      *
-     * @param accountFrom аккаунт отправителя
-     * @param accountTo   аккаунт получателя
+     * @param from аккаунт отправителя
+     * @param to   аккаунт получателя
      * @param amount      сумма перевода (объект {@link Money})
      * @throws AccountInactiveException   если аккаунт одной из сторон не активен
      * @throws InsufficientFundsException если на счёте отправителя недостаточно денег
      */
     @Transactional
-    public void transfer(Account accountFrom, Account accountTo, Money amount) {
-        if (!accountFrom.isActive()) {
-            throw new AccountInactiveException("Аккаунт отправителя неактивен");
+    public void transfer(AccountNumber from, AccountNumber to, Money amount) {
+        AccountEntity entityFrom = accountRepository.findByAccountNumber(from)
+                .orElseThrow(() -> new IllegalArgumentException("счёт отправителя не найден"));
+        Account accountFrom = AccountEntityMapper.toAccount(entityFrom);
+
+        AccountEntity entityTo = accountRepository.findByAccountNumber(to)
+                .orElseThrow(() -> new IllegalArgumentException("счёт получателя не найден"));
+        Account accountTo = AccountEntityMapper.toAccount(entityTo);
+
+        if (!accountFrom.isActive() || !accountTo.isActive()) {
+            throw new IllegalArgumentException("оба счёта должны быть активными");
         }
-        if (!accountTo.isActive()) {
-            throw new AccountInactiveException("Аккаунт получателя неактивен");
-        }
+
+        accountFrom.getMoney().checkCurrencyMatch(amount);
+        accountFrom.getMoney().checkSubtractionAllowed(amount);
+
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
+
+        accountRepository.save(accountFrom);
+        accountRepository.save(accountTo);
+
     }
 
     /**
