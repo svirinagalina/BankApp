@@ -1,0 +1,21 @@
+package ru.katacademy.bank_app.shared.exception;
+
+/**
+ * Исключение, выбрасываемое при попытке доступа к несуществующему банковскому счету.
+ * <p>
+ * Используется для обработки ситуаций, когда запрашиваемый счет не найден в системе.
+ * Наследуется от {@link RuntimeException}, что делает его unchecked-исключением.
+ * </p>
+ *
+ * @author Sheffy
+ */
+public class AccountNotFoundException extends RuntimeException {
+    /**
+     * Создает новое исключение с указанным сообщением об ошибке.
+     *
+     * @param message детальное сообщение об ошибке (может включать ID счета или другой идентификатор)
+     */
+    public AccountNotFoundException(String message) {
+        super(message);
+    }
+}

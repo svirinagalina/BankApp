@@ -28,6 +28,10 @@ public record AccountNumber(String accountNumber) {
         }
     }
 
+    public static AccountNumber generateAccountNumber() {
+        return null;
+    }
+
     /**
      * @return строковое представление номера счёта
      */
