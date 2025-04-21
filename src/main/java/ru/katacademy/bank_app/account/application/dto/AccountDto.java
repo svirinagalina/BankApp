@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.account.dto;
+package ru.katacademy.bank_app.account.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,4 +17,3 @@ public class AccountDto {
     private String accountNumber;
 
 }
-
