@@ -1,11 +1,12 @@
 package ru.katacademy.bank_app.account.domain.entity;
 
 import lombok.Getter;
-import lombok.Setter;
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.account.domain.enumtype.Currency;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 import ru.katacademy.bank_app.shared.valueobject.Money;
+
+import java.math.BigDecimal;
 
 /**
  * Класс, представляющий банковский счет.
@@ -23,7 +24,6 @@ import ru.katacademy.bank_app.shared.valueobject.Money;
  * @author Sheffy
  */
 @Getter
-@Setter
 public class Account {
     private Money money;
     private AccountStatus status = AccountStatus.ACTIVE;
@@ -32,6 +32,15 @@ public class Account {
 
 
     public Account(Money money, Currency currency, AccountNumber accountNumber) {
+        if (money == null || money.amount().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Initial balance cannot be null or negative.");
+        }
+        if (currency == null) {
+            throw new IllegalArgumentException("Currency cannot be null.");
+        }
+        if (accountNumber == null) {
+            throw new IllegalArgumentException("Account number cannot be null.");
+        }
         this.money = money;
         this.currency = currency;
         this.accountNumber = accountNumber;
@@ -75,9 +84,30 @@ public class Account {
      * @param money объект предоставляющий сумму валюты и вид валюты
      */
     public void deposit(Money money) {
+        if (!isActive()) {
+            throw new IllegalStateException("Cannot deposit to inactive account.");
+        }
+        if (money.amount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be greater than zero.");
+        }
+        this.money.checkCurrencyMatch(money);
         this.money = this.money.add(money);
     }
 
+    /**
+     * Метод реализует уменьшение баланса счета на заданную сумму.
+     *
+     * @param amount сумма денег, которую клиент хочет снять со счета.
+     */
+    public void withdraw(Money amount) {
+        if (!isActive()) {
+            throw new IllegalStateException("Account is not active. Withdrawal not allowed.");
+        }
+        if (!amount.currency().equals(this.currency)) {
+            throw new IllegalArgumentException("Currency mismatch.");
+        }
+        this.money = this.money.subtract(amount);
+    }
 
     /**
      * Проверяет равенство аккаунтов по {@link AccountNumber}.
