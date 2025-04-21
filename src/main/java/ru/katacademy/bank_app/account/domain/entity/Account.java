@@ -1,28 +1,43 @@
 package ru.katacademy.bank_app.account.domain.entity;
 
+import lombok.Getter;
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
+import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
+import ru.katacademy.bank_app.shared.valueobject.Money;
+import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
 
 /**
- * Класс, представляющий банковский счет.
- * <p>
- * Содержит информацию о текущем статусе счета и предоставляет методы
- * для управления этим статусом (блокировка, закрытие, проверка активности).
- * </p>
+ * Представляет аккаунт с денежным балансом, включающим сумму и валюту.
  *
- * @author Sheffy
+ * <p>
+ * Класс гарантирует что:
+ * <ul>
+ *     <li>Сумма вычета и сложения не может привести к отрицательному значению</li>
+ * </ul>
  */
+@Getter
 public class Account {
+
+    private final AccountNumber accountNumber;
+
+    private Money money;
     /**
      * Текущий статус счета.
      * Определяет доступность счета для операций.
      */
     private AccountStatus status;
 
+    public Account(AccountNumber accountNumber, Money money, AccountStatus status) {
+        this.accountNumber = accountNumber;
+        this.money = money;
+        this.status = status;
+    }
+
     /**
      * Проверяет, является ли счет активным.
      *
      * @return {@code true} если счет имеет статус {@link AccountStatus#ACTIVE},
-     *         {@code false} в противном случае
+     * {@code false} в противном случае
      */
     public boolean isActive() {
         return status == AccountStatus.ACTIVE;
@@ -48,5 +63,59 @@ public class Account {
      */
     public void closeAccount() {
         status = AccountStatus.CLOSE;
+    }
+
+    /**
+     * Создаёт аккаунт с указанным денежным балансом и номером счета.
+     *
+     * @param accountNumber номер счета аккаунта
+     * @param money         начальный баланс аккаунта
+     */
+
+    /**
+     * Пополняет баланс
+     *
+     * @param money объект предоставляющий сумму валюты и вид валюты
+     */
+    public void deposit(Money money) {
+        this.money = this.money.add(money);
+    }
+
+    /**
+     * Вычитает баланс
+     *
+     * @param money объект предоставляющий сумму валюты и вид валюты
+     * @throws InsufficientFundsException если баланс меньше вычитаемой суммы
+     */
+    public void withdraw(Money money) {
+        if (this.money.amount().compareTo(money.amount()) < 0) {
+            this.money = this.money.subtract(money);
+        } else {
+            throw new InsufficientFundsException("Недостаточно средств для снятия.");
+        }
+    }
+
+    /**
+     * Проверяет равенство аккаунтов по {@link AccountNumber}.
+     *
+     * @param o объект для сравнения
+     * @return {@code true}, если оба объекта являются Account и имеют одинаковый номер счёта
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return accountNumber.equals(account.accountNumber);
+    }
+
+    /**
+     * Возвращает хэш-код на основе {@link AccountNumber}.
+     *
+     * @return хэш-код аккаунта
+     */
+    @Override
+    public int hashCode() {
+        return accountNumber.hashCode();
     }
 }
