@@ -13,6 +13,8 @@ import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountE
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.notification.application.NotificationService;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
+import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
+import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -41,10 +43,17 @@ public class AccountService {
      * @param accountFrom аккаунт отправителя
      * @param accountTo   аккаунт получателя
      * @param amount      сумма перевода (объект {@link Money})
-     * @throws IllegalStateException если возникает ошибка при списании или зачислении средств
+     * @throws AccountInactiveException   если аккаунт одной из сторон не активен
+     * @throws InsufficientFundsException если на счёте отправителя недостаточно денег
      */
     @Transactional
     public void transfer(Account accountFrom, Account accountTo, Money amount) {
+        if (!accountFrom.isActive()) {
+            throw new AccountInactiveException("Аккаунт отправителя неактивен");
+        }
+        if (!accountTo.isActive()) {
+            throw new AccountInactiveException("Аккаунт получателя неактивен");
+        }
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
 
