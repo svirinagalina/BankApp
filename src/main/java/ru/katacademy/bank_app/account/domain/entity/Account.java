@@ -1,39 +1,52 @@
 package ru.katacademy.bank_app.account.domain.entity;
 
+import lombok.Getter;
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
-import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
+import ru.katacademy.bank_app.account.domain.enumtype.Currency;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 import ru.katacademy.bank_app.shared.valueobject.Money;
-import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
 
-import java.util.Objects;
+import java.math.BigDecimal;
 
 /**
  * Представляет банковский аккаунт с денежным балансом, включающим сумму и валюту.
  * Содержит информацию о текущем статусе счета
  * и предоставляет методы для управления этим статусом (блокировка, закрытие, проверка активности).
  * <p>
- * Класс гарантирует что:
- * <ul>
- *     <li>Сумма вычета и сложения не может привести к отрицательному значению</li>
- *     <li>Методы блокировки и закрытия изменяют статус счета, делая его недоступным для операций</li>
- * </ul>
+ * Содержит информацию о текущем статусе счета и предоставляет методы
+ * для управления этим статусом (блокировка, закрытие, проверка активности).
+ * </p>
+ * <p>
+ * Поля:
+ * - money: баланс счета
+ * - status: текущий статус счета. Определяет доступность счета для операций.
+ * - currency: валюта счета.
+ * - accountNumber: номер счета
  *
  * @author Rizvan Gunaev
  */
+@Getter
 public class Account {
-    /**
-     * Номер счета текущего аккаунта
-     */
-    private final AccountNumber accountNumber;
-    /**
-     * Текущий денежный баланс, содержащий данные о валюте и ее сумме.
-     */
     private Money money;
-    /**
-     * Текущий статус счета, который определяет его доступность для операций.
-     */
-    private AccountStatus status;
+    private AccountStatus status = AccountStatus.ACTIVE;
+    private final Currency currency;
+    private final AccountNumber accountNumber;
+
+
+    public Account(Money money, Currency currency, AccountNumber accountNumber) {
+        if (money == null || money.amount().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Initial balance cannot be null or negative.");
+        }
+        if (currency == null) {
+            throw new IllegalArgumentException("Currency cannot be null.");
+        }
+        if (accountNumber == null) {
+            throw new IllegalArgumentException("Account number cannot be null.");
+        }
+        this.money = money;
+        this.currency = currency;
+        this.accountNumber = accountNumber;
+    }
 
     /**
      * Создаёт новый банковский аккаунт с заданным номером счёта, начальными средствами и статусом.
@@ -119,34 +132,58 @@ public class Account {
     }
 
     /**
-     * Сравнивает текущий аккаунт с другим объектом на равенство.
-     * <p>
-     * Сравнение происходит только по {@link AccountNumber},
-     * поскольку номер счёта однозначно идентифицирует аккаунт.
-     * </p>
+     * Пополняет баланс
      *
-     * @param o объект, с которым сравнивается текущий аккаунт
-     * @return {@code true}, если объект является {@code Account} и имеет такой же номер счёта;
-     * {@code false} в остальных случаях
+     * @param money объект предоставляющий сумму валюты и вид валюты
      */
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Account account)) return false;
-        return Objects.equals(accountNumber, account.accountNumber);
+    public void deposit(Money money) {
+        if (!isActive()) {
+            throw new IllegalStateException("Cannot deposit to inactive account.");
+        }
+        if (money.amount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be greater than zero.");
+        }
+        this.money.checkCurrencyMatch(money);
+        this.money = this.money.add(money);
     }
 
     /**
-     * Возвращает хэш-код аккаунта на основе его номера счёта.
-     * <p>
-     * Этот метод согласован с {@link #equals(Object)}, то есть
-     * если два аккаунта равны по {@code equals}, то их {@code hashCode} также совпадают.
-     * </p>
+     * Метод реализует уменьшение баланса счета на заданную сумму.
      *
-     * @return хэш-код, вычисленный по {@code accountNumber}
+     * @param amount сумма денег, которую клиент хочет снять со счета.
+     */
+    public void withdraw(Money amount) {
+        if (!isActive()) {
+            throw new IllegalStateException("Account is not active. Withdrawal not allowed.");
+        }
+        if (!amount.currency().equals(this.currency)) {
+            throw new IllegalArgumentException("Currency mismatch.");
+        }
+        this.money = this.money.subtract(amount);
+    }
+
+    /**
+     * Проверяет равенство аккаунтов по {@link AccountNumber}.
+     *
+     * @param o объект для сравнения
+     * @return {@code true}, если оба объекта являются Account и имеют одинаковый номер счёта
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ru.katacademy.bank_app.account.domain.entity.Account account =
+                (ru.katacademy.bank_app.account.domain.entity.Account) o;
+        return accountNumber.equals(account.accountNumber);
+    }
+
+    /**
+     * Возвращает хэш-код на основе {@link AccountNumber}.
+     *
+     * @return хэш-код аккаунта
      */
     @Override
     public int hashCode() {
-        return Objects.hash(accountNumber);
+        return accountNumber.hashCode();
     }
 }
