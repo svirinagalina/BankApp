@@ -7,6 +7,7 @@ import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
+import ru.katacademy.bank_app.notification.application.NotificationService;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
 import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
@@ -23,6 +24,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final NotificationService notificationService;
 
 
     /**
@@ -50,6 +52,8 @@ public class AccountService {
         }
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
+
+        notificationService.sendTransferNotification(accountFrom, accountTo, amount);
     }
 
     /**
