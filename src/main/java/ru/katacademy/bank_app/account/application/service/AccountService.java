@@ -54,19 +54,11 @@ public class AccountService {
                 .orElseThrow(() -> new IllegalArgumentException("счёт получателя не найден"));
         Account accountTo = AccountEntityMapper.toAccount(entityTo);
 
-        if (!accountFrom.isActive() || !accountTo.isActive()) {
-            throw new IllegalArgumentException("оба счёта должны быть активными");
-        }
-
-        accountFrom.getMoney().checkCurrencyMatch(amount);
-        accountFrom.getMoney().checkSubtractionAllowed(amount);
-
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
 
         accountRepository.save(accountFrom);
         accountRepository.save(accountTo);
-
     }
 
     /**
