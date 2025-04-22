@@ -3,14 +3,11 @@ package ru.katacademy.bank_app.account.application.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.katacademy.bank_app.account.application.command.CreateAccountCommand;
-import ru.katacademy.bank_app.account.application.dto.AccountDto;
-import ru.katacademy.bank_app.account.application.mapper.AccountMapper;
 import ru.katacademy.bank_app.account.domain.entity.Account;
-import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
+import ru.katacademy.bank_app.notification.application.NotificationService;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
 import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
@@ -27,6 +24,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final NotificationService notificationService;
 
 
     /**
@@ -59,6 +57,8 @@ public class AccountService {
 
         accountRepository.save(accountFrom);
         accountRepository.save(accountTo);
+        
+        notificationService.sendTransferNotification(accountFrom, accountTo, amount);
     }
 
     /**
