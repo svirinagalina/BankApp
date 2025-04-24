@@ -57,7 +57,7 @@ public class AccountService {
 
         accountRepository.save(accountFrom);
         accountRepository.save(accountTo);
-        
+
         notificationService.sendTransferNotification(accountFrom, accountTo, amount);
     }
 
