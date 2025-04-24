@@ -1,0 +1,25 @@
+stages:
+  - build
+  - checkstyle
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx1024m"
+
+before_script:
+  - chmod +x gradlew
+
+build:
+  stage: build
+  script:
+    - ./gradlew clean build --no-daemon
+
+checkstyle:
+  stage: checkstyle
+  script:
+    - ./gradlew checkstyleMain checkstyleTest --no-daemon
+  artifacts:
+    when: always
+    reports:
+      codequality: build/reports/checkstyle/main.xml
+    paths:
+      - build/reports/checkstyle

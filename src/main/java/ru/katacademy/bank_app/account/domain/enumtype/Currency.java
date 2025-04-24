@@ -11,4 +11,3 @@ package ru.katacademy.bank_app.account.domain.enumtype;
 public enum Currency {
     RUB, USD, EUR
 }
-

@@ -33,7 +33,8 @@ public class Account {
 
     public Account(Money money, Currency currency, AccountNumber accountNumber) {
         if (money == null || money.amount().compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Initial balance cannot be null or negative.");
+            throw new IllegalArgumentException("Initial balance cannot " +
+                    "be null or negative.");
         }
         if (currency == null) {
             throw new IllegalArgumentException("Currency cannot be null.");
@@ -88,7 +89,8 @@ public class Account {
             throw new IllegalStateException("Cannot deposit to inactive account.");
         }
         if (money.amount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Deposit amount must be greater than zero.");
+            throw new IllegalArgumentException("Deposit amount must be " +
+                    "greater than zero.");
         }
         this.money.checkCurrencyMatch(money);
         this.money = this.money.add(money);
@@ -101,7 +103,8 @@ public class Account {
      */
     public void withdraw(Money amount) {
         if (!isActive()) {
-            throw new IllegalStateException("Account is not active. Withdrawal not allowed.");
+            throw new IllegalStateException("Account is not active. " +
+                    "Withdrawal not allowed.");
         }
         if (!amount.currency().equals(this.currency)) {
             throw new IllegalArgumentException("Currency mismatch.");
@@ -113,13 +116,18 @@ public class Account {
      * Проверяет равенство аккаунтов по {@link AccountNumber}.
      *
      * @param o объект для сравнения
-     * @return {@code true}, если оба объекта являются Account и имеют одинаковый номер счёта
+     * @return {@code true}, если оба объекта являются Account и
+     * имеют одинаковый номер счёта
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ru.katacademy.bank_app.account.domain.entity.Account account =
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final ru.katacademy.bank_app.account.domain.entity.Account account =
                 (ru.katacademy.bank_app.account.domain.entity.Account) o;
         return accountNumber.equals(account.accountNumber);
     }
