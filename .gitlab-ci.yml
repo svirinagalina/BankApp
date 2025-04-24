@@ -1,6 +1,5 @@
 stages:
   - build
-  - checkstyle
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx1024m"
@@ -10,16 +9,10 @@ before_script:
 
 build:
   stage: build
+  image: gradle:8.5-jdk21
   script:
-    - ./gradlew clean build --no-daemon
-
-checkstyle:
-  stage: checkstyle
-  script:
-    - ./gradlew checkstyleMain checkstyleTest --no-daemon
+    - ./gradlew clean build checkstyleMain checkstyleTest --no-daemon
   artifacts:
     when: always
-    reports:
-      codequality: build/reports/checkstyle/main.xml
     paths:
       - build/reports/checkstyle
