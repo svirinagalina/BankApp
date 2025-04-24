@@ -12,7 +12,7 @@ build:
   image: gradle:8.5-jdk21
   script:
     - ./gradlew clean build checkstyleMain checkstyleTest --no-daemon
-  artifacts:
-    when: always
-    paths:
-      - build/reports/checkstyle
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - when: never
