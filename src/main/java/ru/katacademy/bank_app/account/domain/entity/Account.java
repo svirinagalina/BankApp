@@ -9,9 +9,7 @@ import ru.katacademy.bank_app.shared.valueobject.Money;
 import java.math.BigDecimal;
 
 /**
- * Представляет банковский аккаунт с денежным балансом, включающим сумму и валюту.
- * Содержит информацию о текущем статусе счета
- * и предоставляет методы для управления этим статусом (блокировка, закрытие, проверка активности).
+ * Класс, представляющий банковский счет.
  * <p>
  * Содержит информацию о текущем статусе счета и предоставляет методы
  * для управления этим статусом (блокировка, закрытие, проверка активности).
@@ -23,7 +21,7 @@ import java.math.BigDecimal;
  * - currency: валюта счета.
  * - accountNumber: номер счета
  *
- * @author Rizvan Gunaev
+ * @author Sheffy
  */
 @Getter
 public class Account {
@@ -46,57 +44,6 @@ public class Account {
         this.money = money;
         this.currency = currency;
         this.accountNumber = accountNumber;
-    }
-
-    /**
-     * Создаёт новый банковский аккаунт с заданным номером счёта, начальными средствами и статусом.
-     *
-     * @param accountNumber уникальный номер счёта
-     * @param money         начальный баланс (сумма и валюта)
-     * @param status        статус счёта при создании (например, ACTIVE или BLOCKED)
-     */
-    public Account(AccountNumber accountNumber, Money money, AccountStatus status) {
-        this.accountNumber = accountNumber;
-        this.money = money;
-        this.status = status;
-    }
-
-    /**
-     * Пополняет баланс на указанную сумму
-     * <p>
-     * Если аккаунт не активен выбрасывает исключение {@link AccountInactiveException}
-     * </p>
-     *
-     * @param money объект предоставляющий сумму валюты и вид валюты
-     * @throws AccountInactiveException если аккаунт неактивен и операция невозможна.
-     */
-    public void deposit(Money money) {
-        if (!isActive()) {
-            throw new AccountInactiveException("Невозможно пополнить: аккаунт неактивен.");
-        }
-        this.money = this.money.add(money);
-    }
-
-    /**
-     * Вычитает баланс на указанную сумму.
-     * <p>
-     * Если аккаунт неактивен, выбрасывает исключение {@link AccountInactiveException}.
-     * Если на счете недостаточно средств для выполнения операции, выбрасывает исключение
-     * {@link InsufficientFundsException}.
-     * </p>
-     *
-     * @param money объект предоставляющий сумму валюты и вид валюты
-     * @throws AccountInactiveException   если аккаунт неактивен и операция невозможна.
-     * @throws InsufficientFundsException если на счете недостаточно средств для выполнения операции.
-     */
-    public void withdraw(Money money) {
-        if (!isActive()) {
-            throw new AccountInactiveException("Невозможно снять средства: аккаунт неактивен.");
-        }
-        if (this.money.amount().compareTo(money.amount()) < 0) {
-            throw new InsufficientFundsException("Недостаточно средств для снятия со счета.");
-        }
-        this.money = this.money.subtract(money);
     }
 
     /**
