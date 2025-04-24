@@ -1,11 +1,15 @@
-# Используем образ с JDK
-FROM openjdk:21
+# Образ с Eclipse Temurin вместо OpenJDK для уменьшения размера образа
+FROM eclipse-temurin:21-jre-alpine
 
-# Указываем рабочую директорию
+# Рабочая директорию
 WORKDIR /app
 
-# Копируем собранный jar-файл в контейнер
-COPY build/libs/bank-app.jar app.jar
+# Скачиваем агент OpenTelemetry и сохраняем внутрь Docker-образа, в папку /app
+RUN curl -o /app/opentelemetry-javaagent.jar \
+  https://github.com/open-telemetry/opentelemetry-java/releases/download/v1.17.0/opentelemetry-javaagent-1.17.0.jar
 
-# Команда запуска
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Копируем JAR приложения
+COPY build/libs/app.jar app.jar
+
+# Команда запуска приложения с подключенным агентом
+ENTRYPOINT ["java", "-javaagent:/app/opentelemetry-javaagent.jar", "-jar", "app.jar"]

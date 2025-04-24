@@ -20,7 +20,7 @@ public class KafkaConfiguration {
      *         - 1 реплику: это копия данных для обеспечения отказоустойчивости, что важно для надежности системы.
      */
     @Bean
-    public NewTopic newTopic() {
+    public NewTopic createCourseTopic() {
         return new NewTopic("course", 1, (short) 1);
     }
 }
