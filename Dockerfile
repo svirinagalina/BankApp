@@ -4,9 +4,8 @@ FROM eclipse-temurin:21-jre-alpine
 # Рабочая директорию
 WORKDIR /app
 
-# Скачиваем агент OpenTelemetry и сохраняем внутрь Docker-образа, в папку /app
-RUN curl -o /app/opentelemetry-javaagent.jar \
-  https://github.com/open-telemetry/opentelemetry-java/releases/download/v1.17.0/opentelemetry-javaagent-1.17.0.jar
+# Скачиваем агент OpenTelemetry с использованием ADD
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.15.0/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 
 # Копируем JAR приложения
 COPY build/libs/app.jar app.jar
