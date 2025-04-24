@@ -37,7 +37,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void sendTransferNotification(Account fromAccount, Account toAccount, Money amount) {
         // Форматируем сообщение с использованием шаблона уведомления
-        String message = TransferNotificationTemplate.format(fromAccount, toAccount, amount);
+        final String message = TransferNotificationTemplate.format(fromAccount, toAccount, amount);
 
         // Логируем уведомление
         logger.info(message);

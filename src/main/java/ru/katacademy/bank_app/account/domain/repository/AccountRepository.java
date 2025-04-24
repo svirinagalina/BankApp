@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Репозиторий для работы с аккаунтами
  */
-public interface AccountRepository {
+public interface AccountRepository extends JpaRepository<Account, Long> {
 
     /**
      * Находит аккаунт по номеру счета.
@@ -17,16 +17,5 @@ public interface AccountRepository {
      * @param accountNumber номер счета аккаунта
      * @return Optional с найденным аккаунтом, если он есть
      */
-    Optional<AccountEntity> findByAccountNumber(AccountNumber accountNumber);
-
-    /**
-     * Сохраняет аккаунт в репозитории.
-     * <p>
-     * Если аккаунт уже существует, обновляет его данные.
-     * Если аккаунт новый - добавляет его в репозиторий.
-     * </p>
-     *
-     * @param account объект аккаунта для сохранения
-     */
-    Account save(Account account);
+    Optional<Account> findByAccountNumber(AccountNumber accountNumber);
 }
