@@ -30,7 +30,7 @@ public record Money(BigDecimal amount, Currency currency) {
      * @param money объект Money для сравнения
      * @throws IllegalArgumentException если валюты не совпадают
      */
-    private void checkCurrencyMatch(Money money) {
+    public void checkCurrencyMatch(Money money) {
         if (!this.currency.equals(money.currency)) {
             throw new IllegalArgumentException("Currency does not match currency.");
         }

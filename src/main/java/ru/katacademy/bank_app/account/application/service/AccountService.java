@@ -3,13 +3,16 @@ package ru.katacademy.bank_app.account.application.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.katacademy.bank_app.account.application.command.CreateAccountCommand;
+import ru.katacademy.bank_app.account.application.dto.AccountDto;
+import ru.katacademy.bank_app.account.application.mapper.AccountMapper;
 import ru.katacademy.bank_app.account.domain.entity.Account;
+import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.notification.application.NotificationService;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
-import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
 import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
@@ -39,24 +42,23 @@ public class AccountService {
      * @param from аккаунт отправителя
      * @param to   аккаунт получателя
      * @param amount      сумма перевода (объект {@link Money})
-     * @throws AccountInactiveException   если аккаунт одной из сторон не активен
      * @throws InsufficientFundsException если на счёте отправителя недостаточно денег
      */
     @Transactional
     public void transfer(AccountNumber from, AccountNumber to, Money amount) {
-        AccountEntity entityFrom = accountRepository.findByAccountNumber(from)
+        final AccountEntity entityFrom = accountRepository.findByAccountNumber(from)
                 .orElseThrow(() -> new IllegalArgumentException("счёт отправителя не найден"));
-        Account accountFrom = AccountEntityMapper.toAccount(entityFrom);
+        final Account accountFrom = AccountEntityMapper.toAccount(entityFrom);
 
-        AccountEntity entityTo = accountRepository.findByAccountNumber(to)
+        final AccountEntity entityTo = accountRepository.findByAccountNumber(to)
                 .orElseThrow(() -> new IllegalArgumentException("счёт получателя не найден"));
-        Account accountTo = AccountEntityMapper.toAccount(entityTo);
+        final Account accountTo = AccountEntityMapper.toAccount(entityTo);
 
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
 
-        accountRepository.save(accountFrom);
-        accountRepository.save(accountTo);
+        accountRepository.save(AccountEntityMapper.toAccountEntity(accountFrom));
+        accountRepository.save(AccountEntityMapper.toAccountEntity(accountTo));
 
         notificationService.sendTransferNotification(accountFrom, accountTo, amount);
     }
@@ -72,11 +74,12 @@ public class AccountService {
         Objects.requireNonNull(cmd, "Команда создания счета не может быть null");
         Objects.requireNonNull(cmd.currency(), "Валюта счета не может быть null");
 
-        AccountNumber accountNumber = AccountNumber.generateAccountNumber();
-        Money initialBalance = new Money(BigDecimal.ZERO, cmd.currency());
+        final AccountNumber accountNumber = AccountNumber.generateAccountNumber();
+        final Money initialBalance = new Money(BigDecimal.ZERO, cmd.currency());
 
-        Account account = new Account(accountNumber, initialBalance, AccountStatus.ACTIVE);
-        accountRepository.save(account);
+        final Account account = new Account(accountNumber, initialBalance, AccountStatus.ACTIVE);
+        final AccountEntity accountEntity = AccountEntityMapper.toAccountEntity(account);
+        accountRepository.save(accountEntity);
 
         return AccountMapper.toAccountDto(account);
     }
@@ -93,10 +96,10 @@ public class AccountService {
             throws AccountNotFoundException {
         Objects.requireNonNull(accountNumber, "Номер счета не может быть null");
 
-        AccountEntity accountEntity = accountRepository.findByAccountNumber(accountNumber)
+        final AccountEntity accountEntity = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException(
                         String.format("Счет с номером %s не найден", accountNumber.value())));
-        Account account = AccountEntityMapper.toAccount(accountEntity);
+        final Account account = AccountEntityMapper.toAccount(accountEntity);
         return AccountMapper.toAccountDto(account);
     }
 }
