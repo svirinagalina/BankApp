@@ -16,3 +16,5 @@ build:
     when: always
     paths:
       - build/reports/checkstyle
+  only:
+    - main
