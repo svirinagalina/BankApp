@@ -3,26 +3,21 @@ package ru.katacademy.bank_app.account.application.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.katacademy.bank_app.account.application.command.CreateAccountCommand;
 import ru.katacademy.bank_app.account.application.dto.AccountDto;
 import ru.katacademy.bank_app.account.application.port.out.TransferEventPublisher;
 import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
-import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
-import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.notification.application.NotificationService;
-import ru.katacademy.bank_app.shared.event.TransferComplitedEvent;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
-import ru.katacademy.bank_app.shared.exception.AccountInactiveException;
-import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
+import ru.katacademy.bank_app.shared.event.TransferComplitedEvent;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
-import javax.security.auth.login.AccountNotFoundException;
-import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
+
+import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Сервис для выполнения операций со счетами.
@@ -35,6 +30,7 @@ public class AccountService {
     private final TransferEventPublisher eventPublisher;
 
 
+
     /**
      * Переводит денежные средства от одного аккаунта к другому.
      * Сначала выполняется списание средств с аккаунта отправителя,
@@ -44,22 +40,28 @@ public class AccountService {
      * если одна из операций завершится с ошибкой, изменения будут откатаны.
      * </p>
      *
-     * @param accountFrom аккаунт отправителя
-     * @param accountTo   аккаунт получателя
+     * @param from аккаунт отправителя
+     * @param to   аккаунт получателя
      * @param amount      сумма перевода (объект {@link Money})
-     * @throws AccountInactiveException   если аккаунт одной из сторон не активен
-     * @throws InsufficientFundsException если на счёте отправителя недостаточно денег
+     * @throws IllegalStateException если возникает ошибка при списании или зачислении средств
      */
     @Transactional
-    public void transfer(Account accountFrom, Account accountTo, Money amount) {
-        if (!accountFrom.isActive()) {
-            throw new AccountInactiveException("Аккаунт отправителя неактивен");
-        }
-        if (!accountTo.isActive()) {
-            throw new AccountInactiveException("Аккаунт получателя неактивен");
-        }
+    public void transfer(AccountNumber from, AccountNumber to, Money amount) {
+        final AccountEntity entityFrom = accountRepository.findByAccountNumber(from)
+                .orElseThrow(() -> new IllegalArgumentException("счёт отправителя не найден"));
+        final Account accountFrom = AccountEntityMapper.toAccount(entityFrom);
+
+        final AccountEntity entityTo = accountRepository.findByAccountNumber(to)
+                .orElseThrow(() -> new IllegalArgumentException("счёт получателя не найден"));
+        final Account accountTo = AccountEntityMapper.toAccount(entityTo);
+
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
+
+        accountRepository.save(AccountEntityMapper.toAccountEntity(accountFrom));
+        accountRepository.save(AccountEntityMapper.toAccountEntity(accountTo));
+
+        notificationService.sendTransferNotification(accountFrom, accountTo, amount);
 
         notificationService.sendTransferNotification(accountFrom, accountTo, amount);
 
@@ -88,11 +90,12 @@ public class AccountService {
         Objects.requireNonNull(cmd, "Команда создания счета не может быть null");
         Objects.requireNonNull(cmd.currency(), "Валюта счета не может быть null");
 
-        AccountNumber accountNumber = AccountNumber.generateAccountNumber();
-        Money initialBalance = new Money(BigDecimal.ZERO, cmd.currency());
+        final AccountNumber accountNumber = AccountNumber.generateAccountNumber();
+        final Money initialBalance = new Money(BigDecimal.ZERO, cmd.currency());
 
-        Account account = new Account(accountNumber, initialBalance, AccountStatus.ACTIVE);
-        accountRepository.save(account);
+        final Account account = new Account(accountNumber, initialBalance, AccountStatus.ACTIVE);
+        final AccountEntity accountEntity = AccountEntityMapper.toAccountEntity(account);
+        accountRepository.save(accountEntity);
 
         return AccountMapper.toAccountDto(account);
     }
@@ -109,10 +112,10 @@ public class AccountService {
             throws AccountNotFoundException {
         Objects.requireNonNull(accountNumber, "Номер счета не может быть null");
 
-        AccountEntity accountEntity = accountRepository.findByAccountNumber(accountNumber)
+        final AccountEntity accountEntity = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException(
                         String.format("Счет с номером %s не найден", accountNumber.value())));
-        Account account = AccountEntityMapper.toAccount(accountEntity);
+        final Account account = AccountEntityMapper.toAccount(accountEntity);
         return AccountMapper.toAccountDto(account);
     }
 }
