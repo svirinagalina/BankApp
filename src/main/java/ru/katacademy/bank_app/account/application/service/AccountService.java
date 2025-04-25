@@ -71,7 +71,7 @@ public class AccountService {
         notificationService.sendTransferNotification(accountFrom, accountTo, amount);
 
         // Создаем и публикуем событие о завершении перевода
-        TransferComplitedEvent event = new TransferComplitedEvent(
+        final TransferComplitedEvent event = new TransferComplitedEvent(
                 UUID.randomUUID(),
                 accountFrom,
                 accountTo,

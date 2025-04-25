@@ -26,7 +26,7 @@ public class KafkaTransferEventPublisher implements TransferEventPublisher {
 
     @Override
     public void publish(TransferComplitedEvent event) {
-        String message = String.format("Был совершён перевод: %s", event);
+        final String message = String.format("Был совершён перевод: %s", event);
         producer.send("transfer", message);
     }
 }
