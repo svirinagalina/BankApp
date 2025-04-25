@@ -23,4 +23,9 @@ public class KafkaConfiguration {
     public NewTopic createCourseTopic() {
         return new NewTopic("course", 1, (short) 1);
     }
+
+    @Bean
+    public NewTopic createTransferTopic() {
+        return new NewTopic("transfer", 1, (short) 1);
+    }
 }
