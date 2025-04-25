@@ -39,14 +39,13 @@ public class AccountService {
      * если одна из операций завершится с ошибкой, изменения будут откатаны.
      * </p>
      *
-     * @param from аккаунт отправителя
-     * @param to   аккаунт получателя
-     * @param amount      сумма перевода (объект {@link Money})
+     * @param from   аккаунт отправителя
+     * @param to     аккаунт получателя
+     * @param amount сумма перевода (объект {@link Money})
      * @throws InsufficientFundsException если на счёте отправителя недостаточно денег
      */
     @Transactional
     public void transfer(AccountNumber from, AccountNumber to, Money amount) {
-        from.validateTransferTo(to, amount);
 
         final AccountEntity entityFrom = accountRepository.findByAccountNumber(from)
                 .orElseThrow(() -> new IllegalArgumentException("счёт отправителя не найден"));
@@ -56,6 +55,7 @@ public class AccountService {
                 .orElseThrow(() -> new IllegalArgumentException("счёт получателя не найден"));
         final Account accountTo = AccountEntityMapper.toAccount(entityTo);
 
+        accountFrom.validateTransferTo(accountTo, amount);
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
 
