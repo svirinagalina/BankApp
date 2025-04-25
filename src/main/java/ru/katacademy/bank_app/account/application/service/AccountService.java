@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.notification.application.NotificationService;
+import ru.katacademy.bank_app.shared.exception.BusinessRuleViolationException;
+import ru.katacademy.bank_app.shared.exception.CurrencyMismatchException;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
 /**
@@ -29,16 +31,18 @@ public class AccountService {
      * @param accountFrom аккаунт отправителя
      * @param accountTo   аккаунт получателя
      * @param amount      сумма перевода (объект {@link Money})
-     * @throws IllegalStateException если возникает ошибка при списании или зачислении средств
+     * @throws IllegalStateException          если возникает ошибка при списании или зачислении средств
+     * @throws BusinessRuleViolationException если целевой аккаунт не активен
+     * @throws CurrencyMismatchException      если валюты не совпадают
      */
     @Transactional
     public void transfer(Account accountFrom, Account accountTo, Money amount) {
+        accountFrom.validateTransferTo(accountTo, amount);
         try {
             accountFrom.withdraw(amount);
         } catch (Exception e) {
             throw new IllegalStateException("Ошибка при списании средств со счёта отправителя", e);
         }
-
         try {
             accountTo.deposit(amount);
         } catch (Exception e) {
