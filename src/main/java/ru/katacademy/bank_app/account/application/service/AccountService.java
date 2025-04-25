@@ -3,16 +3,21 @@ package ru.katacademy.bank_app.account.application.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.katacademy.bank_app.account.application.command.CreateAccountCommand;
 import ru.katacademy.bank_app.account.application.dto.AccountDto;
+import ru.katacademy.bank_app.account.application.mapper.AccountMapper;
 import ru.katacademy.bank_app.account.application.port.out.TransferEventPublisher;
 import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
+import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
+import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.notification.application.NotificationService;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 import ru.katacademy.bank_app.shared.event.TransferComplitedEvent;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.time.Instant;
 import java.util.UUID;
 
