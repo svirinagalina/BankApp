@@ -1,30 +1,33 @@
 package ru.katacademy.bank_app.account.application.mapper;
 
-import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.application.dto.AccountDto;
+import ru.katacademy.bank_app.account.domain.entity.Account;
 
 /**
- * Используется для преобразования данных между различными уровнями приложения.
- * В данном случае, он служит для преобразования сущность в DTO и обратно.
+ * Маппер для преобразования доменной модели {@link Account} в DTO {@link AccountDto}.
  * <p>
- * Автор: Maxim4212
- * Дата: 2025-04-21
+ * Содержит статические методы конвертации между слоями приложения.
+ * Не содержит состояния и бизнес-логики.
+ * </p>
+ *
+ * @author Sheffy
  */
-
 public class AccountMapper {
+
     /**
-     * Метод нужен для преобразования аккаунта (сущности) в DTO
+     * Преобразует доменную модель счета в транспортный объект.
      *
-     * @param account аккаунт, который мы преобразуем в DTO
-     * @return что возвращает новый DTO с валютой и статусом аккаунта
+     * @param account доменная модель счета (не должна быть null)
+     * @return новый экземпляр {@link AccountDto}
      */
-    public static AccountDto toDto(Account account) {
+    public static AccountDto toAccountDto(Account account) {
+
         return new AccountDto(
+                account.getAccountNumber(),
+                account.getMoney().currency(),
                 account.getMoney().amount(),
-                account.getCurrency().name(),
-                account.getStatus().name(),
-                account.getAccountNumber().toString()
+                account.getStatus()
         );
+
     }
 }
-

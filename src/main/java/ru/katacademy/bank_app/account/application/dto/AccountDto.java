@@ -1,19 +1,45 @@
 package ru.katacademy.bank_app.account.application.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
+import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
+import ru.katacademy.bank_app.shared.valueobject.Currency;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class AccountDto {
+/**
+ * DTO (Data Transfer Object) для передачи данных о банковском счете.
+ * <p>
+ * Используется для обмена информацией о счете между слоями приложения
+ * без раскрытия внутренней доменной логики.
+ * </p>
+ *
+ * @author Sheffy
+ */
+public record AccountDto(
+        /**
+         * Уникальный номер счета
+         * @see AccountNumber
+         */
+        AccountNumber accountNumber,
 
-    private BigDecimal amount;
-    private String currency;
-    private String status;
-    private String accountNumber;
+        /**
+         * Валюта счета
+         * @see Currency
+         */
+        Currency currency,
 
+        /**
+         * Текущий баланс счета
+         * <p>
+         * Значение представлено в минимальных единицах валюты (например, копейки для RUB)
+         * </p>
+         */
+        BigDecimal balance,
+
+        /**
+         * Текущий статус счета
+         * @see AccountStatus
+         */
+        AccountStatus status
+) {
 }

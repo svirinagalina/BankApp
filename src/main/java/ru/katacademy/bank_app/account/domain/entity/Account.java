@@ -28,24 +28,19 @@ import java.math.BigDecimal;
 @Getter
 public class Account {
     private Money money;
-    private AccountStatus status = AccountStatus.ACTIVE;
-    private final Currency currency;
+    private AccountStatus status;
     private final AccountNumber accountNumber;
 
 
-    public Account(Money money, Currency currency, AccountNumber accountNumber) {
+    public Account(AccountNumber accountNumber, Money money, AccountStatus status) {
         if (money == null || money.amount().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Initial balance cannot " +
                     "be null or negative.");
-        }
-        if (currency == null) {
-            throw new IllegalArgumentException("Currency cannot be null.");
         }
         if (accountNumber == null) {
             throw new IllegalArgumentException("Account number cannot be null.");
         }
         this.money = money;
-        this.currency = currency;
         this.accountNumber = accountNumber;
     }
 
@@ -107,9 +102,6 @@ public class Account {
         if (!isActive()) {
             throw new IllegalStateException("Account is not active. " +
                     "Withdrawal not allowed.");
-        }
-        if (!amount.currency().equals(this.currency)) {
-            throw new IllegalArgumentException("Currency mismatch.");
         }
         this.money = this.money.subtract(amount);
     }
