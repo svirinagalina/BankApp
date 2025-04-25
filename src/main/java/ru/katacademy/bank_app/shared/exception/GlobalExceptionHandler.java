@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException e, HttpServletRequest request) {
-        String message = e.getBindingResult().getFieldErrors().stream()
+        final String message = e.getBindingResult().getFieldErrors().stream()
                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
                 .findFirst()
                 .orElse("Validation failed");
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с телом ответа (message, timestamp, status, error, path)
      */
     private ResponseEntity<Map<String, Object>> buildResponse(String message, HttpStatus status, HttpServletRequest request) {
-        Map<String, Object> response = new HashMap<>();
+        final Map<String, Object> response = new HashMap<>();
         response.put("timestamp", LocalDateTime.now());
         response.put("status", status.value());
         response.put("error", status.getReasonPhrase());

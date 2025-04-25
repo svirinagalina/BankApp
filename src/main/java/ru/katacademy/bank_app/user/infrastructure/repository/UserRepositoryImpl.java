@@ -2,7 +2,7 @@ package ru.katacademy.bank_app.user.infrastructure.repository;
 
 import org.springframework.stereotype.Repository;
 
-import ru.katacademy.bank_app.user.application.port.UserRepository;
+import ru.katacademy.bank_app.user.domain.repository.UserRepository;
 import ru.katacademy.bank_app.shared.valueobject.Email;
 import ru.katacademy.bank_app.user.domain.entity.User;
 

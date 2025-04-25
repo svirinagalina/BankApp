@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.katacademy.bank_app.shared.exception.DomainException;
 import ru.katacademy.bank_app.shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_app.shared.valueobject.Email;
-import ru.katacademy.bank_app.user.application.port.UserRepository;
+import ru.katacademy.bank_app.user.domain.repository.UserRepository;
 import ru.katacademy.bank_app.shared.exception.UserNotFoundException;
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.user.application.dto.UserDto;
@@ -51,17 +51,17 @@ public class UserServiceImpl implements UserService {
      * @param cmd команда с данными для регистрации
      * @return DTO пользователя после успешной регистрации
      * @throws EmailAlreadyTakenException если email уже используется
-     * @throws DomainException если произошла ошибка при регистрации
+     * @throws DomainException            если произошла ошибка при регистрации
      */
     @Transactional
     @Override
     public UserDto register(RegisterUserCommand cmd) throws DomainException {
-        Optional<User> existingUser = userRepository.findByEmail(new Email(cmd.email()));
+        final Optional<User> existingUser = userRepository.findByEmail(new Email(cmd.email()));
         if (existingUser.isPresent()) {
             throw new EmailAlreadyTakenException(cmd.email());
         }
-        User newUser = UserFactory.create(cmd);
-        User savedUser = userRepository.save(newUser);
+        final User newUser = UserFactory.create(cmd);
+        final User savedUser = userRepository.save(newUser);
 
         return userMapper.toDto(savedUser);
     }
@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
      * <p>
      * Если пользователь не найден, выбрасывает исключение {@link UserNotFoundException}.
      * <p>
+     *
      * @param id идентификатор пользователя
      * @return DTO найденного пользователя
      * @throws UserNotFoundException если пользователь с таким ID не найден
@@ -78,7 +79,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public UserDto getById(Long id) {
-        User user = userRepository.findById(id)
+        final User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + id + " не найден"));
 
         return userMapper.toDto(user);

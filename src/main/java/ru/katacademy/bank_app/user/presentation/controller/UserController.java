@@ -56,7 +56,7 @@ public class UserController {
     })
     @PostMapping("/register")
     public ResponseEntity<UserDto> register(@Valid @RequestBody RegisterUserCommand cmd) {
-        UserDto userDto = userService.register(cmd);
+        final UserDto userDto = userService.register(cmd);
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
 
@@ -76,7 +76,7 @@ public class UserController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable Long id) {
-        UserDto userDto = userService.getById(id);
+        final UserDto userDto = userService.getById(id);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 }
