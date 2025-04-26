@@ -18,12 +18,6 @@ public class AccountService {
     private final NotificationService notificationService;
     private final AuditService auditService;
 
-    public AccountService(AccountRepository accountRepository, NotificationService notificationService, AuditService auditService) {
-        this.accountRepository = accountRepository;
-        this.notificationService = notificationService;
-        this.auditService = auditService;
-    }
-
     /**
      * Переводит денежные средства от одного аккаунта к другому.
      * Сначала выполняется списание средств с аккаунта отправителя,

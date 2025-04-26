@@ -35,7 +35,7 @@ public class AuditService {
      * @param status  статус выполнения ("SUCCESS", "FAILED" и т.д.)
      */
     public void logAction(Long userId, String action, String details, String status) {
-        AuditEntry entry = new AuditEntry(
+        final AuditEntry entry = new AuditEntry(
                 userId,
                 action,
                 details,
@@ -56,7 +56,7 @@ public class AuditService {
      */
     public void logTransfer(Long userId, Long fromAccountId, Long toAccountId,
                             BigDecimal amount, String status) {
-        String details = String.format("Transfer from %s to %s amount %s", fromAccountId, toAccountId, amount);
+        final String details = String.format("Transfer from %s to %s amount %s", fromAccountId, toAccountId, amount);
         logAction(userId, "TRANSFER", details, status);
     }
 }
