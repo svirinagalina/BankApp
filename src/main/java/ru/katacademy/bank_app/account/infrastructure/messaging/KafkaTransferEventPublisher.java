@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.katacademy.bank_app.account.application.port.out.TransferEventPublisher;
 import ru.katacademy.bank_app.kafka.KafkaProducer;
-import ru.katacademy.bank_app.shared.event.TransferComplitedEvent;
+import ru.katacademy.bank_app.shared.event.TransferCompletedEvent;
 
 /**
  * Реализация публикатора событий о переводах через Kafka.
@@ -25,8 +25,8 @@ public class KafkaTransferEventPublisher implements TransferEventPublisher {
     }
 
     @Override
-    public void publish(TransferComplitedEvent event) {
+    public void publish(TransferCompletedEvent event) {
         final String message = String.format("Был совершён перевод: %s", event);
-        producer.send("transfer", message);
+        producer.send("transfer-completed-events", message);
     }
 }

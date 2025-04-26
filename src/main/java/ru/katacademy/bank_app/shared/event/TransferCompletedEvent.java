@@ -14,15 +14,15 @@ import java.util.UUID;
  * Публикуется в message broker (например, Kafka) после завершения операции.
  * </p>
  *
- * @param eventId уникальный идентификатор события
+ * @param eventId     уникальный идентификатор события
  * @param accountFrom счет отправителя
- * @param accountTo счет получателя
- * @param amount сумма перевода
- * @param currency валюта перевода
- * @param timestamp время выполнения перевода
+ * @param accountTo   счет получателя
+ * @param amount      сумма перевода
+ * @param currency    валюта перевода
+ * @param timestamp   время выполнения перевода
  * @author Sheffy
  */
-public record TransferComplitedEvent(
+public record TransferCompletedEvent(
         UUID eventId,
         Account accountFrom,
         Account accountTo,

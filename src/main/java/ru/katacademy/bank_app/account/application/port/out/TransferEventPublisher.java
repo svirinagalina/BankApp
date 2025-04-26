@@ -1,6 +1,6 @@
 package ru.katacademy.bank_app.account.application.port.out;
 
-import ru.katacademy.bank_app.shared.event.TransferComplitedEvent;
+import ru.katacademy.bank_app.shared.event.TransferCompletedEvent;
 
 /**
  * Интерфейс для публикации событий о переводах.
@@ -8,5 +8,5 @@ import ru.katacademy.bank_app.shared.event.TransferComplitedEvent;
  * @author Sheffy
  */
 public interface TransferEventPublisher {
-    void publish(TransferComplitedEvent event);
+    void publish(TransferCompletedEvent event);
 }

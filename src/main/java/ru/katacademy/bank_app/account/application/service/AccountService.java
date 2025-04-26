@@ -13,11 +13,12 @@ import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.notification.application.NotificationService;
+import ru.katacademy.bank_app.shared.exception.AccountNotFoundException;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
-import ru.katacademy.bank_app.shared.event.TransferComplitedEvent;
+import ru.katacademy.bank_app.shared.event.TransferCompletedEvent;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
-import javax.security.auth.login.AccountNotFoundException;
+
 import java.time.Instant;
 import java.util.UUID;
 
@@ -34,8 +35,6 @@ public class AccountService {
     private final NotificationService notificationService;
     private final TransferEventPublisher eventPublisher;
 
-
-
     /**
      * Переводит денежные средства от одного аккаунта к другому.
      * Сначала выполняется списание средств с аккаунта отправителя,
@@ -45,20 +44,23 @@ public class AccountService {
      * если одна из операций завершится с ошибкой, изменения будут откатаны.
      * </p>
      *
-     * @param from аккаунт отправителя
-     * @param to   аккаунт получателя
-     * @param amount      сумма перевода (объект {@link Money})
+     * @param from   аккаунт отправителя
+     * @param to     аккаунт получателя
+     * @param amount сумма перевода (объект {@link Money})
      * @throws IllegalStateException если возникает ошибка при списании или зачислении средств
      */
     @Transactional
-    public void transfer(AccountNumber from, AccountNumber to, Money amount) {
-        final AccountEntity entityFrom = accountRepository.findByAccountNumber(from)
-                .orElseThrow(() -> new IllegalArgumentException("счёт отправителя не найден"));
-        final Account accountFrom = AccountEntityMapper.toAccount(entityFrom);
+    public void transfer(AccountNumber from, AccountNumber to, Money amount) throws AccountNotFoundException {
 
-        final AccountEntity entityTo = accountRepository.findByAccountNumber(to)
-                .orElseThrow(() -> new IllegalArgumentException("счёт получателя не найден"));
-        final Account accountTo = AccountEntityMapper.toAccount(entityTo);
+        if (from == null) {
+            throw new IllegalArgumentException("Номер счёта списания не может быть null");
+        }
+        if (to == null) {
+            throw new IllegalArgumentException("Номер счёта зачисления не может быть null");
+        }
+
+        final Account accountFrom = getAccountByAccountNumber(from);
+        final Account accountTo = getAccountByAccountNumber(to);
 
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
@@ -68,10 +70,8 @@ public class AccountService {
 
         notificationService.sendTransferNotification(accountFrom, accountTo, amount);
 
-        notificationService.sendTransferNotification(accountFrom, accountTo, amount);
-
-        // Создаем и публикуем событие о завершении перевода
-        final TransferComplitedEvent event = new TransferComplitedEvent(
+        // Создаем событие о завершении перевода
+        final TransferCompletedEvent event = new TransferCompletedEvent(
                 UUID.randomUUID(),
                 accountFrom,
                 accountTo,
@@ -122,5 +122,10 @@ public class AccountService {
                         String.format("Счет с номером %s не найден", accountNumber.value())));
         final Account account = AccountEntityMapper.toAccount(accountEntity);
         return AccountMapper.toAccountDto(account);
+    }
+
+    private Account getAccountByAccountNumber(AccountNumber accountNumber) {
+        return AccountEntityMapper.toAccount(accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Счёт не найден")));
     }
 }
