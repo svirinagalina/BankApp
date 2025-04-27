@@ -136,7 +136,7 @@ public class Account {
      */
     private void validateWithdrawalAllowed(Money other) {
         if (!isActive()) {
-            throw new BusinessRuleViolationException("Невозможно снять средства: аккаунт получателя неактивен");
+            throw new BusinessRuleViolationException("Невозможно снять средства: аккаунт отправителя неактивен");
         }
         checkCurrencyEquality(other);
         if (this.money.amount().compareTo(other.amount()) < 0) {
@@ -221,8 +221,8 @@ public class Account {
      * @param amount сумма для перевода
      */
     public void validateTransferTo(Account target, Money amount) {
-        canTransferTo(target);
         canWithdraw(amount);
+        canTransferTo(target);
     }
 
 

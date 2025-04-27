@@ -12,8 +12,9 @@ import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.notification.application.NotificationService;
+import ru.katacademy.bank_app.shared.exception.BusinessRuleViolationException;
+import ru.katacademy.bank_app.shared.exception.CurrencyMismatchException;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
-import ru.katacademy.bank_app.shared.exception.InsufficientFundsException;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -42,7 +43,9 @@ public class AccountService {
      * @param from   аккаунт отправителя
      * @param to     аккаунт получателя
      * @param amount сумма перевода (объект {@link Money})
-     * @throws InsufficientFundsException если на счёте отправителя недостаточно денег
+     * @throws BusinessRuleViolationException если аккаунт отправителя-получателя не активен,
+     *                                        валюты не совпадают или сумма депозита меньше или сумма списания больше или ровна нулю
+     * @throws CurrencyMismatchException      если валюты не совпадают
      */
     @Transactional
     public void transfer(AccountNumber from, AccountNumber to, Money amount) {
