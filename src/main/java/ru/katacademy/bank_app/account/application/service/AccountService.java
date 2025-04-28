@@ -14,6 +14,8 @@ import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountE
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.notification.application.NotificationService;
 import ru.katacademy.bank_app.shared.exception.AccountNotFoundException;
+import ru.katacademy.bank_app.shared.exception.BusinessRuleViolationException;
+import ru.katacademy.bank_app.shared.exception.CurrencyMismatchException;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
 import ru.katacademy.bank_app.shared.event.TransferCompletedEvent;
 import ru.katacademy.bank_app.shared.valueobject.Money;
@@ -47,7 +49,10 @@ public class AccountService {
      * @param from   аккаунт отправителя
      * @param to     аккаунт получателя
      * @param amount сумма перевода (объект {@link Money})
-     * @throws IllegalStateException если возникает ошибка при списании или зачислении средств
+     * @throws IllegalArgumentException        если {@code from} или {@code to} равны {@code null}
+     * @throws BusinessRuleViolationException если аккаунт отправителя-получателя не активен,
+     *                                        валюты не совпадают или сумма депозита меньше или сумма списания больше или ровна нулю
+     * @throws CurrencyMismatchException      если валюты не совпадают
      */
     @Transactional
     public void transfer(AccountNumber from, AccountNumber to, Money amount) throws AccountNotFoundException {
@@ -62,6 +67,7 @@ public class AccountService {
         final Account accountFrom = getAccountByAccountNumber(from);
         final Account accountTo = getAccountByAccountNumber(to);
 
+        accountFrom.validateTransferTo(accountTo, amount);
         accountFrom.withdraw(amount);
         accountTo.deposit(amount);
 
