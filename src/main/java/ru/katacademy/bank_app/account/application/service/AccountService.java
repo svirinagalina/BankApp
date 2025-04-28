@@ -49,9 +49,11 @@ public class AccountService {
      * @param from   аккаунт отправителя
      * @param to     аккаунт получателя
      * @param amount сумма перевода (объект {@link Money})
+     * @throws IllegalArgumentException        если {@code from} или {@code to} равны {@code null}
      * @throws BusinessRuleViolationException если аккаунт отправителя-получателя не активен,
      *                                        валюты не совпадают или сумма депозита меньше или сумма списания больше или ровна нулю
      * @throws CurrencyMismatchException      если валюты не совпадают
+     * @throws IllegalStateException при null параметрах AccountNumber
      */
     @Transactional
     public void transfer(AccountNumber from, AccountNumber to, Money amount) throws AccountNotFoundException {
