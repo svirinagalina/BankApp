@@ -19,8 +19,9 @@ public class KafkaConfiguration {
      *         - 1 партицию: это часть данных, которая будет обработана отдельно. Партиции помогают масштабировать обработку данных.
      *         - 1 реплику: это копия данных для обеспечения отказоустойчивости, что важно для надежности системы.
      */
+
     @Bean
-    public NewTopic createCourseTopic() {
-        return new NewTopic("course", 1, (short) 1);
+    public NewTopic createTransferTopic() {
+        return new NewTopic("transfer-completed-events", 1, (short) 1);
     }
 }
