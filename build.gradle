@@ -39,6 +39,7 @@ dependencies {
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 	implementation 'org.hibernate.validator:hibernate-validator:6.0.13.Final'
 	implementation 'org.glassfish:javax.el:3.0.0'
+	implementation 'org.springframework.kafka:spring-kafka'
 
 
 	// Lombok
@@ -57,3 +58,13 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'ru.katacademy.bank_app.BankAppApplication'
+		)
+	}
+	archiveFileName = 'app.jar'
+}
+

@@ -3,10 +3,29 @@ package ru.katacademy.bank_app.account.application.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.katacademy.bank_app.account.application.command.CreateAccountCommand;
+import ru.katacademy.bank_app.account.application.dto.AccountDto;
+import ru.katacademy.bank_app.account.application.mapper.AccountMapper;
+import ru.katacademy.bank_app.account.application.port.out.TransferEventPublisher;
 import ru.katacademy.bank_app.account.domain.entity.Account;
+import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
+import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
+import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.notification.application.NotificationService;
+import ru.katacademy.bank_app.shared.exception.AccountNotFoundException;
+import ru.katacademy.bank_app.shared.exception.BusinessRuleViolationException;
+import ru.katacademy.bank_app.shared.exception.CurrencyMismatchException;
+import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
+import ru.katacademy.bank_app.shared.event.TransferCompletedEvent;
 import ru.katacademy.bank_app.shared.valueobject.Money;
+
+
+import java.time.Instant;
+import java.util.UUID;
+
+import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Сервис для выполнения операций со счетами.
@@ -16,7 +35,7 @@ import ru.katacademy.bank_app.shared.valueobject.Money;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final NotificationService notificationService;
-    private final AuditService auditService;
+    private final TransferEventPublisher eventPublisher;
 
     /**
      * Переводит денежные средства от одного аккаунта к другому.
@@ -27,23 +46,92 @@ public class AccountService {
      * если одна из операций завершится с ошибкой, изменения будут откатаны.
      * </p>
      *
-     * @param accountFrom аккаунт отправителя
-     * @param accountTo   аккаунт получателя
-     * @param amount      сумма перевода (объект {@link Money})
-     * @throws IllegalStateException если возникает ошибка при списании или зачислении средств
+     * @param from   аккаунт отправителя
+     * @param to     аккаунт получателя
+     * @param amount сумма перевода (объект {@link Money})
+     * @throws IllegalArgumentException        если {@code from} или {@code to} равны {@code null}
+     * @throws BusinessRuleViolationException если аккаунт отправителя-получателя не активен,
+     *                                        валюты не совпадают или сумма депозита меньше или сумма списания больше или ровна нулю
+     * @throws CurrencyMismatchException      если валюты не совпадают
      */
     @Transactional
-    public void transfer(Account accountFrom, Account accountTo, Money amount) {
-        try {
-            accountFrom.withdraw(amount);
-        } catch (Exception e) {
-            throw new IllegalStateException("Ошибка при списании средств со счёта отправителя", e);
+    public void transfer(AccountNumber from, AccountNumber to, Money amount) throws AccountNotFoundException {
+
+        if (from == null) {
+            throw new IllegalArgumentException("Номер счёта списания не может быть null");
+        }
+        if (to == null) {
+            throw new IllegalArgumentException("Номер счёта зачисления не может быть null");
         }
 
-        try {
-            accountTo.deposit(amount);
-        } catch (Exception e) {
-            throw new IllegalStateException("Ошибка при зачислении средств на счёт получателя", e);
-        }
+        final Account accountFrom = getAccountByAccountNumber(from);
+        final Account accountTo = getAccountByAccountNumber(to);
+
+        accountFrom.validateTransferTo(accountTo, amount);
+        accountFrom.withdraw(amount);
+        accountTo.deposit(amount);
+
+        accountRepository.save(AccountEntityMapper.toAccountEntity(accountFrom));
+        accountRepository.save(AccountEntityMapper.toAccountEntity(accountTo));
+
+        notificationService.sendTransferNotification(accountFrom, accountTo, amount);
+
+        // Создаем событие о завершении перевода
+        final TransferCompletedEvent event = new TransferCompletedEvent(
+                UUID.randomUUID(),
+                accountFrom,
+                accountTo,
+                amount.amount(),
+                amount.currency(),
+                Instant.now()
+        );
+
+        // публикация события в Kafka
+        eventPublisher.publish(event);
+    }
+
+    /**
+     * Создает новый банковский счет.
+     *
+     * @param cmd команда создания счета (не должна быть null)
+     * @return DTO созданного счета
+     * @throws IllegalArgumentException если команда или её параметры невалидны
+     */
+    public AccountDto createAccount(CreateAccountCommand cmd) {
+        Objects.requireNonNull(cmd, "Команда создания счета не может быть null");
+        Objects.requireNonNull(cmd.currency(), "Валюта счета не может быть null");
+
+        final AccountNumber accountNumber = AccountNumber.generateAccountNumber();
+        final Money initialBalance = new Money(BigDecimal.ZERO, cmd.currency());
+
+        final Account account = new Account(accountNumber, initialBalance, AccountStatus.ACTIVE);
+        final AccountEntity accountEntity = AccountEntityMapper.toAccountEntity(account);
+        accountRepository.save(accountEntity);
+
+        return AccountMapper.toAccountDto(account);
+    }
+
+    /**
+     * Получает информацию о счете по его номеру.
+     *
+     * @param accountNumber номер счета (не должен быть null)
+     * @return DTO с информацией о счете
+     * @throws AccountNotFoundException если счет не найден
+     * @throws IllegalArgumentException если accountNumber == null
+     */
+    public AccountDto getByAccountNumber(AccountNumber accountNumber)
+            throws AccountNotFoundException {
+        Objects.requireNonNull(accountNumber, "Номер счета не может быть null");
+
+        final AccountEntity accountEntity = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException(
+                        String.format("Счет с номером %s не найден", accountNumber.value())));
+        final Account account = AccountEntityMapper.toAccount(accountEntity);
+        return AccountMapper.toAccountDto(account);
+    }
+
+    private Account getAccountByAccountNumber(AccountNumber accountNumber) {
+        return AccountEntityMapper.toAccount(accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Счёт не найден")));
     }
 }
