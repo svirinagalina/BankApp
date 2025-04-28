@@ -1,5 +1,7 @@
 package ru.katacademy.bank_app.shared.valueobject;
 
+import java.util.Random;
+
 /**
  * Представляет объект номера счета.
  * <p>
@@ -28,9 +30,20 @@ public record AccountNumber(String accountNumber) {
         }
     }
 
-    //Заглушка
+    /**
+     * Генерирует временный номер счета - строку состоящую из 20 числовых символов от 0 до 9
+     *
+     * @return новый объект AccountNumber c
+     */
     public static AccountNumber generateAccountNumber() {
-        return null;
+        final Random random = new Random();
+        final StringBuilder number = new StringBuilder();
+
+        for (int i = 0; i < 20; i++) {
+            number.append(random.nextInt(10));
+        }
+
+        return new AccountNumber(number.toString());
     }
 
     /**
