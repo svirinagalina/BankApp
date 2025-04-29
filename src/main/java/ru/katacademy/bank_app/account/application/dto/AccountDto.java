@@ -2,9 +2,7 @@ package ru.katacademy.bank_app.account.application.dto;
 
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
-import ru.katacademy.bank_app.shared.valueobject.Currency;
-
-import java.math.BigDecimal;
+import ru.katacademy.bank_app.shared.valueobject.Money;
 
 /**
  * DTO (Data Transfer Object) для передачи данных о банковском счете.
@@ -23,18 +21,10 @@ public record AccountDto(
         AccountNumber accountNumber,
 
         /**
-         * Валюта счета
-         * @see Currency
+         * Баланс + валюта счета
+         * @see Money
          */
-        Currency currency,
-
-        /**
-         * Текущий баланс счета
-         * <p>
-         * Значение представлено в минимальных единицах валюты (например, копейки для RUB)
-         * </p>
-         */
-        BigDecimal balance,
+        Money amount,
 
         /**
          * Текущий статус счета
