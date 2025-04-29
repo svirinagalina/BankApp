@@ -24,8 +24,7 @@ public class AccountMapper {
 
         return new AccountDto(
                 account.getAccountNumber(),
-                account.getMoney().currency(),
-                account.getMoney().amount(),
+                account.getMoney(),
                 account.getStatus()
         );
 
