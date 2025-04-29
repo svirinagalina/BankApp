@@ -3,7 +3,8 @@ package ru.katacademy.bank_app.account.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Класс представляет запись в журнале аудита.
@@ -24,31 +25,42 @@ public class AuditEntry {
     private Long id;
 
     @Column(nullable = false)
-    @NonNull
     private Long userId;
 
     @Column(nullable = false)
-    @NonNull
     private String action;
 
     @Column(nullable = false)
-    @NonNull
     private String details;
 
     @Column(nullable = false)
-    @NonNull
-    private Timestamp timestamp;
+    private LocalDateTime timestamp;
 
     @Column(nullable = false)
-    @NonNull
     private String status;
 
-    public AuditEntry(Long userId, String action, String details,
-                      Timestamp timestamp, String status) {
+    public AuditEntry(Long userId, String action, String details, LocalDateTime timestamp, String status) {
         this.userId = userId;
         this.action = action;
         this.details = details;
         this.timestamp = timestamp;
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AuditEntry that = (AuditEntry) o;
+        return id.equals(that.id) && userId.equals(that.userId) && timestamp.equals(that.timestamp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, timestamp);
     }
 }

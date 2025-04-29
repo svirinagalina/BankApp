@@ -36,6 +36,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final NotificationService notificationService;
     private final TransferEventPublisher eventPublisher;
+    private final AuditService auditService;
 
     /**
      * Переводит денежные средства от одного аккаунта к другому.
@@ -85,6 +86,9 @@ public class AccountService {
                 amount.currency(),
                 Instant.now()
         );
+
+        // логирование информации о переводе
+        auditService.logTransfer(null, accountFrom, accountTo, amount, "статус перевода");
 
         // публикация события в Kafka
         eventPublisher.publish(event);

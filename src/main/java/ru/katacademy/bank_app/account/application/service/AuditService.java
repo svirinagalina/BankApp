@@ -1,11 +1,12 @@
 package ru.katacademy.bank_app.account.application.service;
 
 import org.springframework.stereotype.Service;
+import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.domain.entity.AuditEntry;
 import ru.katacademy.bank_app.account.domain.repository.AuditRepository;
+import ru.katacademy.bank_app.shared.valueobject.Money;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Сервис для логирования действий пользователей и финансовых операций.
@@ -26,37 +27,38 @@ public class AuditService {
     }
 
     /**
-     * Логирует произвольное действие пользователя.
+     * Метод для логирования операций перевода.
      *
-     * @param userId  идентификатор пользователя
-     * @param action  тип действия (например, "LOGIN", "TRANSFER")
-     * @param details детальное описание действия
-     * Timestamp - время действий пользователя
-     * @param status  статус выполнения ("SUCCESS", "FAILED" и т.д.)
+     * @param userId        идентификатор пользователя
+     * @param accountFrom   номер счета отправителя
+     * @param accountTo     номер счета получателя
+     * @param amount        сумма перевода
+     * @param status        статус операции
+     */
+    public void logTransfer(Long userId, Account accountFrom, Account accountTo, Money amount, String status) {
+        final String action = "Transfer";
+        final String details = "Перевод со счета " + accountFrom + " на счет " + accountTo + " на сумму " + amount;
+
+        logAction(userId, action, details, status);
+    }
+
+    /**
+     * Метод для логирования действий пользователя
+     *
+     * @param userId        идентификатор пользователя
+     * @param action        действие пользователя
+     * @param details       детали операции
+     * @param status        статус операции
      */
     public void logAction(Long userId, String action, String details, String status) {
         final AuditEntry entry = new AuditEntry(
                 userId,
                 action,
                 details,
-                new Timestamp(System.currentTimeMillis()), // Создание timestamp
+                LocalDateTime.now(),
                 status
         );
         auditRepository.save(entry);
     }
 
-    /**
-     * Метод для логирования операций перевода.
-     *
-     * @param userId        идентификатор пользователя
-     * @param fromAccountId идентификатор счета-отправителя
-     * @param toAccountId   идентификатор счета-получателя
-     * @param amount        сумма перевода
-     * @param status        статус операции
-     */
-    public void logTransfer(Long userId, Long fromAccountId, Long toAccountId,
-                            BigDecimal amount, String status) {
-        final String details = String.format("Transfer from %s to %s amount %s", fromAccountId, toAccountId, amount);
-        logAction(userId, "TRANSFER", details, status);
-    }
 }
