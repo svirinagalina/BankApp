@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.account.infrastructure.persistence.entity;
+package ru.katacademy.bank_app.audit.infrastructure.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
