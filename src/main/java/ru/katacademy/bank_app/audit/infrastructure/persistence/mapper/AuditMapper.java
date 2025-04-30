@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.account.infrastructure.persistence.mapper;
+package ru.katacademy.bank_app.audit.infrastructure.persistence.mapper;
 
 import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 import ru.katacademy.bank_app.audit.infrastructure.persistence.entity.AuditEntryEntity;
