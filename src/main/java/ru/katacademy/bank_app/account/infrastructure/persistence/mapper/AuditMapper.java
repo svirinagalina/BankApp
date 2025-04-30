@@ -6,7 +6,7 @@ import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AuditEnt
 public class AuditMapper {
     public static AuditEntryEntity toEntity(AuditEntry auditEntry) {
         return new AuditEntryEntity(
-                auditEntry.getId(),
+                auditEntry.getUserId(),
                 auditEntry.getAction(),
                 auditEntry.getTimestamp(),
                 auditEntry.getDetails(),

@@ -1,12 +1,13 @@
-package ru.katacademy.bank_app.account.application.service;
+package ru.katacademy.bank_app.audit.application.service;
 
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.domain.entity.AuditEntry;
-import ru.katacademy.bank_app.account.domain.repository.AuditRepository;
+import ru.katacademy.bank_app.audit.domain.repository.AuditRepository;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Сервис для логирования действий пользователей и финансовых операций.
@@ -61,4 +62,11 @@ public class AuditService {
         auditRepository.save(entry);
     }
 
+    public List<AuditEntry> getAllAudits() {
+        return auditRepository.getAllAudits();
+    }
+
+    public List<AuditEntry> getAllAuditsByType(String eventType) {
+        return auditRepository.getAllAuditsByType(eventType);
+    }
 }
