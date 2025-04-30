@@ -1,7 +1,6 @@
 package ru.katacademy.bank_app.user.domain.entity;
 
-import lombok.Getter;
-
+import lombok.Data;
 import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.shared.valueobject.Email;
 
@@ -23,13 +22,13 @@ import java.util.Objects;
  * Автор: Бачагов В.О.
  * Дата: 2025-04-14
  */
-@Getter
+@Data
 public class User {
     private final Long id;
     private final UserRole role;
     private final String fullName;
     private final Email email;
-    private final String passwordHash;
+    private String passwordHash;
     private final LocalDateTime createdAt;
 
     public User(Long id,
