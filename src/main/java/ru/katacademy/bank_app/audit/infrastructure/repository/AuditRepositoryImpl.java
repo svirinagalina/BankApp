@@ -1,7 +1,7 @@
 package ru.katacademy.bank_app.audit.infrastructure.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.katacademy.bank_app.account.domain.entity.AuditEntry;
+import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 import ru.katacademy.bank_app.audit.domain.repository.AuditRepository;
 import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AuditEntryEntity;
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AuditMapper;

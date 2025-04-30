@@ -1,6 +1,6 @@
 package ru.katacademy.bank_app.audit.domain.repository;
 
-import ru.katacademy.bank_app.account.domain.entity.AuditEntry;
+import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 
 import java.util.List;
 

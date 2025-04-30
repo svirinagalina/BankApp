@@ -2,7 +2,7 @@ package ru.katacademy.bank_app.audit.application.service;
 
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.account.domain.entity.Account;
-import ru.katacademy.bank_app.account.domain.entity.AuditEntry;
+import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 import ru.katacademy.bank_app.audit.domain.repository.AuditRepository;
 import ru.katacademy.bank_app.shared.valueobject.Money;
 

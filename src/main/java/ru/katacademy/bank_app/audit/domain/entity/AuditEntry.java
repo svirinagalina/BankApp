@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.account.domain.entity;
+package ru.katacademy.bank_app.audit.domain.entity;
 
 import lombok.*;
 
@@ -10,7 +10,6 @@ import java.util.Objects;
  * <p>
  * Содержит информацию о действиях пользователей в системе, включая метаданные
  * о времени выполнения и статусе операции.
- * Является JPA-сущностью для сохранения в БД.
  */
 @Data
 @NoArgsConstructor

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import ru.katacademy.bank_app.account.domain.entity.AuditEntry;
+import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 import ru.katacademy.bank_app.audit.domain.repository.AuditRepository;
 
 import java.time.LocalDateTime;

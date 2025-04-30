@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.katacademy.bank_app.audit.application.service.AuditService;
-import ru.katacademy.bank_app.account.domain.entity.AuditEntry;
+import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 
 import java.util.List;
 
