@@ -3,7 +3,7 @@ package ru.katacademy.bank_app.account.infrastructure.repository;
 import org.springframework.stereotype.Repository;
 import ru.katacademy.bank_app.account.domain.entity.AuditEntry;
 import ru.katacademy.bank_app.account.domain.repository.AuditRepository;
-import ru.katacademy.bank_app.account.infrastructure.JpaAuditEntryRepository;
+import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AuditMapper;
 
 /**
  * Реализация репозитория для работы с записями аудита.
@@ -31,6 +31,7 @@ public class AuditRepositoryImpl implements AuditRepository {
      */
     @Override
     public void save(AuditEntry auditEntry) {
-        jpaRepository.save(auditEntry);
+
+        jpaRepository.save(AuditMapper.toEntity(auditEntry));
     }
 }
