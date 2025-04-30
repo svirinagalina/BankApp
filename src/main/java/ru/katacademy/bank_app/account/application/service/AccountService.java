@@ -50,7 +50,7 @@ public class AccountService {
      * @param from   аккаунт отправителя
      * @param to     аккаунт получателя
      * @param amount сумма перевода (объект {@link Money})
-     * @throws IllegalArgumentException        если {@code from} или {@code to} равны {@code null}
+     * @throws IllegalArgumentException       если {@code from} или {@code to} равны {@code null}
      * @throws BusinessRuleViolationException если аккаунт отправителя-получателя не активен,
      *                                        валюты не совпадают или сумма депозита меньше или сумма списания больше или ровна нулю
      * @throws CurrencyMismatchException      если валюты не совпадают
@@ -137,5 +137,20 @@ public class AccountService {
     private Account getAccountByAccountNumber(AccountNumber accountNumber) {
         return AccountEntityMapper.toAccount(accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Счёт не найден")));
+    }
+
+    /**
+     * Блокирует счет (Account) по его номеру.
+     *
+     * @param accountNumber номер аккаунта, который необходимо заблокировать
+     * @throws AccountNotFoundException если аккаунт с указанным номером не найден
+     */
+    public void blockAccountByNumber(AccountNumber accountNumber) {
+        final AccountEntity accountEntity = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException(accountNumber.toString()));
+
+        final Account account = AccountEntityMapper.toAccount(accountEntity);
+        account.blockAccount();
+        accountRepository.save(AccountEntityMapper.toAccountEntity(account));
     }
 }
