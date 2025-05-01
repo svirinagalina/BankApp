@@ -1,36 +1,49 @@
 package ru.katacademy.bank_app.user.domain.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
-
 import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.shared.valueobject.Email;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * Представляет пользователя системы.
- * Содержит основные поля для идентификации и авторизации.
- * <p>
- * Поля:
- * - id: уникальный идентификатор
- * - role: роль пользователя (USER, ADMIN)
- * - fullName: полное имя пользователя
- * - email: email как value object с валидацией
- * - passwordHash: хеш пароля
- * - createdAt: Дата и время регистрации
- * <p>
- * Автор: Бачагов В.О.
- * Дата: 2025-04-14
  */
+@Entity
+@Table(name = "users")
 @Getter
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private final UserRole role;
+
+    @Column(name = "full_name", nullable = false)
     private final String fullName;
+
+    @Embedded
     private final Email email;
+
+    @Column(name = "password_hash", nullable = false)
     private final String passwordHash;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private final LocalDateTime createdAt;
+
+    // JPA требует конструктор без аргументов
+    protected User() {
+        this.id = null;
+        this.role = null;
+        this.fullName = null;
+        this.email = null;
+        this.passwordHash = null;
+        this.createdAt = null;
+    }
 
     public User(Long id,
                 UserRole role,
@@ -46,20 +59,11 @@ public class User {
         this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
     }
 
-    /**
-     * Проверяет, является ли пользователь администратором
-     *
-     * @return true если роль ADMIN
-     */
+    // Остальные методы остаются без изменений
     public boolean isAdmin() {
         return this.role == UserRole.ADMIN;
     }
 
-    /**
-     * Проверяет, является ли пользователь обычным пользователем
-     *
-     * @return true если роль USER
-     */
     public boolean isUser() {
         return this.role == UserRole.USER;
     }
