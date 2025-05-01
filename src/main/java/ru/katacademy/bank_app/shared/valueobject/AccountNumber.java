@@ -1,5 +1,7 @@
 package ru.katacademy.bank_app.shared.valueobject;
 
+import java.io.Serializable;
+
 /**
  * Представляет объект номера счета.
  * <p>
@@ -13,7 +15,7 @@ package ru.katacademy.bank_app.shared.valueobject;
  * Если эти условия не выполнены, выбрасывается {@link IllegalArgumentException}.
  * </p>
  */
-public record AccountNumber(String accountNumber) {
+public record AccountNumber(String accountNumber) implements Serializable {
 
     /**
      * Проверяет, что номер счета состоит ровно из 20 цифр.
