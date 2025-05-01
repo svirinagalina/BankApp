@@ -12,6 +12,7 @@ import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
+import ru.katacademy.bank_app.audit.application.service.AuditService;
 import ru.katacademy.bank_app.notification.application.NotificationService;
 import ru.katacademy.bank_app.shared.exception.AccountNotFoundException;
 import ru.katacademy.bank_app.shared.exception.BusinessRuleViolationException;
