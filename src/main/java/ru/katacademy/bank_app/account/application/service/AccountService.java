@@ -140,4 +140,19 @@ public class AccountService {
         return AccountEntityMapper.toAccount(accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountNotFoundException("Счёт не найден")));
     }
+
+    /**
+     * Блокирует счет (Account) по его номеру.
+     *
+     * @param accountNumber номер аккаунта, который необходимо заблокировать
+     * @throws AccountNotFoundException если аккаунт с указанным номером не найден
+     */
+    public void blockAccountByNumber(AccountNumber accountNumber) {
+        final AccountEntity accountEntity = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException(accountNumber.toString()));
+
+        final Account account = AccountEntityMapper.toAccount(accountEntity);
+        account.blockAccount();
+        accountRepository.save(AccountEntityMapper.toAccountEntity(account));
+    }
 }
