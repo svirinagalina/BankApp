@@ -27,7 +27,7 @@ public class KafkaProducer {
      *
      * @param message сообщение, которое будет отправлено в топик "course".
      */
-    public void send(String message) {
-        kafkaTemplate.send("course", message);
+    public void send(String topic, String message) {
+        kafkaTemplate.send(topic, message);
     }
 }

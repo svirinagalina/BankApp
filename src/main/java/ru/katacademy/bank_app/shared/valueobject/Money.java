@@ -72,4 +72,17 @@ public record Money(BigDecimal amount, Currency currency) {
         checkSubtractionAllowed(other);
         return new Money(this.amount.subtract(other.amount), this.currency);
     }
+
+    /**
+     * Сравнивает два объекта Money, чтобы понять,
+     * больше ли одна сумма другой (при условии, что они в одной валюте).
+     *
+     * @param other объект Money, с которым производится сравнение
+     * @return true — если текущий объект Money больше, чем переданный. Иначе - false
+     * @throws IllegalArgumentException если валюты не совпадают
+     */
+    public boolean isGreaterThan(Money other) {
+        checkCurrencyMatch(other);
+        return this.amount.compareTo(other.amount) > 0;
+    }
 }
