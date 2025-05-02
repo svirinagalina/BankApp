@@ -2,9 +2,11 @@ package ru.katacademy.bank_app.user.infrastructure.repository;
 
 import org.springframework.stereotype.Repository;
 
+import ru.katacademy.bank_app.user.domain.mapper.UserEntityMapper;
 import ru.katacademy.bank_app.user.domain.repository.UserRepository;
 import ru.katacademy.bank_app.shared.valueobject.Email;
 import ru.katacademy.bank_app.user.domain.entity.User;
+import ru.katacademy.bank_app.user.infrastructure.persistence.entity.UserEntity;
 
 import java.util.Optional;
 
@@ -46,7 +48,7 @@ public class UserRepositoryImpl implements UserRepository {
      */
     @Override
     public Optional<User> findById(Long id) {
-        return jpaRepository.findById(id);
+        return jpaRepository.findById(id).map(UserEntityMapper::toUser);
     }
 
     /**
@@ -57,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
      */
     @Override
     public Optional<User> findByEmail(Email email) {
-        return jpaRepository.findByEmail(email.value());
+        return jpaRepository.findByEmail(email.value()).map(UserEntityMapper::toUser);
     }
 
     /**
@@ -68,6 +70,7 @@ public class UserRepositoryImpl implements UserRepository {
      */
     @Override
     public User save(User user) {
-        return jpaRepository.save(user);
+        final UserEntity entity = UserEntityMapper.toUserEntity(user);
+        return UserEntityMapper.toUser(jpaRepository.save(entity));
     }
 }
