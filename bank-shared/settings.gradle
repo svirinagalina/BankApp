@@ -5,7 +5,4 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
-
-include("bank-shared")
-
-rootProject.name = 'bank-app'
+rootProject.name = 'bank-shared'

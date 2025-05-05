@@ -1,13 +1,10 @@
-package ru.katacademy.bank_app.shared.exception;
-
-import lombok.Getter;
+package ru.katacademy.bank_shared.exception;
 
 /**
  * Исключение выбрасываемое при нарушении бизнес-правила.
  * Например, может быть использовано для случаев, когда операция не может быть выполнена
  * из-за нарушения инварианта, такого как недостаток средств или неактивный аккаунт.
  */
-@Getter
 public class BusinessRuleViolationException extends RuntimeException {
 
     private final BusinessErrorCode errorCode;
@@ -25,4 +22,11 @@ public class BusinessRuleViolationException extends RuntimeException {
         this.detailedMessage = detailedMessage;
     }
 
+    public BusinessErrorCode getErrorCode() {
+        return errorCode;
+    }
+
+    public String getDetailedMessage() {
+        return detailedMessage;
+    }
 }

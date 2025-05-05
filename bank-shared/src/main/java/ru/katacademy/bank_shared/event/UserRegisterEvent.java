@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.shared.event;
+package ru.katacademy.bank_shared.event;
 
 import java.time.LocalDateTime;
 

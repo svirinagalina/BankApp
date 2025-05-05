@@ -2,7 +2,7 @@ package ru.katacademy.bank_app.shared.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import ru.katacademy.bank_app.shared.valueobject.Currency;
+import ru.katacademy.bank_shared.valueobject.Currency;
 
 @Converter(autoApply = false)
 public class CurrencyConverter implements AttributeConverter<Currency, String> {

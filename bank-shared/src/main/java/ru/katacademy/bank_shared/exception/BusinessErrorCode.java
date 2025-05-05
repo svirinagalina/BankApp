@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.shared.exception;
+package ru.katacademy.bank_shared.exception;
 
 /**
  * Перечисление кодов бизнес-ошибок.

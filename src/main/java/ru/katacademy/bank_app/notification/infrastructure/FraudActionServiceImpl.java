@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.account.application.service.AccountService;
 import ru.katacademy.bank_app.notification.application.FraudActionService;
-import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
 
 /**
  * Класс отвечающает за выполнение действий при обнаружении мошенничества.

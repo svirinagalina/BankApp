@@ -3,7 +3,7 @@ package ru.katacademy.bank_app.user.infrastructure.messaging;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.katacademy.bank_app.kafka.KafkaProducer;
-import ru.katacademy.bank_app.shared.event.UserRegisterEvent;
+import ru.katacademy.bank_shared.event.UserRegisterEvent;
 import ru.katacademy.bank_app.user.application.port.out.UserRegisterEventPublisher;
 
 /**

@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.shared.valueobject;
+package ru.katacademy.bank_shared.valueobject;
 
 import java.util.Objects;
 

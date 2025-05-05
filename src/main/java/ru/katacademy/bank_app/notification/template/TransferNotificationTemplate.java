@@ -1,7 +1,7 @@
 package ru.katacademy.bank_app.notification.template;
 
 import ru.katacademy.bank_app.account.domain.entity.Account;
-import ru.katacademy.bank_app.shared.valueobject.Money;
+import ru.katacademy.bank_shared.valueobject.Money;
 
 /**
  * Шаблон уведомления о переводе средств между счетами.

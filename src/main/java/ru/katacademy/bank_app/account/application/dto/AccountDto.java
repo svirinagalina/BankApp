@@ -1,8 +1,8 @@
 package ru.katacademy.bank_app.account.application.dto;
 
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
-import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
-import ru.katacademy.bank_app.shared.valueobject.Money;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.valueobject.Money;
 
 /**
  * DTO (Data Transfer Object) для передачи данных о банковском счете.

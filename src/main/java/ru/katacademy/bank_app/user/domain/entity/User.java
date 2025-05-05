@@ -3,7 +3,7 @@ package ru.katacademy.bank_app.user.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
-import ru.katacademy.bank_app.shared.valueobject.Email;
+import ru.katacademy.bank_shared.valueobject.Email;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
