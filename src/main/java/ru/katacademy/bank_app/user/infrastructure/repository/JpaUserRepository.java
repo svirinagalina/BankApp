@@ -3,6 +3,7 @@ package ru.katacademy.bank_app.user.infrastructure.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import ru.katacademy.bank_app.user.domain.entity.User;
+import ru.katacademy.bank_app.user.infrastructure.persistence.entity.UserEntity;
 
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ import java.util.Optional;
  * Автор: Бачагов В.О.
  * Дата: 2025-04-17
  */
-public interface JpaUserRepository extends JpaRepository<User, Long> {
+public interface JpaUserRepository extends JpaRepository<UserEntity, Long> {
 
     /**
      * Находит пользователя по email.
@@ -24,5 +25,5 @@ public interface JpaUserRepository extends JpaRepository<User, Long> {
      * @param email email пользователя
      * @return Optional<User> найденного пользователя
      */
-    Optional<User> findByEmail(String email);
+    Optional<UserEntity> findByEmail(String email);
 }

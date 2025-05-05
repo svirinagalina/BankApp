@@ -10,8 +10,6 @@ import java.util.Objects;
 /**
  * Представляет пользователя системы.
  */
-@Entity
-@Table(name = "users")
 @Getter
 public class User {
 
@@ -34,16 +32,6 @@ public class User {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private final LocalDateTime createdAt;
-
-    // JPA требует конструктор без аргументов
-    protected User() {
-        this.id = null;
-        this.role = null;
-        this.fullName = null;
-        this.email = null;
-        this.passwordHash = null;
-        this.createdAt = null;
-    }
 
     public User(Long id,
                 UserRole role,
