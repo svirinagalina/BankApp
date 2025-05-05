@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.user.application.dto.UserDto;
+import ru.katacademy.bank_app.user.application.service.LoginAttemptService;
 import ru.katacademy.bank_app.user.application.service.UserService;
 import ru.katacademy.bank_app.shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_app.shared.exception.UserNotFoundException;
+import ru.katacademy.bank_app.user.domain.entity.LoginAttemptEntry;
 
 /**
  * Контроллер для управления пользователями через REST API.

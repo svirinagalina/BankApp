@@ -8,6 +8,7 @@ import ru.katacademy.bank_app.shared.exception.DomainException;
 import ru.katacademy.bank_app.shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_app.shared.valueobject.Email;
 import ru.katacademy.bank_app.user.application.command.ChangePasswordCommand;
+import ru.katacademy.bank_app.user.application.dto.PasswordChangedEvent;
 import ru.katacademy.bank_app.user.domain.repository.UserRepository;
 import ru.katacademy.bank_app.shared.exception.UserNotFoundException;
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
@@ -15,6 +16,7 @@ import ru.katacademy.bank_app.user.application.dto.UserDto;
 import ru.katacademy.bank_app.user.domain.entity.User;
 import ru.katacademy.bank_app.user.domain.factory.UserFactory;
 import ru.katacademy.bank_app.user.domain.mapper.UserMapper;
+import ru.katacademy.bank_app.user.infrastructure.messaging.PasswordChangeEventPublisher;
 
 import java.util.Optional;
 
@@ -38,10 +40,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private PasswordChangeEventPublisher passwordChangeEventPublisher;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordChangeEventPublisher passwordChangeEventPublisher) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordChangeEventPublisher = passwordChangeEventPublisher;
     }
 
     /**
@@ -94,6 +98,8 @@ public class UserServiceImpl implements UserService {
      * и что новый пароль отличается от старого. Также проверяется, что
      * новый пароль соответствует установленным критериям валидности.
      *
+     * Событие смены пароля публикуется в kafka
+     *
      * @param command объект команды для смены пароля, содержащий идентификатор пользователя,
      *                старый пароль и новый пароль. Не может быть null.
      * @throws RuntimeException если пользователь не найден.
@@ -131,6 +137,14 @@ public class UserServiceImpl implements UserService {
         // устанавливаем и сохраняем новый пароль
         user.setPasswordHash(newEnteredPasswordHash);
         userRepository.save(user);
+
+        final PasswordChangedEvent event = new PasswordChangedEvent(
+                user.getId(),
+                oldEnteredPasswordHash,
+                newEnteredPasswordHash
+        );
+
+        passwordChangeEventPublisher.publish(event);
     }
 
     /**
