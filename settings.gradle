@@ -6,3 +6,4 @@ pluginManagement {
 	}
 }
 rootProject.name = 'bank-app'
+include 'fraud-detection'
