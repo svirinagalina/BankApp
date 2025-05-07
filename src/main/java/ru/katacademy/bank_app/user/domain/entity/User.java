@@ -2,6 +2,7 @@ package ru.katacademy.bank_app.user.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.shared.valueobject.Email;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.util.Objects;
 /**
  * Представляет пользователя системы.
  */
+@Setter
 @Getter
 public class User {
 
@@ -28,7 +30,7 @@ public class User {
     private final Email email;
 
     @Column(name = "password_hash", nullable = false)
-    private final String passwordHash;
+    private String passwordHash;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private final LocalDateTime createdAt;
