@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.frauddetection.shared.valueobject;
+package ru.katacademy.bank_shared.valueobject;
 
 import java.math.BigDecimal;
 

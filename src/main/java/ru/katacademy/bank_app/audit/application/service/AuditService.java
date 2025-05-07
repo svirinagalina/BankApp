@@ -4,7 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 import ru.katacademy.bank_app.audit.domain.repository.AuditRepository;
-import ru.katacademy.bank_app.shared.valueobject.Money;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.valueobject.Money;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,14 +32,14 @@ public class AuditService {
      * Метод для логирования операций перевода.
      *
      * @param userId        идентификатор пользователя
-     * @param accountFrom   номер счета отправителя
-     * @param accountTo     номер счета получателя
+     * @param accountNumberFrom   номер счета отправителя
+     * @param accountNumberTo     номер счета получателя
      * @param amount        сумма перевода
      * @param status        статус операции
      */
-    public void logTransfer(Long userId, Account accountFrom, Account accountTo, Money amount, String status) {
+    public void logTransfer(Long userId, AccountNumber accountNumberFrom, AccountNumber accountNumberTo, Money amount, String status) {
         final String action = "Transfer";
-        final String details = "Перевод со счета " + accountFrom + " на счет " + accountTo + " на сумму " + amount;
+        final String details = "Перевод со счета " + accountNumberFrom + " на счет " + accountNumberTo + " на сумму " + amount;
 
         logAction(userId, action, details, status);
     }

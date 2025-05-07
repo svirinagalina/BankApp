@@ -14,15 +14,15 @@ import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountE
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
 import ru.katacademy.bank_app.audit.application.service.AuditService;
 import ru.katacademy.bank_app.notification.application.NotificationService;
-import ru.katacademy.bank_app.shared.exception.AccountNotFoundException;
-import ru.katacademy.bank_app.shared.exception.BusinessRuleViolationException;
-import ru.katacademy.bank_app.shared.exception.CurrencyMismatchException;
-import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
-import ru.katacademy.bank_app.shared.event.TransferCompletedEvent;
-import ru.katacademy.bank_app.shared.valueobject.Money;
+import ru.katacademy.bank_shared.exception.AccountNotFoundException;
+import ru.katacademy.bank_shared.exception.BusinessRuleViolationException;
+import ru.katacademy.bank_shared.exception.CurrencyMismatchException;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.event.TransferCompletedEvent;
+import ru.katacademy.bank_shared.valueobject.Money;
 
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import java.math.BigDecimal;
@@ -82,15 +82,14 @@ public class AccountService {
         // Создаем событие о завершении перевода
         final TransferCompletedEvent event = new TransferCompletedEvent(
                 UUID.randomUUID(),
-                accountFrom,
-                accountTo,
-                amount.amount(),
-                amount.currency(),
-                Instant.now()
+                from,
+                to,
+                amount,
+                LocalDateTime.now()
         );
 
         // логирование информации о переводе
-        auditService.logTransfer(null, accountFrom, accountTo, amount, "статус перевода");
+        auditService.logTransfer(null, from, to, amount, "статус перевода");
 
         // публикация события в Kafka
         eventPublisher.publish(event);

@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.shared.valueobject;
+package ru.katacademy.bank_shared.valueobject;
 
 /**
  * Value Object для Email.

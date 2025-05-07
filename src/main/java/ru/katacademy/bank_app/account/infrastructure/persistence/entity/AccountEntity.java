@@ -12,8 +12,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.shared.converter.MoneyConverter;
-import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
-import ru.katacademy.bank_app.shared.valueobject.Money;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.valueobject.Money;
 
 /**
  * Сущность банковского счета для работы с БД.

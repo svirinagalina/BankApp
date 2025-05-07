@@ -5,8 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.katacademy.bank_app.notification.application.FraudActionService;
-import ru.katacademy.bank_app.shared.event.TransferCompletedEvent;
-import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.event.TransferCompletedEvent;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.valueobject.Money;
 
 import java.math.BigDecimal;
 
@@ -38,9 +39,9 @@ public class FraudDetectionConsumer {
      */
     @KafkaListener(topics = "transfer.completed", groupId = "fraud")
     public void handleTransferCompleted(TransferCompletedEvent event) {
-        final BigDecimal amount = event.amount();
-        if (amount.compareTo(FRAUD_LIMIT) > 0) {
-            final AccountNumber senderAccountNumber = event.accountFrom().getAccountNumber();
+        final Money money = event.money();
+        if (money.amount().compareTo(FRAUD_LIMIT) > 0) {
+            final AccountNumber senderAccountNumber = event.accountNumberFrom();
             log.warn("Обнаружена подозрительная операция! " +
                             "Счёт {} заблокирован.",
                     senderAccountNumber);

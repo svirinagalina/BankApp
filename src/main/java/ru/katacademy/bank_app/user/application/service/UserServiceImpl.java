@@ -3,11 +3,11 @@ package ru.katacademy.bank_app.user.application.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ru.katacademy.bank_app.shared.exception.DomainException;
-import ru.katacademy.bank_app.shared.exception.EmailAlreadyTakenException;
-import ru.katacademy.bank_app.shared.valueobject.Email;
+import ru.katacademy.bank_shared.exception.DomainException;
+import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
+import ru.katacademy.bank_shared.valueobject.Email;
 import ru.katacademy.bank_app.user.domain.repository.UserRepository;
-import ru.katacademy.bank_app.shared.exception.UserNotFoundException;
+import ru.katacademy.bank_shared.exception.UserNotFoundException;
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.user.application.dto.UserDto;
 import ru.katacademy.bank_app.user.domain.entity.User;

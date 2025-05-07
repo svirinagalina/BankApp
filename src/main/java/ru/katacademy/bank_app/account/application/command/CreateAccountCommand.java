@@ -1,6 +1,6 @@
 package ru.katacademy.bank_app.account.application.command;
 
-import ru.katacademy.bank_app.shared.valueobject.Currency;
+import ru.katacademy.bank_shared.valueobject.Currency;
 
 /**
  * Команда для создания нового банковского счета.

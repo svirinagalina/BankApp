@@ -2,8 +2,8 @@ package ru.katacademy.bank_app.account.domain.entity;
 
 import lombok.Getter;
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
-import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
-import ru.katacademy.bank_app.shared.valueobject.Money;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.valueobject.Money;
 
 import java.math.BigDecimal;
 

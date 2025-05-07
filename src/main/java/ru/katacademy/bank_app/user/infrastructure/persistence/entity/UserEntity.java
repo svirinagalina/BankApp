@@ -12,8 +12,8 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.katacademy.bank_app.shared.valueobject.Email;
 import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
+import ru.katacademy.bank_shared.valueobject.Email;
 
 import java.time.LocalDateTime;
 

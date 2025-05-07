@@ -1,6 +1,6 @@
 package ru.katacademy.bank_app.user.domain.repository;
 
-import ru.katacademy.bank_app.shared.valueobject.Email;
+import ru.katacademy.bank_shared.valueobject.Email;
 import ru.katacademy.bank_app.user.domain.entity.User;
 
 import java.util.Optional;

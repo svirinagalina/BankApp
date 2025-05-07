@@ -2,13 +2,10 @@ package ru.katacademy.bank_app.account.infrastructure.repository;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
-import ru.katacademy.bank_app.account.domain.entity.Account;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
-import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
-import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
 
-import java.util.Objects;
 import java.util.Optional;
 
 /**

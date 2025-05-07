@@ -2,8 +2,8 @@ package ru.katacademy.bank_app.shared.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import ru.katacademy.bank_app.shared.valueobject.Currency;
-import ru.katacademy.bank_app.shared.valueobject.Money;
+import ru.katacademy.bank_shared.valueobject.Currency;
+import ru.katacademy.bank_shared.valueobject.Money;
 
 import java.math.BigDecimal;
 
