@@ -2,7 +2,7 @@ package ru.katacademy.bank_app.frauddetection.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.katacademy.bank_app.frauddetection.shared.event.TransferCompletedEvent;
+import ru.katacademy.bank_shared.event.TransferCompletedEvent;
 
 import java.math.BigDecimal;
 
@@ -36,8 +36,8 @@ public class FraudDetectionService {
         /**
          * Проверяет сумму на превышение порогового значения.
          */
-        if (event.amount().compareTo(SUSPICIOUS_AMOUNT) > 0) {
-            log.warn("Подозрительная активность! Перевод на сумму - {}", event.amount());
+        if (event.money().amount().compareTo(SUSPICIOUS_AMOUNT) > 0) {
+            log.warn("Подозрительная активность! Перевод на сумму - {}", event.money().amount());
             // TODO: В будущем отправлять команду на блокировку аккаунта
         }
     }

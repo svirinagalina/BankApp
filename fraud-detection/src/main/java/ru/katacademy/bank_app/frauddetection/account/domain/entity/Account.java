@@ -1,9 +1,10 @@
 package ru.katacademy.bank_app.frauddetection.account.domain.entity;
 
 import lombok.Getter;
-import ru.katacademy.bank_app.frauddetection.shared.valueobject.AccountNumber;
 import ru.katacademy.bank_app.frauddetection.account.domain.enumtype.AccountStatus;
-import ru.katacademy.bank_app.frauddetection.shared.valueobject.Money;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.valueobject.Money;
+
 
 import java.math.BigDecimal;
 

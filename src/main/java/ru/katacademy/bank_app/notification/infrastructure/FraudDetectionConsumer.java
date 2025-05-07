@@ -39,7 +39,7 @@ public class FraudDetectionConsumer {
      */
     @KafkaListener(topics = "transfer.completed", groupId = "fraud")
     public void handleTransferCompleted(TransferCompletedEvent event) {
-        final Money money = event.amount();
+        final Money money = event.money();
         if (money.amount().compareTo(FRAUD_LIMIT) > 0) {
             final AccountNumber senderAccountNumber = event.accountNumberFrom();
             log.warn("Обнаружена подозрительная операция! " +

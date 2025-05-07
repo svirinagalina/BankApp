@@ -16,7 +16,7 @@ import java.util.UUID;
  * @param eventId           уникальный идентификатор события
  * @param accountNumberFrom счет отправителя
  * @param accountNumberTo   счет получателя
- * @param amount            сумма перевода
+ * @param money            сумма перевода
  * @param localDateTime     время выполнения перевода
  * @author Sheffy
  */
@@ -24,7 +24,7 @@ public record TransferCompletedEvent(
         UUID eventId,
         AccountNumber accountNumberFrom,
         AccountNumber accountNumberTo,
-        Money amount,
+        Money money,
         LocalDateTime localDateTime
 ) {
 }
