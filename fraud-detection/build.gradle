@@ -5,7 +5,7 @@ plugins {
 	id 'checkstyle'
 }
 
-group = 'ru.katacademy'
+group = 'ru.katacademy.bank_app'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -22,7 +22,7 @@ configurations {
 
 checkstyle {
 	toolVersion = '10.12.3'
-	configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+	configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
 }
 
 
@@ -44,7 +44,6 @@ dependencies {
 	implementation 'org.postgresql:postgresql:42.7.2'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 	implementation 'org.springframework.kafka:spring-kafka'
-	implementation(project(":bank-shared"))
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -57,6 +56,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+springBoot {
+	mainClass = 'ru.katacademy.bank_app.frauddetection.FraudDetectionApplication' // замени на свой
+}
+
+bootJar {
+	archiveFileName = 'app.jar'
 }
 
 tasks.named('test') {
