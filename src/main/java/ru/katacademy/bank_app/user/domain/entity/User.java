@@ -2,7 +2,6 @@ package ru.katacademy.bank_app.user.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.shared.valueobject.Email;
 import java.time.LocalDateTime;
@@ -11,9 +10,6 @@ import java.util.Objects;
 /**
  * Представляет пользователя системы.
  */
-@Entity
-@Table(name = "users")
-@Setter
 @Getter
 public class User {
 
@@ -32,20 +28,10 @@ public class User {
     private final Email email;
 
     @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    private final String passwordHash;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private final LocalDateTime createdAt;
-
-    // JPA требует конструктор без аргументов
-    protected User() {
-        this.id = null;
-        this.role = null;
-        this.fullName = null;
-        this.email = null;
-        this.passwordHash = null;
-        this.createdAt = null;
-    }
 
     public User(Long id,
                 UserRole role,
