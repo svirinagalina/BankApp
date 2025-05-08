@@ -1,0 +1,71 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.0-SNAPSHOT'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'checkstyle'
+}
+
+group = 'ru.katacademy.bank_app'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+checkstyle {
+	toolVersion = '10.12.3'
+	configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
+}
+
+
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+	// Spring Boot Starters
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'javax.validation:validation-api:2.0.1.Final'
+	implementation 'org.hibernate.validator:hibernate-validator:6.0.13.Final'
+	implementation 'org.glassfish:javax.el:3.0.0'
+	implementation 'org.postgresql:postgresql:42.7.2'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation(project(":bank-shared"))
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Database
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// Testing
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+springBoot {
+	mainClass = 'ru.katacademy.bank_app.frauddetection.FraudDetectionApplication' // замени на свой
+}
+
+bootJar {
+	archiveFileName = 'app.jar'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

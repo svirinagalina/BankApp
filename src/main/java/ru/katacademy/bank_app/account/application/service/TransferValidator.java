@@ -2,12 +2,12 @@ package ru.katacademy.bank_app.account.application.service;
 
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.account.domain.entity.Account;
-import ru.katacademy.bank_app.shared.exception.BusinessRuleViolationException;
-import ru.katacademy.bank_app.shared.valueobject.Money;
+import ru.katacademy.bank_shared.exception.BusinessRuleViolationException;
+import ru.katacademy.bank_shared.valueobject.Money;
 
 import java.math.BigDecimal;
 
-import static ru.katacademy.bank_app.shared.exception.BusinessErrorCode.*;
+import static ru.katacademy.bank_shared.exception.BusinessErrorCode.*;
 
 @Service
 public class TransferValidator {

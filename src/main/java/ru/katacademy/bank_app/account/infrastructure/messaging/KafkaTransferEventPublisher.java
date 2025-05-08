@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.katacademy.bank_app.account.application.port.out.TransferEventPublisher;
 import ru.katacademy.bank_app.kafka.KafkaProducer;
-import ru.katacademy.bank_app.shared.event.TransferCompletedEvent;
+import ru.katacademy.bank_shared.event.TransferCompletedEvent;
 
 /**
  * Реализация публикатора событий о переводах через Kafka.

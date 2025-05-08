@@ -1,6 +1,6 @@
 package ru.katacademy.bank_app.notification.application;
 
-import ru.katacademy.bank_app.shared.valueobject.AccountNumber;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
 
 /**
  * Сервис для выполнения действий, связанных с обнаружением мошенничества.
