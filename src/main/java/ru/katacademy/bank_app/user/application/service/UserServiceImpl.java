@@ -3,18 +3,21 @@ package ru.katacademy.bank_app.user.application.service;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import ru.katacademy.bank_shared.exception.DomainException;
-import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
-import ru.katacademy.bank_shared.valueobject.Email;
-import ru.katacademy.bank_app.user.domain.repository.UserRepository;
-import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_app.user.application.command.ChangePasswordCommand;
+import ru.katacademy.bank_app.user.application.dto.PasswordChangedEvent;
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.user.application.dto.UserDto;
 import ru.katacademy.bank_app.user.domain.entity.User;
 import ru.katacademy.bank_app.user.domain.factory.UserFactory;
 import ru.katacademy.bank_app.user.domain.mapper.UserMapper;
+import ru.katacademy.bank_app.user.domain.repository.UserRepository;
+import ru.katacademy.bank_app.user.domain.service.UserService;
 import ru.katacademy.bank_app.user.infrastructure.messaging.PasswordChangeEventPublisher;
+import ru.katacademy.bank_shared.exception.DomainException;
+import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
+import ru.katacademy.bank_shared.exception.InvalidPasswordException;
+import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_shared.valueobject.Email;
 
 import java.util.Optional;
 
@@ -40,7 +43,11 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private PasswordChangeEventPublisher passwordChangeEventPublisher;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordChangeEventPublisher passwordChangeEventPublisher) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            UserMapper userMapper,
+            PasswordChangeEventPublisher passwordChangeEventPublisher
+    ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordChangeEventPublisher = passwordChangeEventPublisher;
@@ -92,58 +99,60 @@ public class UserServiceImpl implements UserService {
     /**
      * Меняет пароль пользователя.
      *
-     * Метод проверяет, соответствует ли введенный текущий пароль
-     * и что новый пароль отличается от старого. Также проверяется, что
-     * новый пароль соответствует установленным критериям валидности.
+     * <p>Метод выполняет следующие действия:</p>
+     * <ol>
+     *     <li>Поиск пользователя по идентификатору.</li>
+     *     <li>Проверка текущего пароля на соответствие.</li>
+     *     <li>Проверка нового пароля на отличие от старого.</li>
+     *     <li>Валидация нового пароля по заданным критериям.</li>
+     *     <li>Установка нового пароля и его хеширование.</li>
+     *     <li>Сохранение изменённого пользователя в репозитории.</li>
+     *     <li>Публикация события о смене пароля.</li>
+     * </ol>
      *
-     * Событие смены пароля публикуется в kafka
-     *
-     * @param command объект команды для смены пароля, содержащий идентификатор пользователя,
-     *                старый пароль и новый пароль. Не может быть null.
-     * @throws RuntimeException если пользователь не найден.
-     *                          если текущий пароль некорректный.
-     *                          если новый пароль совпадает с текущим.
-     *                          если новый пароль не соответствует требованиям валидности.
-     *
-     *  Автор: Колпаков А.С..
-     *  Дата: 2025-04-30
+     * @param command Команда, содержащая идентификатор пользователя и пароли.
+     * @throws UserNotFoundException Если пользователь с указанным идентификатором не найден.
+     * @throws InvalidPasswordException Если текущий пароль не совпадает с хешем. Если новый пароль совпадает с текущим.
+     *                                  Если новый пароль не соответствует критериям (менее 8 символов,
+     *                                  Если не содержит латинские буквы и цифры от 0 до 9).
      */
     @Transactional
     public void changePassword(ChangePasswordCommand command) {
         final User user = userRepository
                 .findById(command.getUserId())
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
 
-        final String oldEnteredPasswordHash = BCrypt.hashpw(command.getOldPassword(), BCrypt.gensalt());
-        final String newEnteredPasswordHash = BCrypt.hashpw(command.getNewPassword(), BCrypt.gensalt());
-
-        // проверяем текущий пароль
-        if (!BCrypt.checkpw(oldEnteredPasswordHash, user.getPasswordHash())) {
-            throw new RuntimeException("Текущий пароль некорректный");
+        // Проверяем текущий пароль
+        if (!BCrypt.checkpw(command.getOldPassword(), user.getPasswordHash())) {
+            throw new InvalidPasswordException("Текущий пароль некорректный");
         }
 
-        // проверяем, что новый пароль отличается от старого
-        if (BCrypt.checkpw(newEnteredPasswordHash, user.getPasswordHash())) {
-            throw new RuntimeException("Новый пароль должен отличаться от старого");
+        // Проверяем, что новый пароль отличается от старого
+        if (BCrypt.checkpw(command.getNewPassword(), user.getPasswordHash())) {
+            throw new InvalidPasswordException("Новый пароль должен отличаться от старого");
         }
 
-        // проверяем новый пароль на валидность
+        // Проверяем новый пароль на валидность
         if (!isValidPassword(command.getNewPassword())) {
-            throw new RuntimeException("Пароль должен состоять не менее чем из 6 символов, а также содержать латинские буквы и числа от 0 до 9");
+            throw new InvalidPasswordException("Пароль должен состоять не менее чем из 8 символов, " +
+                    "а также содержать латинские буквы и числа от 0 до 9");
         }
 
-        // устанавливаем и сохраняем новый пароль
+        // Устанавливаем и сохраняем новый пароль
+        final String newEnteredPasswordHash = BCrypt.hashpw(command.getNewPassword(), BCrypt.gensalt());
         user.setPasswordHash(newEnteredPasswordHash);
         userRepository.save(user);
 
+        // Публикуем событие о смене пароля
         final PasswordChangedEvent event = new PasswordChangedEvent(
                 user.getId(),
-                oldEnteredPasswordHash,
+                user.getPasswordHash(),  // передаем новый хеш
                 newEnteredPasswordHash
         );
 
         passwordChangeEventPublisher.publish(event);
     }
+
 
     /**
      * Вспомогательный метод для changePassword().
@@ -151,7 +160,7 @@ public class UserServiceImpl implements UserService {
      * Проверяет, что указанный пароль является валидным.
      *
      * Этот метод проверяет, соответствует ли пароль следующим критериям:
-     * - Должен содержать не менее 6 символов.
+     * - Должен содержать не менее 8 символов.
      * - Должен включать как минимум одну латинскую букву (верхнего или нижнего регистра).
      * - Должен содержать как минимум одну цифру от 0 до 9.
      *

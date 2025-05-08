@@ -3,6 +3,7 @@ package ru.katacademy.bank_app.user.application.service;
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.user.domain.entity.LoginAttemptEntry;
 import ru.katacademy.bank_app.user.domain.repository.LoginAttemptRepository;
+import ru.katacademy.bank_app.user.domain.service.LoginAttemptService;
 
 import java.time.LocalDateTime;
 

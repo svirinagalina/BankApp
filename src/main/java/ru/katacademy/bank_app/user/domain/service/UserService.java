@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.user.application.service;
+package ru.katacademy.bank_app.user.domain.service;
 
 import ru.katacademy.bank_app.user.application.command.ChangePasswordCommand;
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
