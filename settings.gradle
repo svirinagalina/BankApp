@@ -10,3 +10,4 @@ include("bank-shared")
 
 rootProject.name = 'bank-app'
 include 'fraud-detection'
+include 'audit'
