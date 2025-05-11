@@ -22,7 +22,7 @@ configurations {
 
 checkstyle {
 	toolVersion = '10.12.3'
-	configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
 }
 
 
