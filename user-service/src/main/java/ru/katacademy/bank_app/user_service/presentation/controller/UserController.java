@@ -6,18 +6,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ru.katacademy.bank_app.user_service.application.dto.RegisterUserCommand;
-
 import ru.katacademy.bank_app.user_service.application.dto.UserDto;
-import ru.katacademy.bank_app.user_service.application.service.UserService;
+import ru.katacademy.bank_app.user_service.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
-import ru.katacademy.bank_shared.kafka.KafkaProducer;
 
 /**
  * Контроллер для управления пользователями через REST API.
@@ -36,11 +33,9 @@ import ru.katacademy.bank_shared.kafka.KafkaProducer;
 public class UserController {
 
     private final UserService userService;
-    private final KafkaProducer kafkaProducer;
 
-    public UserController(UserService userService, KafkaProducer kafkaProducer) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.kafkaProducer = kafkaProducer;
     }
 
     /**
