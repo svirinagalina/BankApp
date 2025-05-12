@@ -10,6 +10,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -22,35 +24,45 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BankAppApplicationTests {
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
-    private final String bootstrapServers = "localhost:9094"; // Kafka должен быть запущен заранее
-    private final String topic = "user-registration.error";
+    // Запуск Kafka-контейнера
+    static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.5.0"));
+
+    static {
+        kafka.start();
+    }
 
     @Test
     void testMessageSentToDLT() {
+        // Здесь поднимаем kafkaTemplate, настраиваем его через bootstrapServers из контейнера
+        final String bootstrapServers = kafka.getBootstrapServers();
 
-        // Отправляем сообщение с ошибкой
-        kafkaTemplate.send("user-register-events", "ERROR: simulate failure");
+        // Отправка сообщения напрямую через KafkaProducer
+        final Properties producerProps = new Properties();
+        producerProps.put("bootstrap.servers", bootstrapServers);
+        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-        // Настройки consumer
-        final Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "realTestGroup");
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        try (var producer = new org.apache.kafka.clients.producer.KafkaProducer<String, String>(producerProps)) {
+            producer.send(new org.apache.kafka.clients.producer.ProducerRecord<>("user-register-events", "ERROR: simulate failure"));
+        }
 
-        // Чтение из топика
-        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props)) {
-            consumer.subscribe(Collections.singletonList(topic));
+        // Чтение через consumer
+        final Properties consumerProps = new Properties();
+        consumerProps.put("bootstrap.servers", bootstrapServers);
+        consumerProps.put("group.id", "realTestGroup");
+        consumerProps.put("auto.offset.reset", "earliest");
+        consumerProps.put("enable.auto.commit", "true");
+        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+        try (var consumer = new org.apache.kafka.clients.consumer.KafkaConsumer<String, String>(consumerProps)) {
+            consumer.subscribe(Collections.singletonList("user-register-events"));
 
             boolean found = false;
             final long timeout = System.currentTimeMillis() + 15000;
 
             while (System.currentTimeMillis() < timeout) {
-                final ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(500));
+                final var records = consumer.poll(Duration.ofMillis(500));
                 found = StreamSupport.stream(records.spliterator(), false)
                         .anyMatch(record -> record.value().contains("ERROR"));
 
@@ -58,6 +70,7 @@ class BankAppApplicationTests {
                     break;
                 }
             }
+
             assertThat(found).isTrue();
         }
     }
