@@ -1,18 +1,23 @@
 package ru.katacademy.bank_app.user.application.service;
 
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import ru.katacademy.bank_shared.exception.DomainException;
-import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
-import ru.katacademy.bank_shared.valueobject.Email;
-import ru.katacademy.bank_app.user.domain.repository.UserRepository;
-import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_app.user.application.command.ChangePasswordCommand;
+import ru.katacademy.bank_app.user.application.dto.PasswordChangedEvent;
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.user.application.dto.UserDto;
 import ru.katacademy.bank_app.user.domain.entity.User;
 import ru.katacademy.bank_app.user.domain.factory.UserFactory;
 import ru.katacademy.bank_app.user.domain.mapper.UserMapper;
+import ru.katacademy.bank_app.user.domain.repository.UserRepository;
+import ru.katacademy.bank_app.user.domain.service.UserService;
+import ru.katacademy.bank_app.user.infrastructure.messaging.PasswordChangeEventPublisher;
+import ru.katacademy.bank_shared.exception.DomainException;
+import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
+import ru.katacademy.bank_shared.exception.InvalidPasswordException;
+import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_shared.valueobject.Email;
 
 import java.util.Optional;
 
@@ -36,10 +41,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private PasswordChangeEventPublisher passwordChangeEventPublisher;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            UserMapper userMapper,
+            PasswordChangeEventPublisher passwordChangeEventPublisher
+    ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordChangeEventPublisher = passwordChangeEventPublisher;
     }
 
     /**
@@ -83,5 +94,89 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + id + " не найден"));
 
         return userMapper.toDto(user);
+    }
+
+    /**
+     * Меняет пароль пользователя.
+     *
+     * <p>Метод выполняет следующие действия:</p>
+     * <ol>
+     *     <li>Поиск пользователя по идентификатору.</li>
+     *     <li>Проверка текущего пароля на соответствие.</li>
+     *     <li>Проверка нового пароля на отличие от старого.</li>
+     *     <li>Валидация нового пароля по заданным критериям.</li>
+     *     <li>Установка нового пароля и его хеширование.</li>
+     *     <li>Сохранение изменённого пользователя в репозитории.</li>
+     *     <li>Публикация события о смене пароля.</li>
+     * </ol>
+     *
+     * @param command Команда, содержащая идентификатор пользователя и пароли.
+     * @throws UserNotFoundException Если пользователь с указанным идентификатором не найден.
+     * @throws InvalidPasswordException Если текущий пароль не совпадает с хешем. Если новый пароль совпадает с текущим.
+     *                                  Если новый пароль не соответствует критериям (менее 8 символов,
+     *                                  Если не содержит латинские буквы и цифры от 0 до 9).
+     */
+    @Transactional
+    public void changePassword(ChangePasswordCommand command) {
+        final User user = userRepository
+                .findById(command.getUserId())
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+
+        // Проверяем текущий пароль
+        if (!BCrypt.checkpw(command.getOldPassword(), user.getPasswordHash())) {
+            throw new InvalidPasswordException("Текущий пароль некорректный");
+        }
+
+        // Проверяем, что новый пароль отличается от старого
+        if (BCrypt.checkpw(command.getNewPassword(), user.getPasswordHash())) {
+            throw new InvalidPasswordException("Новый пароль должен отличаться от старого");
+        }
+
+        // Проверяем новый пароль на валидность
+        if (!isValidPassword(command.getNewPassword())) {
+            throw new InvalidPasswordException("Пароль должен состоять не менее чем из 8 символов, " +
+                    "а также содержать латинские буквы и числа от 0 до 9");
+        }
+
+        // Устанавливаем и сохраняем новый пароль
+        final String newEnteredPasswordHash = BCrypt.hashpw(command.getNewPassword(), BCrypt.gensalt());
+        user.setPasswordHash(newEnteredPasswordHash);
+        userRepository.save(user);
+
+        // Публикуем событие о смене пароля
+        final PasswordChangedEvent event = new PasswordChangedEvent(
+                user.getId(),
+                user.getPasswordHash(),  // передаем новый хеш
+                newEnteredPasswordHash
+        );
+
+        passwordChangeEventPublisher.publish(event);
+    }
+
+
+    /**
+     * Вспомогательный метод для changePassword().
+     *
+     * Проверяет, что указанный пароль является валидным.
+     *
+     * Этот метод проверяет, соответствует ли пароль следующим критериям:
+     * - Должен содержать не менее 8 символов.
+     * - Должен включать как минимум одну латинскую букву (верхнего или нижнего регистра).
+     * - Должен содержать как минимум одну цифру от 0 до 9.
+     *
+     * @param input строка, представляющая пароль для проверки. Не может быть null.
+     * @return true, если пароль соответствует критериям; иначе false.
+     * @throws IllegalArgumentException если input является null.
+     *
+     * Автор: Колпаков А.С..
+     * Дата: 2025-04-30
+     */
+    private static boolean isValidPassword(String input) {
+        if (input == null) {
+            throw new IllegalArgumentException("Пароль не может быть Null");
+        }
+
+        final String regex = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$";
+        return input.matches(regex);
     }
 }

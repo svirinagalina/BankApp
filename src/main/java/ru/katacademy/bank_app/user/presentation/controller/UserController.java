@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.user.application.dto.UserDto;
-import ru.katacademy.bank_app.user.application.service.UserService;
+import ru.katacademy.bank_app.user.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
 

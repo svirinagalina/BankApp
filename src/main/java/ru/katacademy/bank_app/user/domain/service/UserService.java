@@ -1,5 +1,6 @@
-package ru.katacademy.bank_app.user.application.service;
+package ru.katacademy.bank_app.user.domain.service;
 
+import ru.katacademy.bank_app.user.application.command.ChangePasswordCommand;
 import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.user.application.dto.UserDto;
 
@@ -33,4 +34,8 @@ public interface UserService {
      * @return DTO пользователя
      */
     UserDto getById(Long id);
+
+    void changePassword(ChangePasswordCommand command);
+
 }
+
