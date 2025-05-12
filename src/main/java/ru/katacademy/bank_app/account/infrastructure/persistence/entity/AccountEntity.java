@@ -11,7 +11,7 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
-import ru.katacademy.bank_app.shared.converter.MoneyConverter;
+import ru.katacademy.bank_shared.conventor.MoneyConverter;
 import ru.katacademy.bank_shared.valueobject.AccountNumber;
 import ru.katacademy.bank_shared.valueobject.Money;
 

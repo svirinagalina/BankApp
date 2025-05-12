@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  otel-collector-user-service:
+    image: otel/opentelemetry-collector:latest
+    container_name: otel-collector-user-service
+    ports:
+      - "4319:4318"   # хост‑порт 4319 → контейнер‑порт 4318
+      - "4316:4317"   # хост‑порт 4316 → контейнер‑порт 4317
+    expose:
+      - "4318"
+      - "4317"
+    volumes:
+      - ./user-service-otel-config.yaml:/etc/user-service-otel-config.yaml
+    command: [ "--config=/etc/user-service-otel-config.yaml" ]
+
+
+  postgres2:
+    image: postgres:15
+    container_name: user-service-postgres
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: mainDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+      - ./main.sql:/docker-entrypoint-initdb.d/main.sql
+
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres2
+      - otel-collector-user-service
+    ports:
+      - "8081:8080"
+    environment:
+      # где действительно доступен ваш collector
+      OTEL_SERVICE_NAME: user-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector-user-service:4318  # Уникальный адрес и порт для этого контейнера
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres2:5432/mainDB
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: "host.docker.internal:9092"  # Адрес Kafka в сети
+
+volumes:
+  user-db-data:
