@@ -17,8 +17,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class NotificationConsumer {
-    @KafkaListener(topics = "user-register-event", groupId = "notification-group")
+    @KafkaListener(topics = "user-register-events", groupId = "notification-group")
     public void handleUserRegisteredEvent(String message) {
-        log.info(message);
+        log.info("Получено сообщение: {}", message);
+
+        // Для тестирования
+        if (message.contains("ERROR")) {
+            throw new RuntimeException(message);
+        }
     }
 }

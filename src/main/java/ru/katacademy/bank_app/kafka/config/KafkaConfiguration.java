@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.kafka;
+package ru.katacademy.bank_app.kafka.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
@@ -28,5 +28,20 @@ public class KafkaConfiguration {
     @Bean
     public NewTopic createRegisterTopic() {
         return new NewTopic("user-register-events", 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic createTransferErrorTopic() {
+        return new NewTopic("transfer.error", 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic createRegestrationErrorTopic() {
+        return new NewTopic("user-registration.error", 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic createAuditErrorTopic() {
+        return new NewTopic("audit.error", 1, (short) 1);
     }
 }
