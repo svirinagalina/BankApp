@@ -82,19 +82,4 @@ public class UserController {
         final UserDto userDto = userService.getById(id);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
-    /**
-     * Отправляет сырое текстовое сообщение в указанный Kafka-топик.
-     * Пример:
-     * POST /api/test/send?topic=user-register-events
-     * Body: "Hello from TestKafkaController"
-     */
-    @PostMapping("/send")
-    public ResponseEntity<String> sendMessage(
-            @RequestParam("topic") String topic,
-            @RequestBody String message
-    ) {
-        kafkaProducer.send(topic, message);
-        return ResponseEntity.ok("Сообщение отправлено в топик «" + topic + "»");
-    }
-
 }
