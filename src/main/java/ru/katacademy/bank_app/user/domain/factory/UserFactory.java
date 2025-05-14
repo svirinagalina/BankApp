@@ -24,7 +24,6 @@ public class UserFactory {
      */
     public static User create(RegisterUserCommand cmd) {
         return new User(
-                null, // ID будет генерироваться позже
                 UserRole.USER, // Роль по умолчанию
                 cmd.fullName(),
                 new Email(cmd.email()),
