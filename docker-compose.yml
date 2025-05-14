@@ -29,7 +29,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  postgres2:
+  user-service_postgres:
     image: postgres:15
     container_name: user-service-postgres
     restart: always
@@ -122,11 +122,11 @@ services:
       context: ./user-service
       dockerfile: Dockerfile
     depends_on:
-      - postgres2
+      - user-service_postgres
     ports:
-      - "8082:8080"
+      - "8083:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres2:5432/mainDB
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-service_postgres:5432/mainDB
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092  # Адрес Kafka в сети

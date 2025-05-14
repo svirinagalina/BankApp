@@ -57,16 +57,6 @@ public class User {
         this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
     }
 
-    // Конструктор для новых пользователей (без id)
-    public User(UserRole role, String fullName, Email email, String passwordHash, LocalDateTime createdAt) {
-        this.id = null;
-        this.role = Objects.requireNonNull(role);
-        this.fullName = Objects.requireNonNull(fullName);
-        this.email = Objects.requireNonNull(email);
-        this.passwordHash = Objects.requireNonNull(passwordHash);
-        this.createdAt = Objects.requireNonNull(createdAt);
-    }
-
     // Остальные методы остаются без изменений
     public boolean isAdmin() {
         return this.role == UserRole.ADMIN;
