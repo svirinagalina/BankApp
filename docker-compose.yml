@@ -29,6 +29,21 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  user-service_postgres:
+    image: postgres:15
+    container_name: user-service-postgres
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: mainDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+      - ./main.sql:/docker-entrypoint-initdb.d/main.sql
+
   kafka:
     image: bitnami/kafka:3.6
     container_name: kafka
@@ -102,6 +117,25 @@ services:
       SPRING_PROFILES_ACTIVE: docker
     restart: always
 
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    depends_on:
+      - user-service_postgres
+    ports:
+      - "8083:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-service_postgres:5432/mainDB
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092  # Адрес Kafka в сети
+      OTEL_SERVICE_NAME: user-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+
 volumes:
   postgres_data:
   kafka_data:
+  user-db-data:

@@ -3,7 +3,7 @@ package ru.katacademy.bank_app.account.infrastructure.messaging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.katacademy.bank_app.account.application.port.out.TransferEventPublisher;
-import ru.katacademy.bank_app.kafka.KafkaProducer;
+import ru.katacademy.bank_shared.kafka.KafkaProducer;
 import ru.katacademy.bank_shared.event.TransferCompletedEvent;
 
 /**

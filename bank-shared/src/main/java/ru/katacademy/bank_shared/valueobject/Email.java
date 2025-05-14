@@ -1,5 +1,7 @@
 package ru.katacademy.bank_shared.valueobject;
 
+import ru.katacademy.bank_shared.exception.InvalidEmailException;
+
 /**
  * Value Object для Email.
  * Валидирует корректность email-адреса при создании.
@@ -12,7 +14,7 @@ public record Email(String value) {
 
     public Email {
         if (!isValid(value)) {
-            throw new IllegalArgumentException("Invalid email format: " + value);
+            throw new InvalidEmailException("Invalid email format: " + value);
         }
     }
 
