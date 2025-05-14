@@ -46,7 +46,6 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation(project(":bank-shared"))
 	implementation 'junit:junit:4.13.1'
-	implementation 'junit:junit:4.13.1'
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -65,9 +64,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-
-
-
-
-
