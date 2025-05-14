@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.settingsservice.controller;
+package ru.katacademy.bank_app.settingsservice.adapter.in.web.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.katacademy.bank_app.settingsservice.DTO.UserSettingsDto;
-import ru.katacademy.bank_app.settingsservice.comand.UpdateSettingsCommand;
-import ru.katacademy.bank_app.settingsservice.model.UserSettings;
-import ru.katacademy.bank_app.settingsservice.service.UserSettingsService;
+import ru.katacademy.bank_app.settingsservice.application.dto.UserSettingsDto;
+import ru.katacademy.bank_app.settingsservice.application.command.UpdateSettingsCommand;
+import ru.katacademy.bank_app.settingsservice.application.port.in.UserSettingsService;
 
 @RestController
 @RequestMapping("/api/settings")
@@ -23,7 +22,7 @@ public class UserSettingsController {
     public final UserSettingsService userSettingsService;
 
     @GetMapping("/{userId}")
-    public UserSettings getUserSettings(@PathVariable Long userId) {
+    public UserSettingsDto getUserSettings(@PathVariable Long userId) {
         return userSettingsService.get(userId);
     }
 
