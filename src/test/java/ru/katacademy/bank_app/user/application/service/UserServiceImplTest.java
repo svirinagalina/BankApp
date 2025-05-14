@@ -1,0 +1,181 @@
+package ru.katacademy.bank_app.user.application.service;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import ru.katacademy.bank_app.user.application.command.ChangePasswordCommand;
+import ru.katacademy.bank_app.user.application.dto.PasswordChangedEvent;
+import ru.katacademy.bank_app.user.application.dto.RegisterUserCommand;
+import ru.katacademy.bank_app.user.application.dto.UserDto;
+import ru.katacademy.bank_app.user.domain.entity.User;
+import ru.katacademy.bank_app.user.domain.enumtype.UserRole;
+import ru.katacademy.bank_app.user.domain.mapper.UserMapper;
+import ru.katacademy.bank_app.user.domain.repository.UserRepository;
+import ru.katacademy.bank_app.user.infrastructure.messaging.PasswordChangeEventPublisher;
+import ru.katacademy.bank_shared.exception.DomainException;
+import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
+import ru.katacademy.bank_shared.exception.InvalidPasswordException;
+import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_shared.valueobject.Email;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class UserServiceImplTest {
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private UserMapper userMapper;
+
+    @Mock
+    private PasswordChangeEventPublisher eventPublisher;
+
+    @InjectMocks
+    private UserServiceImpl userService;
+
+    private final String fullName = "Тест Тестович Тестов";
+    private final String email = "test@mail.ru";
+    private final String password = "password123";
+
+    // Проверяем добавление нового пользователя
+    @Test
+    void register_ShouldReturnUserDto_WhenValidCommandProvided() throws DomainException {
+        final RegisterUserCommand cmd = new RegisterUserCommand(fullName, email, password);
+
+        final User newUser = new User(UserRole.USER, cmd.fullName(), new Email(cmd.email()),
+                cmd.password(), LocalDateTime.now());
+
+        final User savedUser = new User(1L, newUser.getRole(), newUser.getFullName(),
+                newUser.getEmail(), newUser.getPasswordHash(),
+                newUser.getCreatedAt());
+
+        final UserDto expectedDto = new UserDto(1L, fullName, email, UserRole.USER);
+
+        when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+        when(userMapper.toDto(savedUser)).thenReturn(expectedDto);
+
+        final UserDto result = userService.register(cmd);
+
+        assertThat(result).isEqualTo(expectedDto);
+    }
+
+    // проверяем, что если пользователь с таким email уже существует, выбрасываем исключение
+    @Test
+    void register_ShouldThrowEmailAlreadyTakenException_WhenEmailExists() {
+        final RegisterUserCommand cmd = new RegisterUserCommand(fullName, email, password);
+
+        final User existingUser = new User(UserRole.USER, fullName,
+                new Email(email), password, LocalDateTime.now());
+
+        when(userRepository.findByEmail(any(Email.class)))
+                .thenReturn(Optional.of(existingUser));
+
+        assertThatThrownBy(() -> userService.register(cmd))
+                .isInstanceOf(EmailAlreadyTakenException.class)
+                .hasMessageContaining(email);
+
+        verify(userRepository).findByEmail(new Email(email));
+        verify(userRepository, never()).save(any());
+    }
+
+    // проверка получения пользователя по идентификатору
+    @Test
+    void getById_ShouldReturnUserDto_WhenUserExists() {
+        // Arrange
+        final Long userId = 1L;
+        final String testEmail = "test@example.com";  // Явно задаем email
+        final String testFullName = "Test User";     // Явно задаем fullName
+        final UserRole testRole = UserRole.USER;     // Явно задаем роль
+
+        final User user = new User(
+                userId,
+                testRole,
+                testFullName,
+                new Email(testEmail),  // Создаем Email объект
+                "hashed_password",
+                LocalDateTime.now()
+        );
+
+        final UserDto expectedDto = new UserDto(
+                userId,
+                testFullName,
+                testEmail,  // Должно совпадать с user.getEmail().value()
+                testRole
+        );
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userMapper.toDto(user)).thenReturn(expectedDto);
+
+        final UserDto result = userService.getById(userId);
+
+        assertThat(result.id()).isEqualTo(expectedDto.id());
+        assertThat(result.fullName()).isEqualTo(expectedDto.fullName());
+        assertThat(result.email()).isEqualTo(expectedDto.email());
+        assertThat(result.role()).isEqualTo(expectedDto.role());
+
+        verify(userRepository).findById(userId);
+        verify(userMapper).toDto(user);
+    }
+
+    // проверка правильности выбрасываемого исключения при не нахождении пользователя по id
+    @Test
+    void getById_ShouldThrowUserNotFoundException_WhenUserNotExists() {
+        final Long nonExistentId = 999L;
+        when(userRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+
+        assertThatThrownBy(() -> userService.getById(nonExistentId))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessageContaining("Пользователь с id " + nonExistentId + " не найден");
+
+        verify(userRepository).findById(nonExistentId);
+    }
+
+    // проверка отправки события в kafka при смене пароля
+    @Test
+    void changePassword_ShouldUpdatePasswordAndPublishEvent_WhenValidData() {
+        final Long userId = 1L;
+        final String oldPassword = password;
+        final String newPassword = "newValid123";
+        final String oldHash = BCrypt.hashpw(oldPassword, BCrypt.gensalt());
+
+        final  User user = new User(userId, UserRole.USER, fullName,
+                new Email(email), oldHash, LocalDateTime.now());
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        userService.changePassword(new ChangePasswordCommand(userId, oldPassword, newPassword));
+
+        verify(userRepository).save(user);
+        assertThat(BCrypt.checkpw(newPassword, user.getPasswordHash())).isTrue();
+        verify(eventPublisher).publish(any(PasswordChangedEvent.class));
+    }
+
+    // Тест проверяет, что метод changePassword() выбрасывает исключение InvalidPasswordException,
+    // когда пользователь пытается изменить пароль, но вводит неправильный старый пароль.
+    @Test
+    void changePassword_ShouldThrowException_WhenOldPasswordIncorrect() {
+        final Long userId = 1L;
+        final User user = new User(userId, UserRole.USER, fullName,
+                new Email(email), BCrypt.hashpw(password, BCrypt.gensalt()), LocalDateTime.now());
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        assertThatThrownBy(() ->
+                userService.changePassword(new ChangePasswordCommand(userId, "wrong", "newPass123")))
+                .isInstanceOf(InvalidPasswordException.class)
+                .hasMessageContaining("Текущий пароль некорректный");
+    }
+}
