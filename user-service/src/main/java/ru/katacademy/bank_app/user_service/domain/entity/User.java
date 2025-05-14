@@ -35,13 +35,21 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private final LocalDateTime createdAt;
 
+    public User(UserRole role,
+                String fullName,
+                Email email,
+                String passwordHash,
+                LocalDateTime createdAt) {
+        this(null, role, fullName, email, passwordHash, createdAt);
+    }
+
     public User(Long id,
                 UserRole role,
                 String fullName,
                 Email email,
                 String passwordHash,
                 LocalDateTime createdAt) {
-        this.id = Objects.requireNonNull(id, "id must not be null");
+        this.id = id; // Разрешаем null, т.к. id генерируется автоматически при сохранении объекта в БД
         this.role = Objects.requireNonNull(role, "role must not be null");
         this.fullName = Objects.requireNonNull(fullName, "fullName must not be null");
         this.email = Objects.requireNonNull(email, "email must not be null");

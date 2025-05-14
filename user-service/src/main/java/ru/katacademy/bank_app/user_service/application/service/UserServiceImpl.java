@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private PasswordChangeEventPublisher passwordChangeEventPublisher;
+    private final PasswordChangeEventPublisher passwordChangeEventPublisher;
 
     public UserServiceImpl(
             UserRepository userRepository,
