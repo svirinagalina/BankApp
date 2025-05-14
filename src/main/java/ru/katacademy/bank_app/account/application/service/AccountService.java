@@ -12,7 +12,6 @@ import ru.katacademy.bank_app.account.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.account.domain.repository.AccountRepository;
 import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper;
-import ru.katacademy.bank_app.audit.application.service.AuditService;
 import ru.katacademy.bank_app.notification.application.NotificationService;
 import ru.katacademy.bank_shared.exception.AccountNotFoundException;
 import ru.katacademy.bank_shared.exception.BusinessRuleViolationException;
@@ -37,7 +36,6 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final NotificationService notificationService;
     private final TransferEventPublisher eventPublisher;
-    private final AuditService auditService;
     private final TransferValidator validator;
 
     /**
@@ -87,9 +85,6 @@ public class AccountService {
                 amount,
                 LocalDateTime.now()
         );
-
-        // логирование информации о переводе
-        auditService.logTransfer(null, from, to, amount, "статус перевода");
 
         // публикация события в Kafka
         eventPublisher.publish(event);
