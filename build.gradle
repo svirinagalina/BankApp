@@ -60,8 +60,9 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// Testcontainers для Kafka
-	testImplementation 'org.testcontainers:testcontainers:1.19.3'
+	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:kafka:1.19.3'
+	testImplementation 'org.testcontainers:postgresql'
 }
 
 tasks.named('test') {
