@@ -4,6 +4,11 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import ru.katacademy.bank_shared.valueobject.Email;
 
+/**
+ * JPA-конвертер для value object'а {@link Email}.
+ * Используется для автоматического преобразования Email в строку при сохранении в БД
+ * и восстановления объекта Email из строки при загрузке.
+ */
 @Converter(autoApply = true)
 public class EmailAttributeConverter implements AttributeConverter<Email, String> {
 

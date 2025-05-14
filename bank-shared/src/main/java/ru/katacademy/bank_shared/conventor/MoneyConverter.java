@@ -7,11 +7,23 @@ import ru.katacademy.bank_shared.valueobject.Money;
 
 import java.math.BigDecimal;
 
+/**
+ * JPA-конвертер для value object'а {@link Money}.
+ * Используется для автоматического преобразования Money в строку при сохранении в БД
+ * и восстановления объекта Money из строки при загрузке.
+ */
 @Converter
 public class MoneyConverter implements AttributeConverter<Money, String> {
 
     private final CurrencyConverter currencyConverter = new CurrencyConverter();
 
+    /**
+     * Преобразует объект {@link Money} в строку для хранения в БД.
+     * Формат: "сумма|валюта", где валюта сериализована {@link CurrencyConverter}.
+     *
+     * @param money объект Money или null
+     * @return строковое представление или null
+     */
     @Override
     public String convertToDatabaseColumn(Money money) {
         if (money == null) {
@@ -22,6 +34,14 @@ public class MoneyConverter implements AttributeConverter<Money, String> {
         return amount + "|" + currency;
     }
 
+    /**
+     * Восстанавливает объект {@link Money} из строки БД.
+     * Ожидаемый формат: "сумма|валюта", где валюта — строка от {@link CurrencyConverter}.
+     *
+     * @param dbData строка из БД
+     * @return объект Money
+     * @throws NumberFormatException если сумма не является корректным числом
+     */
     @Override
     public Money convertToEntityAttribute(String dbData) {
         if (dbData == null || !dbData.contains("|")) {

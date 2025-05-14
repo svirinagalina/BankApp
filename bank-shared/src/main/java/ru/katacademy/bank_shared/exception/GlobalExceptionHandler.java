@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.shared.exception;
+package ru.katacademy.bank_shared.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -33,6 +32,7 @@ import java.util.Map;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
     /**
      * Обрабатывает исключение EmailAlreadyTakenException и возвращает HTTP 409 (Conflict).
      *
@@ -58,6 +58,28 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Validation failed");
         return buildResponse(message, HttpStatus.BAD_REQUEST, request);
+    }
+
+    /**
+     * Обрабатывает исключение InvalidEmailException и возвращает HTTP 400 Bad Request.
+     *
+     * @param e исключение, возникающее при попытке зарегистрировать некорректный email
+     * @return ResponseEntity с сообщением об ошибке, текущим временем и статусом 400 Bad Request
+     */
+    @ExceptionHandler(InvalidEmailException.class)
+    public ResponseEntity<Map<String, Object>> handleEmailAlreadyTaken(InvalidEmailException e, HttpServletRequest request) {
+        return buildResponse(e.getMessage(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    /**
+     * Обрабатывает исключение UserNotFoundException и возвращает HTTP 404 Not Found.
+     *
+     * @param e исключение, возникающее при попытке найти несуществующего юзера
+     * @return ResponseEntity с сообщением об ошибке, текущим временем и статусом 404 Not Found
+     */
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleEmailAlreadyTaken(UserNotFoundException e, HttpServletRequest request) {
+        return buildResponse(e.getMessage(), HttpStatus.NOT_FOUND, request);
     }
 
     /**

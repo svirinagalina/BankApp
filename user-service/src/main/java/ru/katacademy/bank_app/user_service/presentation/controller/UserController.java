@@ -15,6 +15,7 @@ import ru.katacademy.bank_app.user_service.application.dto.UserDto;
 import ru.katacademy.bank_app.user_service.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_shared.kafka.KafkaProducer;
 
 /**
  * Контроллер для управления пользователями через REST API.
@@ -33,9 +34,11 @@ import ru.katacademy.bank_shared.exception.UserNotFoundException;
 public class UserController {
 
     private final UserService userService;
+    private final KafkaProducer kafkaProducer;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, KafkaProducer kafkaProducer) {
         this.userService = userService;
+        this.kafkaProducer = kafkaProducer;
     }
 
     /**
@@ -79,4 +82,19 @@ public class UserController {
         final UserDto userDto = userService.getById(id);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
+    /**
+     * Отправляет сырое текстовое сообщение в указанный Kafka-топик.
+     * Пример:
+     * POST /api/test/send?topic=user-register-events
+     * Body: "Hello from TestKafkaController"
+     */
+    @PostMapping("/send")
+    public ResponseEntity<String> sendMessage(
+            @RequestParam("topic") String topic,
+            @RequestBody String message
+    ) {
+        kafkaProducer.send(topic, message);
+        return ResponseEntity.ok("Сообщение отправлено в топик «" + topic + "»");
+    }
+
 }
