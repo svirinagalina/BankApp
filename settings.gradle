@@ -7,6 +7,7 @@ pluginManagement {
 }
 
 include("bank-shared")
+include ("settings-service")
 
 rootProject.name = 'bank-app'
 include 'fraud-detection'

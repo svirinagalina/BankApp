@@ -29,4 +29,9 @@ public class KafkaConfiguration {
     public NewTopic createRegisterTopic() {
         return new NewTopic("user-register-events", 1, (short) 1);
     }
+
+    @Bean
+    public NewTopic createSettingsChangedTopic() {
+        return new NewTopic("settings-changed-topic", 1, (short) 1);
+    }
 }
