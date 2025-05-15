@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.kafka.config;
+package ru.katacademy.bank_app.kafka;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.TopicPartition;
