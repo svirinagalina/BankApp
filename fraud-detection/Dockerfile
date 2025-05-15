@@ -5,7 +5,8 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Копируем сборку jar (предположим, fat jar)
-COPY build/libs/fraud-detection-*.jar app.jar
+COPY build/libs/app.jar app.jar
+
 
 # Команда запуска
 ENTRYPOINT ["java", "-jar", "app.jar"]

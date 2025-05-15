@@ -33,6 +33,7 @@ public class FraudDetectionService {
             throw new IllegalArgumentException("Событие перевода не может быть null");
         }
 
+
         /**
          * Проверяет сумму на превышение порогового значения.
          */
