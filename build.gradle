@@ -22,7 +22,7 @@ configurations {
 
 checkstyle {
 	toolVersion = '10.12.3'
-	configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
 }
 
 
@@ -45,6 +45,7 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation(project(":bank-shared"))
+	implementation 'junit:junit:4.13.1'
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -57,6 +58,7 @@ dependencies {
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation("org.mockito:mockito-core:5.17.0")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// Testcontainers для Kafka
