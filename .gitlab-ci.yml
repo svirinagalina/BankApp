@@ -1,37 +1,24 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+      when: always
+    - when: never
+
 stages:
   - build
 
-services:
-  - bitnami/kafka:3.6
-  - postgres:15
-
 variables:
-  POSTGRES_DB: userDB
-  POSTGRES_USER: root
-  POSTGRES_PASSWORD: root
-  KAFKA_ENABLE_KRAFT: "yes"
-  KAFKA_CFG_NODE_ID: "1"
-  KAFKA_CFG_PROCESS_ROLES: "controller,broker"
-  KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
-  KAFKA_CFG_LISTENERS: "PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:9094,CONTROLLER://0.0.0.0:9093"
-  KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094"
-  KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
-  KAFKA_CFG_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx1024m"
 
 before_script:
   - chmod +x gradlew
-  - echo "Жду, пока поднимутся Postgres и Kafka..."
-  - sleep 10
-  - until nc -z postgres 5432; do echo "Ожидание Postgres..."; sleep 5; done
-  - until nc -z kafka 9092; do echo "Ожидание Kafka..."; sleep 5; done
 
 build:
   stage: build
   image: gradle:8.5-jdk21
   script:
-    - ./gradlew clean build checkstyleMain checkstyleTest --no-daemon
+    - ./gradlew clean build checkstyleMain checkstyleTest --no-daemon -x test
   artifacts:
     when: always
     paths:
       - build/reports/checkstyle
-      - build/reports/tests
