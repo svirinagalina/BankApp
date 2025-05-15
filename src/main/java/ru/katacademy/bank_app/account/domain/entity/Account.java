@@ -23,7 +23,7 @@ import java.math.BigDecimal;
  * @author Sheffy
  */
 @Getter
-public class Account {
+public final class Account {
     private Money money;
     private AccountStatus status;
     private final AccountNumber accountNumber;
