@@ -2,27 +2,20 @@ stages:
   - build
 
 services:
-  - name: wurstmeister/zookeeper:3.4.6
-    alias: zookeeper
-  - name: wurstmeister/kafka:2.13-2.8.1
-    alias: kafka
-  - name: postgres:15
-    alias: postgres
-  - name: postgres:15
-    alias: user-service_postgres
+  - wurstmeister/zookeeper:3.4.6
+  - wurstmeister/kafka:2.13-2.8.1
+  - postgres:15
 
 variables:
+  # Kafka
+  KAFKA_ZOOKEEPER_CONNECT: wurstmeister_zookeeper_1:2181  # имя контейнера!
   KAFKA_ADVERTISED_HOST_NAME: kafka
-  KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
   KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  # Postgres
   POSTGRES_DB: userDB
   POSTGRES_USER: root
   POSTGRES_PASSWORD: root
-
-  USER_SERVICE_POSTGRES_DB: mainDB
-  USER_SERVICE_POSTGRES_USER: root
-  USER_SERVICE_POSTGRES_PASSWORD: root
 
 before_script:
   - chmod +x gradlew
