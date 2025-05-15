@@ -1,0 +1,9 @@
+<FindBugsFilter>
+<!--    <Match>-->
+<!--        <Bug pattern="NP_ALWAYS_NULL"/>-->
+<!--    </Match>-->
+
+<!--    <Match>-->
+<!--        <Package name="~.*\.dto"/>-->
+<!--    </Match>-->
+</FindBugsFilter>

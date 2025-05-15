@@ -22,17 +22,15 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     private final JpaAccountRepository jpaAccountRepository;
 
-    /**
-     * Конструктор репозитория.
-     *
-     * @param jpaAccountRepository JPA-репозиторий счетов (не должен быть null)
-     * @throws IllegalArgumentException если jpaAccountRepository == null
-     */
     public AccountRepositoryImpl(JpaAccountRepository jpaAccountRepository) {
+        this.jpaAccountRepository = jpaAccountRepository;
+    }
+
+    public static AccountRepositoryImpl create(JpaAccountRepository jpaAccountRepository) {
         if (jpaAccountRepository == null) {
             throw new IllegalArgumentException("JpaAccountRepository не может быть null");
         }
-        this.jpaAccountRepository = jpaAccountRepository;
+        return new AccountRepositoryImpl(jpaAccountRepository);
     }
 
     /**

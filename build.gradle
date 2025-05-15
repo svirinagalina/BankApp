@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.0-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'checkstyle'
+	id("com.github.spotbugs") version "6.1.11"
 }
 
 group = 'ru.katacademy'
@@ -25,12 +26,18 @@ checkstyle {
 	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
 }
 
-
+tasks.spotbugsMain {
+	reports.create("html") {
+		required = true
+		outputLocation = file("$rootDir/reports/spotbugs.html")
+		setStylesheet("fancy-hist.xsl")
+	}
+}
 
 repositories {
 	mavenCentral()
-	maven { url 'https://repo.spring.io/milestone' }
-	maven { url 'https://repo.spring.io/snapshot' }
+	maven { url = 'https://repo.spring.io/milestone' }
+	maven { url = 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
@@ -55,10 +62,16 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 
 	// Testing
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation("org.mockito:mockito-core:5.17.0")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Testcontainers для Kafka
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:kafka:1.19.3'
+	testImplementation 'org.testcontainers:postgresql'
 }
 
 tasks.named('test') {

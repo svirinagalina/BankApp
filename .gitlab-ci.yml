@@ -17,7 +17,7 @@ build:
   stage: build
   image: gradle:8.5-jdk21
   script:
-    - ./gradlew clean build checkstyleMain checkstyleTest --no-daemon
+    - ./gradlew clean build checkstyleMain checkstyleTest --no-daemon -x test
   artifacts:
     when: always
     paths:

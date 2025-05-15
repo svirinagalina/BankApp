@@ -31,6 +31,21 @@ public class KafkaConfiguration {
     }
 
     @Bean
+    public NewTopic createTransferErrorTopic() {
+        return new NewTopic("transfer.error", 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic createRegestrationErrorTopic() {
+        return new NewTopic("user-registration.error", 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic createAuditErrorTopic() {
+        return new NewTopic("audit.error", 1, (short) 1);
+    }
+
+    @Bean
     public NewTopic createSettingsChangedTopic() {
         return new NewTopic("settings-changed-topic", 1, (short) 1);
     }
