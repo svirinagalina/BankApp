@@ -15,7 +15,7 @@ import ru.katacademy.bank_app.user_service.application.dto.UserDto;
 import ru.katacademy.bank_app.user_service.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
-import ru.katacademy.bank_shared.kafka.KafkaProducer;
+import ru.katacademy.bank_shared.exception.InvalidEmailException;
 
 /**
  * Контроллер для управления пользователями через REST API.
@@ -34,11 +34,9 @@ import ru.katacademy.bank_shared.kafka.KafkaProducer;
 public class UserController {
 
     private final UserService userService;
-    private final KafkaProducer kafkaProducer;
 
-    public UserController(UserService userService, KafkaProducer kafkaProducer) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.kafkaProducer = kafkaProducer;
     }
 
     /**
@@ -47,6 +45,7 @@ public class UserController {
      * @param cmd команда с данными для регистрации
      * @return DTO зарегистрированного пользователя
      * @throws EmailAlreadyTakenException если email уже зарегистрирован
+     * @throws InvalidEmailException если Email не валидный
      */
     @Operation(summary = "Регистрация пользователя", description = "Создаёт нового пользователя с переданными данными.")
     @ApiResponses(value = {
