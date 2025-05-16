@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с сообщением об ошибке, текущим временем и статусом 400 Bad Request
      */
     @ExceptionHandler(InvalidEmailException.class)
-    public ResponseEntity<Map<String, Object>> handleEmailAlreadyTaken(InvalidEmailException e, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> handleInvalidEmailException(InvalidEmailException e, HttpServletRequest request) {
         return buildResponse(e.getMessage(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity с сообщением об ошибке, текущим временем и статусом 404 Not Found
      */
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleEmailAlreadyTaken(UserNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> handleUserNotFoundException(UserNotFoundException e, HttpServletRequest request) {
         return buildResponse(e.getMessage(), HttpStatus.NOT_FOUND, request);
     }
 
