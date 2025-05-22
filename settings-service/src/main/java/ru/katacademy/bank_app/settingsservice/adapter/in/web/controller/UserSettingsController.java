@@ -36,7 +36,7 @@ public class UserSettingsController {
         userSettingsService.update(userId, command);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{userId}")
     public void resetUserSettings(@PathVariable Long userId) {
         userSettingsService.reset(userId);
     }
