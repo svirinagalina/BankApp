@@ -45,5 +45,6 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
                 LocalDateTime.now(),
                 success
         );
+        loginAttemptRepository.save(entry);
     }
 }

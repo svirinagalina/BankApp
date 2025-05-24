@@ -45,9 +45,9 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    private final String fullName = "Тест Тестович Тестов";
-    private final String email = "test@mail.ru";
-    private final String password = "password123";
+    private final static String fullName = "Тест Тестович Тестов";
+    private final static String email = "test@mail.ru";
+    private final static String password = "password123";
 
     // Проверяем добавление нового пользователя
     @Test
