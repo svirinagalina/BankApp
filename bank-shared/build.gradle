@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.0-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id("com.github.spotbugs") version "6.1.11"
 }
 
 group = 'ru.katacademy.bank-app'
@@ -17,6 +18,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.kafka:spring-kafka'
+
+	compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
+	annotationProcessor 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 }
 
 repositories {
@@ -24,6 +28,19 @@ repositories {
 	maven { url = 'https://repo.spring.io/milestone' }
 	maven { url = 'https://repo.spring.io/snapshot' }
 }
+
+tasks.spotbugsMain {
+	reports.create("html") {
+		required = true
+		outputLocation = file("$rootDir/reports/spotbugs-bank-shared.html")
+		setStylesheet("fancy-hist.xsl")
+	}
+}
+
+check.dependsOn spotbugsMain
+
+check.dependsOn spotbugsTest
+
 bootJar {
 	enabled = false
 }
