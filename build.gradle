@@ -54,7 +54,6 @@ dependencies {
 	implementation(project(":bank-shared"))
 	implementation 'junit:junit:4.13.1'
 
-
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

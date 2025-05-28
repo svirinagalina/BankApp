@@ -18,7 +18,6 @@ public class KafkaProducer {
      *
      * @param kafkaTemplate {@link KafkaTemplate} для работы с Kafka.
      */
-
     @Autowired
     @SuppressFBWarnings(
             value = "EI_EXPOSE_REP2",
