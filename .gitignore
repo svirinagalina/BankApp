@@ -36,6 +36,6 @@ out/
 /.nb-gradle/
 
 ###Spotbugs
-reportsv
+reports
 ### VS Code ###
 .vscode/
