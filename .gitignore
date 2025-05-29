@@ -35,5 +35,7 @@ out/
 /nbdist/
 /.nb-gradle/
 
+###Spotbugs
+reports
 ### VS Code ###
 .vscode/

@@ -1,5 +1,6 @@
 package ru.katacademy.bank_shared.kafka;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,10 @@ public class KafkaProducer {
      * @param kafkaTemplate {@link KafkaTemplate} для работы с Kafka.
      */
     @Autowired
+    @SuppressFBWarnings(
+            value = "EI_EXPOSE_REP2",
+            justification = "KafkaTemplate is thread-safe and managed by Spring container"
+    )
     public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
