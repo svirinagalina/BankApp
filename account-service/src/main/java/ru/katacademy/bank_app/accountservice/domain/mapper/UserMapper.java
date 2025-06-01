@@ -14,6 +14,7 @@ import ru.katacademy.bank_app.accountservice.domain.entity.User;
 @Component
 public class UserMapper {
     /**
+     *
      * Преобразует сущность User в DTO.
      *
      * @param user пользователь

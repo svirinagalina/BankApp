@@ -8,11 +8,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.katacademy.bank_app.user_service.application.dto.RegisterUserCommand;
-import ru.katacademy.bank_app.user_service.application.dto.UserDto;
-import ru.katacademy.bank_app.user_service.domain.enumtype.UserRole;
-import ru.katacademy.bank_app.user_service.domain.service.UserService;
-import ru.katacademy.bank_app.user_service.presentation.controller.UserController;
+import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
+import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
+import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
+import ru.katacademy.bank_app.accountservice.domain.service.UserService;
+import ru.katacademy.bank_app.accountservice.presentation.controller.UserController;
 import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
 
