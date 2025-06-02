@@ -3,37 +3,33 @@ plugins {
 	id 'org.springframework.boot' version '3.5.0-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'checkstyle'
+	id 'com.github.spotbugs'
 }
-
 group = 'ru.katacademy.bank_app'
 version = '0.0.1-SNAPSHOT'
-
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
-}
 
+}
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
 }
-
 checkstyle {
 	toolVersion = '10.12.3'
 	configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
 }
-
-
-
 repositories {
 	mavenCentral()
 	maven { url = 'https://repo.spring.io/milestone' }
 	maven { url = 'https://repo.spring.io/snapshot' }
 }
-
 dependencies {
+	// SpotBugs
+	implementation 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 	// Spring Boot Starters
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -45,24 +41,34 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation(project(":bank-shared"))
-
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
+	compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 	annotationProcessor 'org.projectlombok:lombok'
-
 	// Database
 	runtimeOnly 'org.postgresql:postgresql'
-
 	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+spotbugs {
+	toolVersion = '4.8.3'
+	ignoreFailures = true
+	showStackTraces = true
+}
+
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+	reports {
+		html.required.set(true)
+		html.outputLocation.set(file("$buildDir/reports/spotbugs.html"))
+	}
+}
+
 bootJar {
 	archiveFileName = 'app.jar'
 }
-
 tasks.named('test') {
 	useJUnitPlatform()
 }
