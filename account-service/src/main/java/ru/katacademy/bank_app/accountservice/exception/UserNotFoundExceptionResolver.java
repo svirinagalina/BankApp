@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.user_service.exception;
+package ru.katacademy.bank_app.accountservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

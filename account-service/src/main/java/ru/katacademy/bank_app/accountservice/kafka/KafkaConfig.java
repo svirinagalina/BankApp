@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.user_service.kafka;
+package ru.katacademy.bank_app.accountservice.kafka;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

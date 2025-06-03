@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.user_service.controller;
+package ru.katacademy.bank_app.accountservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -36,6 +36,7 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -44,8 +45,8 @@ public class UserControllerTest {
      */
     @Test
     void registerUser_shouldReturn201() throws Exception {
-        RegisterUserCommand command = new RegisterUserCommand("John", "user@example.com", "123");
-        UserDto userDto = new UserDto(1L, "John", "user@example.com", UserRole.USER);
+        final RegisterUserCommand command = new RegisterUserCommand("John", "user@example.com", "123");
+        final UserDto userDto = new UserDto(1L, "John", "user@example.com", UserRole.USER);
 
         given(userService.register(command)).willReturn(userDto);
 
@@ -62,7 +63,7 @@ public class UserControllerTest {
      */
     @Test
     void registerUser_shouldReturn400WhenEmailFormatIsInvalid() throws Exception {
-        RegisterUserCommand command = new RegisterUserCommand("invalid-email-format", "John", "123");
+        final RegisterUserCommand command = new RegisterUserCommand("invalid-email-format", "John", "123");
 
         mockMvc.perform(post("/api/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -75,8 +76,8 @@ public class UserControllerTest {
      */
     @Test
     void getById_shouldReturn200WhenUserExists() throws Exception {
-        long userId = 1L;
-        UserDto userDto = new UserDto(userId, "John", "john@example.com", UserRole.USER);
+        final long userId = 1L;
+        final UserDto userDto = new UserDto(userId, "John", "john@example.com", UserRole.USER);
         given(userService.getById(userId)).willReturn(userDto);
 
         mockMvc.perform(get("/api/users/{id}", userId))
@@ -92,7 +93,7 @@ public class UserControllerTest {
      */
     @Test
     void getById_shouldReturn404WhenUserNotFound() throws Exception {
-        long userId = 999L;
+        final long userId = 999L;
         given(userService.getById(userId)).willThrow(new UserNotFoundException(String.valueOf(userId)));
 
         mockMvc.perform(get("/api/users/{id}", userId))

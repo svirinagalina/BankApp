@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.user_service.service.user.application;
+package ru.katacademy.bank_app.accountservice.application;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,9 +45,9 @@ class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    private final static String fullName = "Тест Тестович Тестов";
-    private final static String email = "test@mail.ru";
-    private final static String password = "password123";
+    private final String fullName = "Тест Тестович Тестов";
+    private final String email = "test@mail.ru";
+    private final String password = "password123";
 
     // Проверяем добавление нового пользователя
     @Test
