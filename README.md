@@ -32,16 +32,16 @@
 
 ## 📂 Модули (будущие микросервисы)
 
-- User Service
-- Account Service
-- Transaction Service
-- Notification Service
-- Audit Service
-- KYC Service
-- Loan Service
-- Fraud Detection
-- Security (SOWA-lite)
-- API Gateway
+- User Service (:8083)
+- Account Service ()
+- Transaction Service ()
+- Notification Service ()
+- Audit Service ()
+- KYC Service ()
+- Loan Service ()
+- Fraud Detection ()
+- Security (SOWA-lite) (:8085)
+- API Gateway ()
 
 ## Статический анализ кода
 Проект использует SpotBugs для статического анализа кода.

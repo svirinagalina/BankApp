@@ -1,4 +1,4 @@
-package ru.katacademy.securityservice.controller;
+package ru.katacademy.securityservice.presentation.controller;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

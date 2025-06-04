@@ -145,6 +145,7 @@ services:
     container_name: security-service
     ports:
       - "8085:8080"
+    restart: always
 
 volumes:
   postgres_data:
