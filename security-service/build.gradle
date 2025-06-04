@@ -3,35 +3,47 @@ plugins {
 	id 'org.springframework.boot' version '3.5.0'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'checkstyle'
-	id 'com.github.spotbugs'
+	id("com.github.spotbugs") version "6.1.11"
 }
-group = 'ru.katacademy.bank_app'
+
+group = 'ru.katacademy'
 version = '0.0.1-SNAPSHOT'
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
-
 }
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
 }
+
 checkstyle {
 	toolVersion = '10.12.3'
-	configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
+	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
 }
+
+tasks.spotbugsMain {
+	reports.create("html") {
+		required = true
+		outputLocation = file("$rootDir/reports/spotbugs.html")
+		setStylesheet("fancy-hist.xsl")
+	}
+}
+
 repositories {
 	mavenCentral()
 	maven { url = 'https://repo.spring.io/milestone' }
 	maven { url = 'https://repo.spring.io/snapshot' }
 }
+
 dependencies {
-	// SpotBugs
-	implementation 'com.github.spotbugs:spotbugs-annotations:4.8.3'
-	// Spring Boot Starters
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'javax.validation:validation-api:2.0.1.Final'
@@ -40,35 +52,32 @@ dependencies {
 	implementation 'org.postgresql:postgresql:42.7.2'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 	implementation 'org.springframework.kafka:spring-kafka'
-	implementation(project(":bank-shared"))
+	implementation 'junit:junit:4.13.1'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
-	compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	// Database
 	runtimeOnly 'org.postgresql:postgresql'
+
 	// Testing
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation("org.mockito:mockito-core:5.17.0")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Testcontainers для Kafka
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:kafka:1.19.3'
+	testImplementation 'org.testcontainers:postgresql'
+
 }
 
-spotbugs {
-	toolVersion = '4.8.3'
-	ignoreFailures = true
-	showStackTraces = true
-}
-
-tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
-	reports {
-		html.required.set(true)
-		html.outputLocation.set(file("$buildDir/reports/spotbugs.html"))
-	}
-}
-
-bootJar {
-	archiveFileName = 'app.jar'
-}
 tasks.named('test') {
 	useJUnitPlatform()
 }
