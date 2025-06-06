@@ -13,7 +13,4 @@ include("security-service")
 rootProject.name = 'bank-app'
 include 'fraud-detection'
 include 'audit'
-include 'user-service'
-include 'swagger-gateway'
-
-
+include 'account-service'
