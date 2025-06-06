@@ -1,0 +1,6 @@
+#server:
+#  port: 8080
+#
+#jwt:
+#  secret: "MySuperSecretKeyThatShouldBeLongEnough123456"
+#  expiration-ms: 3600000
