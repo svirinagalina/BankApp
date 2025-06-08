@@ -7,7 +7,7 @@ pluginManagement {
 }
 
 include("bank-shared")
-include ("settings-service")
+include("settings-service")
 include("security-service")
 
 rootProject.name = 'bank-app'
