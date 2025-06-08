@@ -8,7 +8,6 @@ pluginManagement {
 
 include("bank-shared")
 include ("settings-service")
-
 rootProject.name = 'bank-app'
 include 'fraud-detection'
 include 'audit'
@@ -16,3 +15,4 @@ include 'user-service'
 include 'swagger-gateway'
 include 'auth-statistics-service'
 
+include 'account-service'
