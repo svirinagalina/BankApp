@@ -21,28 +21,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: userDB
+      POSTGRES_DB: mainDB
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  user-service_postgres:
-    image: postgres:15
-    container_name: user-service-postgres
-    restart: always
-    ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_DB: mainDB
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_HOST_AUTH_METHOD: trust
-    volumes:
-      - user-db-data:/var/lib/postgresql/data
-      - ./main.sql:/docker-entrypoint-initdb.d/main.sql
 
   kafka:
     image: bitnami/kafka:3.6
