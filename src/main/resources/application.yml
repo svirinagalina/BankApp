@@ -40,3 +40,5 @@ springdoc:
         url: http://localhost:8082/v3/api-docs
       - name: security-service
         url: http://localhost:8085/v3/api-docs
+
+

@@ -1,3 +1,0 @@
-#jwt:
-#  secret: testsecretkeyfortestpurposesonly1234567890
-#  expiration-ms: 3600000
