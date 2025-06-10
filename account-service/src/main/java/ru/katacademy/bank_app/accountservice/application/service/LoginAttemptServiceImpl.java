@@ -1,7 +1,9 @@
 package ru.katacademy.bank_app.accountservice.application.service;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.accountservice.domain.entity.LoginAttemptEntry;
+import ru.katacademy.bank_app.accountservice.domain.events.LoginAttemptedEvent;
 import ru.katacademy.bank_app.accountservice.domain.repository.LoginAttemptRepository;
 import ru.katacademy.bank_app.accountservice.domain.service.LoginAttemptService;
 
@@ -13,9 +15,11 @@ import java.time.LocalDateTime;
 public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     private final LoginAttemptRepository loginAttemptRepository;
+    private final KafkaTemplate<String, LoginAttemptedEvent> kafkaTemplate;
 
-    public LoginAttemptServiceImpl(LoginAttemptRepository loginAttemptRepository) {
+    public LoginAttemptServiceImpl(LoginAttemptRepository loginAttemptRepository, KafkaTemplate<String, LoginAttemptedEvent> kafkaTemplate) {
         this.loginAttemptRepository = loginAttemptRepository;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     /**
@@ -47,5 +51,13 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
                 success
         );
         loginAttemptRepository.save(entry);
+        LoginAttemptedEvent event = new LoginAttemptedEvent(
+                userId,
+                ip,
+                userAgent,
+                LocalDateTime.now(),
+                success
+        );
+        kafkaTemplate.send("login-attempts-topic", event);
     }
 }

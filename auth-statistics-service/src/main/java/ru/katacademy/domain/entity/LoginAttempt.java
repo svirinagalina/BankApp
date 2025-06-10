@@ -23,11 +23,11 @@ public class LoginAttempt {
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
-    @Column(name = "status", nullable = false)
-    private boolean status;
+    @Column(name = "success", nullable = false)
+    private boolean success;
 
     @Column(name = "ip_address")
-    private String ipAddress;
+    private String ip;
 
     @Column(name = "user_agent")
     private String userAgent;
