@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: security-service
+
+jwt:
+  secret: "testsecretkeyfortestpurposesonly1234567890"
+  expiration-ms: 3600000
+
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

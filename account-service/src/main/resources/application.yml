@@ -1,5 +1,5 @@
 server:
-  port: 8084
+  port: 8080
 
 spring:
   application:
@@ -25,3 +25,10 @@ spring:
 #  spring.jpa.hibernate.ddl-auto=create-drop
 #  spring.jpa.show-sql=true
 #  spring.jpa.properties.hibernate.format_sql=true
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
