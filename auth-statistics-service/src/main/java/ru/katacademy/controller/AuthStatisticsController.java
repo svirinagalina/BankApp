@@ -25,26 +25,34 @@ public class AuthStatisticsController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<LoginAttemptDto>> getLoginAttemptHistoryByUser(@PathVariable Long userId) {
-        List<LoginAttempt> attempts = loginAttemptRepository.findByUserId(userId);
-        List<LoginAttemptDto> dto = attempts.stream().map(loginAttemptMapper::toDto).toList();
+        var attempts = loginAttemptRepository.findByUserId(userId);
+        var dto = attempts.stream().map(loginAttemptMapper::toDto).toList();
         return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/user/{userId}/filter")
     public ResponseEntity<List<LoginAttemptDto>> getFilteredLoginAttempt(
             @PathVariable Long userId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime start,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime end,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end,
             @RequestParam(required = false) Boolean success) {
         List<LoginAttempt> attempts;
-        if (start != null && end != null) {
-            attempts = loginAttemptRepository.findByTimestamp(start, end);
-        } else if (success != null) {
-            attempts = loginAttemptRepository.findBySuccess(success);
-        } else {
-            attempts = loginAttemptRepository.findByUserId(userId);
-        }
-        List<LoginAttemptDto> dto = attempts.stream().map(loginAttemptMapper::toDto).toList();
+        attempts = getLoginAttempts(userId, start, end, success);
+        var dto = attempts.stream()
+                .map(loginAttemptMapper::toDto)
+                .toList();
         return ResponseEntity.ok(dto);
+
+
+    }
+
+    private List<LoginAttempt> getLoginAttempts(Long userId, LocalDateTime start, LocalDateTime end, Boolean success) {
+        if (start != null && end != null) {
+            return loginAttemptRepository.findByTimestamp(start, end);
+        }
+        if (success != null) {
+            return loginAttemptRepository.findBySuccess(success);
+        }
+        return loginAttemptRepository.findByUserId(userId);
     }
 }

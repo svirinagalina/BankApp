@@ -3,6 +3,7 @@ package ru.katacademy.kafka.consumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import ru.katacademy.bank_app.accountservice.domain.events.LoginAttemptedEvent;
 import ru.katacademy.domain.entity.LoginAttempt;
 import ru.katacademy.domain.repository.LoginAttemptRepository;
 
@@ -18,7 +19,7 @@ public class LoginAttemptConsumer {
         attempt.setIp(event.getIp());
         attempt.setUserAgent(event.getUserAgent());
         attempt.setTimestamp(event.getTimestamp());
-        attempt.setSuccess(event.getSuccess());
+        attempt.setSuccess(event.isSuccess());
 
         loginAttemptRepository.save(attempt);
     }
