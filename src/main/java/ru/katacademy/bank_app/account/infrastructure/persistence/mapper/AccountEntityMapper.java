@@ -10,6 +10,10 @@ import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountE
  */
 public class AccountEntityMapper {
 
+    private AccountEntityMapper(){
+        // запрещаем создание экземпляра
+    }
+
     /**
      * Конвертирует доменную модель в persistence сущность.
      *
@@ -31,7 +35,7 @@ public class AccountEntityMapper {
      * @return доменная модель
      */
     public static Account toAccount(AccountEntity accountEntity) {
-        return new Account(
+        return Account.newAccount(
                 accountEntity.getAccountNumber(),
                 accountEntity.getMoney(),
                 accountEntity.getStatus()
