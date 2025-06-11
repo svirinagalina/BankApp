@@ -1,8 +1,9 @@
-package ru.katacademy.bank_app.user_service.config;
+package ru.katacademy.securityservice.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 /**
  * - CorsConfig - для настройки HTTP-запросов между фронтендом и бэкэндом.
  * - WebMvcConfigurer - интерфейс для интеграции с Spring MVC
@@ -15,14 +16,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * - @param registry - для регистрации настроек.
  *
  * Автор: Быстров М
- * Дата: 03.06.2025
+ * Дата: 04.06.2025
  */
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
     /**
      * - addMapping("/**") - применение ко всем REST -путям
      * - allowedOrigins("http://localhost:8080") - источник запросов(swagger)
-     * - allowedMethods("GET", "POST") - список методов,
+     * - allowedMethods("POST") - список методов,
      * для использования в запросах.
      *
      */
@@ -30,6 +31,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:8080")
-                .allowedMethods("GET", "POST");
+                .allowedMethods("*")
+                .allowedHeaders("*");
     }
 }

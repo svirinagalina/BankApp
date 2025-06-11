@@ -142,6 +142,15 @@ services:
 
 
 
+  security-service:
+    build:
+      context: ./security-service
+      dockerfile: Dockerfile
+    container_name: security-service
+    ports:
+      - "8085:8080"
+    restart: always
+
 volumes:
   postgres_data:
   kafka_data:
