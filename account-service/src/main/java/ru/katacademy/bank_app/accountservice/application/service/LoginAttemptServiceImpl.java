@@ -8,7 +8,6 @@ import ru.katacademy.bank_app.accountservice.domain.repository.LoginAttemptRepos
 import ru.katacademy.bank_app.accountservice.domain.service.LoginAttemptService;
 
 
-
 import java.time.LocalDateTime;
 
 @Service
@@ -28,18 +27,20 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
      * Этот метод создает запись о попытке входа, включая информацию о пользователе,
      * его IP-адресе, типе пользовательского агента и статусе успеха. Также автоматически
      * присваивается текущая временная метка для каждой попытки входа.
+     * Метод создает объект события {@link LoginAttemptedEvent} с переданными параметрами.
+     * Отправляет событие о попытке входа в Kafka-топик {@code login-attempts-topic}
      * </p>
      *
-     * @param userId   Идентификатор пользователя, пытающегося войти в систему.
-     * @param email    Электронная почта пользователя, связанная с попыткой входа.
-     * @param ip       IP-адрес, с которого была осуществлена попытка входа.
+     * @param userId    Идентификатор пользователя, пытающегося войти в систему.
+     * @param email     Электронная почта пользователя, связанная с попыткой входа.
+     * @param ip        IP-адрес, с которого была осуществлена попытка входа.
      * @param userAgent Информация о браузере или устройстве пользователя,
      *                  отправленная в заголовках HTTP.
-     * @param success  Флаг, указывающий, была ли попытка входа успешной
-     *                 (true) или нет (false).
-     *
-     * Автор: Колпаков А.С..
-     * Дата: 2025-05-05
+     * @param success   Флаг, указывающий, была ли попытка входа успешной
+     *                  (true) или нет (false).
+     *                  <p>
+     *                  Автор: Колпаков А.С..
+     *                  Дата: 2025-05-05
      */
     public void recordLoginAttempt(Long userId, String email, String ip, String userAgent, boolean success) {
         final LoginAttemptEntry entry = new LoginAttemptEntry(
@@ -51,7 +52,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
                 success
         );
         loginAttemptRepository.save(entry);
-        LoginAttemptedEvent event = new LoginAttemptedEvent(
+        final LoginAttemptedEvent event = new LoginAttemptedEvent(
                 userId,
                 ip,
                 userAgent,
