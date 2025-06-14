@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Автор: Maxim4212
  * Дата: 2025-05-11
  */
-class AccountTest {
+public class AccountTest {
 
     private Account sourceAccount;
     private Account targetAccount;
@@ -40,11 +40,15 @@ class AccountTest {
      */
     @BeforeEach
     void setUp() {
-       final Currency currency = new Currency("USD", "Доллар США", 2);
-        sourceAccount = Account .newAccount(new AccountNumber("01234567899876543210"), new Money(new BigDecimal("100.00"),
-                currency), AccountStatus.ACTIVE);
-        targetAccount = Account.newAccount(new AccountNumber("98765432100123456789"), new Money(new BigDecimal("50.00"),
-                currency), AccountStatus.ACTIVE);
+        final Currency currency = new Currency("USD", "Доллар США", 2);
+        sourceAccount = Account.newAccount(
+                new AccountNumber("01234567899876543210"),
+                new Money(new BigDecimal("100.00"), currency),
+                AccountStatus.ACTIVE);
+        targetAccount = Account.newAccount(
+                new AccountNumber("98765432100123456789"),
+                new Money(new BigDecimal("50.00"), currency),
+                AccountStatus.ACTIVE);
         amount = new Money(new BigDecimal("50.00"), currency);
         bigAmount = new Money(new BigDecimal("150.00"), currency);
         transferValidator = new TransferValidator();
