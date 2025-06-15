@@ -5,7 +5,7 @@ import org.testcontainers.containers.GenericContainer;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class   DockerPingTest {
+class DockerPingTest {
 
     @Test
     void dockerShouldBeAccessible() {

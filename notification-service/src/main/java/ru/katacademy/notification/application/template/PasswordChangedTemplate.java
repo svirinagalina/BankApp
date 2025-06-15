@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PasswordChangedTemplate {
-    public String passwordChangedMessage (String username) {
+    public String passwordChangedMessage(String username) {
         return "Здравствуйте, " + username + ". Ваш пароль был успешно изменён.";
     }
 }

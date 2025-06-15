@@ -19,7 +19,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     // Внедрение зависимостей, для методов
     public NotificationServiceImpl(PasswordChangedTemplate passwordChangedTemplate, TransferNotificationTemplate transferNotificationTemplate
-    , WelcomeTemplate welcomeTemplate, NotificationSender notificationSender) {
+            , WelcomeTemplate welcomeTemplate, NotificationSender notificationSender) {
 
         this.passwordChangedTemplate = passwordChangedTemplate;
         this.transferNotificationTemplate = transferNotificationTemplate;
@@ -38,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void handleTransferCompletedEvent(TransferCompletedEvent event) {
-        String text = transferNotificationTemplate.transferMessage(event.getUsername(),event.getAmount(),event.getRecipient());
+        String text = transferNotificationTemplate.transferMessage(event.getUsername(), event.getAmount(), event.getRecipient());
         notificationSender.send(text);
 
 
