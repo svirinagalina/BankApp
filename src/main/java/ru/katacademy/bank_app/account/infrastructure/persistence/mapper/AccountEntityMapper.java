@@ -10,8 +10,10 @@ import ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountE
  */
 public class AccountEntityMapper {
 
-    private AccountEntityMapper(){
-        // запрещаем создание экземпляра
+    /**
+     * Приватный конструктор предотвращает создание экземпляра утилитарного класса.
+     */
+    private AccountEntityMapper() {
     }
 
     /**
