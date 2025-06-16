@@ -1,27 +1,39 @@
 package ru.katacademy.bank_app.accountservice.infrastructure.health;
 
+import org.apache.kafka.clients.admin.AdminClient;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class KafkaHealthIndicator implements HealthIndicator {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaAdmin kafkaAdmin;
 
-    public KafkaHealthIndicator(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
+    public KafkaHealthIndicator(KafkaAdmin kafkaAdmin) {
+        this.kafkaAdmin = kafkaAdmin;
     }
 
     @Override
     public Health health() {
-        try {
-            kafkaTemplate.metrics(); // проверка живости Kafka
-            return Health.up().withDetail("Kafka", "Available").build();
+        try (AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties())) {
+            adminClient.describeCluster()
+                    .nodes()
+                    .get(5, TimeUnit.SECONDS);
+            return Health.up().withDetail("message", "Kafka is available").build();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return Health.down()
+                    .withDetail("error", "Thread was interrupted: " + e.getMessage())
+                    .build();
         } catch (Exception e) {
-            return Health.down().withDetail("Kafka", "Unavailable").withException(e).build();
+            return Health.down()
+                    .withDetail("error", "Kafka is unavailable: " + e.getMessage())
+                    .build();
         }
     }
 }
-

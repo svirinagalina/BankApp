@@ -30,12 +30,9 @@ springdoc:
     path: /swagger-ui.html
 
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health,liveness,readiness,ping
   endpoint:
     health:
-      probes:
-        enabled: true
       show-details: always
+      group:
+        readiness:
+          include: kafka,db
