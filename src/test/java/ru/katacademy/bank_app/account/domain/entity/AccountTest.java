@@ -34,18 +34,21 @@ public class AccountTest {
     private Account targetAccount;
     private Money amount, bigAmount;
     private TransferValidator transferValidator;
-    private Currency currency;
 
     /**
      * Инициализирует данные перед каждым тестом
      */
     @BeforeEach
     void setUp() {
-        currency = new Currency("USD", "Доллар США", 2);
-        sourceAccount = new Account(new AccountNumber("01234567899876543210"), new Money(new BigDecimal("100.00"),
-                currency), AccountStatus.ACTIVE);
-        targetAccount = new Account(new AccountNumber("98765432100123456789"), new Money(new BigDecimal("50.00"),
-                currency), AccountStatus.ACTIVE);
+        final Currency currency = new Currency("USD", "Доллар США", 2);
+        sourceAccount = Account.newAccount(
+                new AccountNumber("01234567899876543210"),
+                new Money(new BigDecimal("100.00"), currency),
+                AccountStatus.ACTIVE);
+        targetAccount = Account.newAccount(
+                new AccountNumber("98765432100123456789"),
+                new Money(new BigDecimal("50.00"), currency),
+                AccountStatus.ACTIVE);
         amount = new Money(new BigDecimal("50.00"), currency);
         bigAmount = new Money(new BigDecimal("150.00"), currency);
         transferValidator = new TransferValidator();
@@ -74,9 +77,7 @@ public class AccountTest {
      */
     @Test
     void testWithdraw_InsufficientFunds() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            sourceAccount.withdraw(bigAmount);
-        });
+        assertThrows(IllegalArgumentException.class, () -> sourceAccount.withdraw(bigAmount));
     }
 
     /**
