@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'checkstyle'
+    id 'jacoco'
 }
 
 group = 'ru.katacademy.bank_app'
@@ -57,4 +58,44 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
+
+jacoco {
+    toolVersion = "0.8.11" // Указываем версию JaCoCo
+    reportsDirectory = layout.buildDirectory.dir("reports/jacoco") // Директория для отчетов
+}
+
+    // Конфигурация отчета JaCoCo
+jacocoTestReport {
+    dependsOn test // Отчет зависит от выполнения тестов
+    reports {
+        html.required = true // Локальный HTML-отчет
+        csv.required = false // Если не нужен CSV
+    }
+
+    // Опционально: исключаем из отчета определенные классы (например, конфиги, DTO)
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/config/**',
+                    '**/dto/**',
+                    '**/exception/**'
+            ])
+        }))
+    }
+}
+
+    // Проверка минимального покрытия (опционально)
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.8 // Минимум 80% покрытия
+            }
+        }
+    }
+}
+
+    // Чтобы проверка coverage запускалась при выполнении check
+check.dependsOn jacocoTestCoverageVerification
