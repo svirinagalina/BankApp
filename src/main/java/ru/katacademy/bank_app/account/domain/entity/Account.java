@@ -6,6 +6,7 @@ import ru.katacademy.bank_shared.valueobject.AccountNumber;
 import ru.katacademy.bank_shared.valueobject.Money;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Класс, представляющий банковский счет.
@@ -20,6 +21,8 @@ import java.math.BigDecimal;
  * - currency: валюта счета.
  * - accountNumber: номер счета
  *
+ * <p>Создание объекта осуществляется через фабричный метод {@link #newAccount(AccountNumber, Money, AccountStatus)}.
+ * </p>
  * @author Sheffy
  */
 @Getter
@@ -28,21 +31,30 @@ public final class Account {
     private AccountStatus status;
     private final AccountNumber accountNumber;
 
+    private Account(AccountNumber accountNumber, Money money, AccountStatus status) {
+        this.money = money;
+        this.accountNumber = accountNumber;
+        this.status = status;
+    }
 
-    public Account(AccountNumber accountNumber, Money money, AccountStatus status) {
+    /**
+     * Фабричный метод для создания нового счёта.
+     *
+     * @param accountNumber номер счёта (не должен быть {@code null})
+     * @param money         первоначальный баланс (не может быть {@code null} или отрицательным)
+     * @param status        начальный статус счёта (не должен быть {@code null})
+     * @return новый экземпляр {@link Account}
+     * @throws NullPointerException     если любой из обязательных параметров равен {@code null}
+     * @throws IllegalArgumentException если баланс равен {@code null} или отрицательный
+     */
+    public static Account newAccount(AccountNumber accountNumber, Money money, AccountStatus status) {
+        Objects.requireNonNull(accountNumber, "Account number must not be null");
+        Objects.requireNonNull(status, "Account status must not be null");
         if (money == null || money.amount().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Initial balance cannot " +
                     "be null or negative.");
         }
-        if (accountNumber == null) {
-            throw new IllegalArgumentException("Account number cannot be null.");
-        }
-        if (status == null) {
-            throw new IllegalArgumentException("Account status cannot be null.");
-        }
-        this.money = money;
-        this.accountNumber = accountNumber;
-        this.status = status;
+        return new Account(accountNumber, money, status);
     }
 
     /**

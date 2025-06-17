@@ -120,15 +120,16 @@ services:
       SPRING_PROFILES_ACTIVE: docker
     restart: always
 
-  user-service:
+  account-service:
     build:
-      context: ./user-service
+      context: ./account-service
       dockerfile: Dockerfile
-    container_name: user-service
+    container_name: account-service
     depends_on:
-      - user-service_postgres
+      - kafka
+      - postgres
     ports:
-      - "8083:8080"
+      - "8084:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://user-service_postgres:5432/mainDB
       SPRING_DATASOURCE_USERNAME: root
@@ -140,26 +141,34 @@ services:
       OTEL_METRICS_EXPORTER: otlp
 
   notification-service:
-      build:
-        context: ./notification-service
-        dockerfile: Dockerfile
-      container_name: notification-service
-      depends_on:
-        - kafka
-        - postgres
-      ports:
-        - "8084:8080"
-      environment:
-        SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userDB
-        SPRING_DATASOURCE_USERNAME: root
-        SPRING_DATASOURCE_PASSWORD: root
-        SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-        SPRING_PROFILES_ACTIVE: docker
-        OTEL_SERVICE_NAME: notification-service
-        OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
-        OTEL_TRACES_EXPORTER: otlp
-        OTEL_METRICS_EXPORTER: otlp
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    depends_on:
+      - kafka
+      - postgres
+    ports:
+      - "8087:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userDB
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_PROFILES_ACTIVE: docker
+      OTEL_SERVICE_NAME: notification-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
 
+  security-service:
+    build:
+      context: ./security-service
+      dockerfile: Dockerfile
+    container_name: security-service
+    ports:
+      - "8085:8080"
+    restart: always
 
 
 volumes:

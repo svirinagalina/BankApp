@@ -104,7 +104,7 @@ public class AccountService {
         final AccountNumber accountNumber = AccountNumber.generateAccountNumber();
         final Money initialBalance = new Money(BigDecimal.ZERO, cmd.currency());
 
-        final Account account = new Account(accountNumber, initialBalance, AccountStatus.ACTIVE);
+        final Account account = Account.newAccount(accountNumber, initialBalance, AccountStatus.ACTIVE);
         final AccountEntity accountEntity = AccountEntityMapper.toAccountEntity(account);
         accountRepository.save(accountEntity);
 

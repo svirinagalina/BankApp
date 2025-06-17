@@ -6,11 +6,14 @@ pluginManagement {
 	}
 }
 
-include("bank-shared")
-include ("settings-service")
-
 rootProject.name = 'bank-app'
-include 'fraud-detection'
-include 'audit'
-include 'user-service'
-include 'notification-service'
+
+include("bank-shared")
+include("settings-service")
+include("security-service")
+include("fraud-detection")
+include("audit")
+include("user-service")
+include("notification-service")
+include("account-service")
+
