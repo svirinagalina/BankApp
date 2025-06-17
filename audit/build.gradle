@@ -1,64 +1,111 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.0'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id 'checkstyle'
-	id("com.github.spotbugs") version "6.1.11"
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'checkstyle'
+    id("com.github.spotbugs") version "6.1.11"
+    id 'jacoco'
 }
 
 group = 'ru.katacademy.bank_app'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 checkstyle {
-	toolVersion = '10.12.3'
-	configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    toolVersion = '10.12.3'
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
 }
+
+jacoco {
+    toolVersion = "0.8.11"
+    reportsDirectory = layout.buildDirectory.dir("reports/jacoco") // Директория для отчетов
+}
+
+// Конфигурация отчета JaCoCo
+jacocoTestReport {
+    dependsOn test // Отчет зависит от выполнения тестов
+    reports {
+        html.required = true // Локальный HTML-отчет
+        csv.required = false // Если не нужен CSV
+    }
+
+    // включаем в отчет определенные слои (domain,application)
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, includes: [
+                    'ru/katacademy/bank_app/audit/domain/**',
+                    'ru/katacademy/bank_app/audit/application/**'
+            ])
+        }))
+    }
+}
+
+// Проверка минимального покрытия
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            includes = [
+                    'ru/katacademy/bank_app/audit/domain/*',
+                    'ru/katacademy/bank_app/audit/application/*'
+            ]
+            limit {
+                counter = 'INSTRUCTION'  // Проверяем покрытие инструкций
+                value = 'COVEREDRATIO'   // В процентах
+                minimum = 0.8 // Минимум 80% покрытия
+            }
+        }
+    }
+}
+
+check.dependsOn jacocoTestCoverageVerification
 
 import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
+
 tasks.spotbugsMain {
-	reports.create("html") {
-		ignoreFailures =false
-		effort = Effort.DEFAULT
-		reportLevel = Confidence.LOW.LOW
-		required = true
-		outputLocation = file("$rootDir/build/reports/spotbugs")
-		setStylesheet("fancy-hist.xsl")
-	}
+    reports.create("html") {
+        ignoreFailures = false
+        effort = Effort.DEFAULT
+        reportLevel = Confidence.LOW.LOW
+        required = true
+        outputLocation = file("$rootDir/build/reports/spotbugs")
+        setStylesheet("fancy-hist.xsl")
+    }
 }
 
 repositories {
-	mavenCentral()
-	maven { url = 'https://repo.spring.io/milestone' }
-	maven { url = 'https://repo.spring.io/snapshot' }
+    mavenCentral()
+    maven { url = 'https://repo.spring.io/milestone' }
+    maven { url = 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.kafka:spring-kafka'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.kafka:spring-kafka'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    runtimeOnly 'org.postgresql:postgresql'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
