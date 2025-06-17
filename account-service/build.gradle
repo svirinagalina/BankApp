@@ -62,7 +62,7 @@ tasks.named('test') {
 }
 
 jacoco {
-    toolVersion = "0.8.11" // Указываем версию JaCoCo
+    toolVersion = "0.8.11"
     reportsDirectory = layout.buildDirectory.dir("reports/jacoco") // Директория для отчетов
 }
 
@@ -74,19 +74,18 @@ jacocoTestReport {
         csv.required = false // Если не нужен CSV
     }
 
-    // Опционально: исключаем из отчета определенные классы (например, конфиги, DTO)
+    // включаем в  отчет определенные слои (domain,application)
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: [
-                    '**/config/**',
-                    '**/dto/**',
-                    '**/exception/**'
+            fileTree(dir: it, includes: [
+                    'ru/katacademy/bank_app/accountservice/domain/**',
+                    'ru/katacademy/bank_app/accountservice/application/**'
             ])
         }))
     }
 }
 
-    // Проверка минимального покрытия (опционально)
+    // Проверка минимального покрытия
 jacocoTestCoverageVerification {
     violationRules {
         rule {
