@@ -25,10 +25,10 @@ class UserMapperTest {
     @DisplayName("Тест 1: Проверка преобразования User в UserDto")
     void toDto_ShouldCorrectlyMapUserToDto() {
         // Создаем тестовый объект Email
-        Email email = new Email("test@mail.com");
+        final Email email = new Email("test@mail.com");
 
         // Создаем тестового пользователя через конструктор
-        User user = new User(
+        final User user = new User(
                 1L,
                 UserRole.USER,
                 "Андрей Кузин",
@@ -38,7 +38,7 @@ class UserMapperTest {
         );
 
         // Проверки всех полей объекта
-        UserDto dto = mapper.toDto(user);
+        final  UserDto dto = mapper.toDto(user);
 
         // Проверки всех полей объекта
         assertNotNull(dto, "DTO не должно быть null");
