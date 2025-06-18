@@ -1,9 +1,6 @@
 package ru.katacademy.notification.application.template;
 
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class WelcomeTemplate {
 
     public String welcome(String username) {

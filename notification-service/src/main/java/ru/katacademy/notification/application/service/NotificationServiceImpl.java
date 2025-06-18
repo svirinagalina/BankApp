@@ -1,6 +1,5 @@
 package ru.katacademy.notification.application.service;
 
-import org.springframework.stereotype.Service;
 import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
 import ru.katacademy.bank_shared.event.notification.TransferCompletedEvent;
 import ru.katacademy.bank_shared.event.notification.UserRegisteredEvent;
@@ -9,7 +8,6 @@ import ru.katacademy.notification.application.template.PasswordChangedTemplate;
 import ru.katacademy.notification.application.template.TransferNotificationTemplate;
 import ru.katacademy.notification.application.template.WelcomeTemplate;
 
-@Service
 public class NotificationServiceImpl implements NotificationService {
 
     private WelcomeTemplate welcomeTemplate;

@@ -2,7 +2,7 @@ package ru.katacademy.notification.sender;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import ru.katacademy.notification.application.sender.NotificationSenderImpl;
+import ru.katacademy.notification.infrastructure.sender.NotificationSenderImpl;
 import ru.katacademy.notification.infrastructure.persistence.entity.NotificationLog;
 import ru.katacademy.notification.infrastructure.persistence.repository.NotificationLogRepository;
 
