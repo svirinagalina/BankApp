@@ -1,19 +1,25 @@
-package ru.katacademy.domain.repository;
+package ru.katacademy.infrastructure.repository;
 
-import ru.katacademy.domain.entity.LoginAttempt;
+import org.springframework.data.jpa.repository.JpaRepository;
+import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Репозиторий для работы с попытками входа в систему в базе данных.
+ * JPA-репозиторий для работы с попытками входа в систему.
  * <p>
- * Предоставляет методы для выборки записей из таблицы {@code auth_login_attempts}.
+ * Предоставляет стандартные CRUD-операции через {@link JpaRepository}
+ * и кастомные запросы для сущности {@link JpaLoginAttempt}.
+ * Все методы работают с JPA-сущностями, преобразование в domain-объекты
+ * выполняется в {@link LoginAttemptAuthRepositoryImpl}.
+ * Работает напрямую с таблицей {@code auth_login_attempts}
  * </p>
  *
  * @author MihasBatler
+ * @see JpaLoginAttempt Сущность, с которой работает репозиторий
  */
-public interface LoginAttemptAuthRepository {
+public interface JpaLoginAttemptAuthRepository extends JpaRepository<JpaLoginAttempt, Long> {
 
     /**
      * Находит все попытки входа по идентификатору пользователя.
@@ -21,7 +27,7 @@ public interface LoginAttemptAuthRepository {
      * @param userId идентификатор пользователя (не может быть {@code null})
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<LoginAttempt> findByUserId(Long userId);
+    List<JpaLoginAttempt> findByUserId(Long userId);
 
     /**
      * Находит все попытки входа в указанном временном диапазоне.
@@ -30,7 +36,7 @@ public interface LoginAttemptAuthRepository {
      * @param end   конечная дата диапазона
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<LoginAttempt> findByTimestamp(LocalDateTime start, LocalDateTime end);
+    List<JpaLoginAttempt> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
 
     /**
      * Находит все попытки входа по указанному результату.
@@ -40,13 +46,5 @@ public interface LoginAttemptAuthRepository {
      *                {@code false} - неудачные
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<LoginAttempt> findBySuccess(boolean success);
-
-    /**
-     * Сохраняет или обновляет информацию о попытке входа.
-     *
-     * @param attempt объект попытки входа для сохранения
-     * @return сохраненный объект с заполненными полями
-     */
-    LoginAttempt save(LoginAttempt attempt);
+    List<JpaLoginAttempt> findBySuccess(boolean success);
 }

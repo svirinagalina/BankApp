@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.katacademy.application.dto.LoginAttemptDto;
 import ru.katacademy.domain.entity.LoginAttempt;
-import ru.katacademy.domain.mapper.LoginAttemptMapper;
+import ru.katacademy.infrastructure.mapper.LoginAttemptMapper;
 import ru.katacademy.domain.repository.LoginAttemptAuthRepository;
 
 import java.time.LocalDateTime;
@@ -29,9 +29,9 @@ public class AuthStatisticsController {
     private final LoginAttemptAuthRepository loginAttemptAuthRepository;
     private final LoginAttemptMapper loginAttemptMapper;
 
-    public AuthStatisticsController(LoginAttemptAuthRepository loginAttemptRepository,
+    public AuthStatisticsController(LoginAttemptAuthRepository loginAttemptAuthRepository,
                                     LoginAttemptMapper loginAttemptMapper) {
-        this.loginAttemptAuthRepository = loginAttemptRepository;
+        this.loginAttemptAuthRepository = loginAttemptAuthRepository;
         this.loginAttemptMapper = loginAttemptMapper;
     }
 
