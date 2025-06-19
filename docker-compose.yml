@@ -147,9 +147,17 @@ services:
       context: ./security-service
       dockerfile: Dockerfile
     container_name: security-service
+    depends_on:
+        - otel-collector
     ports:
-      - "8085:8080"
+        - "8085:8080"
     restart: always
+    environment:
+        OTEL_SERVICE_NAME: security-service
+        OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+        OTEL_TRACES_EXPORTER: otlp
+        OTEL_METRICS_EXPORTER: otlp
+        OTEL_LOGS_EXPORTER: otlp
 
 volumes:
   postgres_data:
