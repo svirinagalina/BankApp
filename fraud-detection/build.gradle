@@ -4,6 +4,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'checkstyle'
 	id 'com.github.spotbugs'
+	id'jacoco'
 }
 group = 'ru.katacademy.bank_app'
 version = '0.0.1-SNAPSHOT'
@@ -27,6 +28,56 @@ repositories {
 	maven { url = 'https://repo.spring.io/milestone' }
 	maven { url = 'https://repo.spring.io/snapshot' }
 }
+
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+test {
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.required = true // Локальный HTML-отчёт
+	}
+
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, includes: [
+					"ru/katacademy/bank_app/frauddetection/account/domain/**",
+					"ru/katacademy/bank_app/frauddetection/service/**",
+			])
+		}))
+	}
+}
+
+// Проверка минимального покрытия (опционально)
+jacocoTestCoverageVerification {
+	dependsOn jacocoTestReport
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, includes: [
+					"ru/katacademy/bank_app/frauddetection/account/domain/**",
+					"ru/katacademy/bank_app/frauddetection/service/**",
+			])
+		}))
+	}
+	violationRules {
+		rule {element = 'CLASS'
+			limit {
+				minimum = 0.80 // Требуемое покрытие (80%)
+			}
+			println "Проверяемые классы/пакеты:"
+			classDirectories.each { dir ->
+				println " - ${dir}"
+			}
+		}
+	}
+}
+
 dependencies {
 	// SpotBugs
 	implementation 'com.github.spotbugs:spotbugs-annotations:4.8.3'
@@ -72,3 +123,5 @@ bootJar {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+// Связь задач: отчёт → проверка покрытия
+jacocoTestReport.finalizedBy jacocoTestCoverageVerification

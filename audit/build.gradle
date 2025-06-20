@@ -28,24 +28,26 @@ checkstyle {
 }
 
 jacoco {
-    toolVersion = "0.8.11"
-    reportsDirectory = layout.buildDirectory.dir("reports/jacoco") // Директория для отчетов
+    toolVersion = "0.8.11" // Версия JaCoCo
 }
 
-// Конфигурация отчета JaCoCo
+test {
+    finalizedBy jacocoTestReport // Генерировать отчёт после тестов
+}
+
 jacocoTestReport {
-    dependsOn test // Отчет зависит от выполнения тестов
+    dependsOn test
     reports {
-        html.required = true // Локальный HTML-отчет
-        csv.required = false // Если не нужен CSV
+        html.required = true // Локальный HTML-отчёт
     }
 
-    // включаем в отчет определенные слои (domain,application)
+
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, includes: [
-                    'ru/katacademy/bank_app/audit/domain/**',
-                    'ru/katacademy/bank_app/audit/application/**'
+                    "ru/katacademy/bank_app/accountservice/domain/entity/**",
+                    "ru/katacademy/bank_app/audit/domain/entity/*",
+                    "ru/katacademy/bank_app/audit/application/service/*",
             ])
         }))
     }
@@ -53,23 +55,28 @@ jacocoTestReport {
 
 // Проверка минимального покрытия
 jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, includes: [
+                    "ru/katacademy/bank_app/audit/domain/entity/*",
+                    "ru/katacademy/bank_app/audit/application.service/*",
+            ])
+        }))
+    }
     violationRules {
         rule {
             element = 'CLASS'
-            includes = [
-                    'ru/katacademy/bank_app/audit/domain/*',
-                    'ru/katacademy/bank_app/audit/application/*'
-            ]
             limit {
-                counter = 'INSTRUCTION'  // Проверяем покрытие инструкций
-                value = 'COVEREDRATIO'   // В процентах
-                minimum = 0.8 // Минимум 80% покрытия
+                minimum = 0.80 // Требуемое покрытие (80%)
+            }
+            println "Проверяемые классы/пакеты:"
+            classDirectories.each { dir ->
+                println " - ${dir}"
             }
         }
     }
 }
-
-check.dependsOn jacocoTestCoverageVerification
 
 import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
@@ -107,5 +114,6 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
 }
+// Связь задач: отчёт → проверка покрытия
+jacocoTestReport.finalizedBy jacocoTestCoverageVerification

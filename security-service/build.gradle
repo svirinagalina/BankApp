@@ -4,6 +4,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'checkstyle'
 	id("com.github.spotbugs") version "6.1.11"
+	id "jacoco"
 }
 
 group = 'ru.katacademy'
@@ -38,6 +39,54 @@ repositories {
 	mavenCentral()
 	maven { url = 'https://repo.spring.io/milestone' }
 	maven { url = 'https://repo.spring.io/snapshot' }
+}
+
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+test {
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.required = true // Локальный HTML-отчёт
+	}
+
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, includes: [
+					"ru/katacademy/securityservice/util/*",
+			])
+		}))
+	}
+}
+
+// Проверка минимального покрытия
+jacocoTestCoverageVerification {
+	dependsOn jacocoTestReport
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, includes: [
+					"ru/katacademy/securityservice/util/*",
+
+			])
+		}))
+	}
+	violationRules {
+		rule {element = 'CLASS'
+			limit {
+				minimum = 0.80 // Требуемое покрытие (80%)
+			}
+			println "Проверяемые классы/пакеты:"
+			classDirectories.each { dir ->
+				println " - ${dir}"
+			}
+		}
+	}
 }
 
 dependencies {
@@ -80,3 +129,6 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Связь задач: отчёт → проверка покрытия
+jacocoTestReport.finalizedBy jacocoTestCoverageVerification
