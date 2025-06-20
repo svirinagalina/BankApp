@@ -1,6 +1,6 @@
 package ru.katacademy.bank_app.accountservice.domain.entity;
 
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -8,86 +8,162 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Тесты для класса LoginAttemptEntry, проверяющие:
- * - Корректность создания объекта через конструкторы
- * - Работу сеттеров и геттеров для полей
+ * Тестовый класс для {@link LoginAttemptEntry} - сущности записи попытки входа.
+ * Проверяет корректность работы всех методов доступа и модификации полей.
  */
-
 class LoginAttemptEntryTest {
 
-    @Test
-    @DisplayName("Тест 1: Проверка конструктора без параметров")
-    void testNoArgsConstructor() {
-        // Вызов тестируемого конструктора
-        final LoginAttemptEntry entry = new LoginAttemptEntry();
+    private LoginAttemptEntry entry;
+    private LocalDateTime testTime;
 
-        // Проверки всех полей объекта
-        assertNotNull(entry);
+    /**
+     * Инициализация тестовых данных перед каждым тестом.
+     * Создает тестовую запись о попытке входа с параметрами.
+     */
+    @BeforeEach
+    void setUp() {
+        testTime = LocalDateTime.now();
+        entry = new LoginAttemptEntry(
+                1L,
+                "user@mail.com",
+                "192.168.1.1",
+                "Mozilla/5.0",
+                testTime,
+                true
+        );
+    }
+
+    /**
+     * Тест получения ID записи.
+     * Проверяет что изначально ID равен null (генерируется БД).
+     */
+    @Test
+    void getId() {
         assertNull(entry.getId());
-        assertNull(entry.getUserId());
-        assertNull(entry.getEmail());
-        assertNull(entry.getIp());
-        assertNull(entry.getUserAgent());
-        assertNull(entry.getTimestamp());
+    }
+
+    /**
+     * Тест получения ID пользователя.
+     * Проверяет корректность возвращаемого значения.
+     */
+    @Test
+    void getUserId() {
+        assertEquals(1L, entry.getUserId());
+    }
+
+    /**
+     * Тест получения email пользователя.
+     * Проверяет корректность возвращаемого значения.
+     */
+    @Test
+    void getEmail() {
+        assertEquals("user@mail.com", entry.getEmail());
+    }
+
+    /**
+     * Тест получения IP-адреса.
+     * Проверяет корректность возвращаемого значения.
+     */
+    @Test
+    void getIp() {
+        assertEquals("192.168.1.1", entry.getIp());
+    }
+
+    /**
+     * Тест получения User-Agent.
+     * Проверяет корректность возвращаемого значения.
+     */
+    @Test
+    void getUserAgent() {
+        assertEquals("Mozilla/5.0", entry.getUserAgent());
+    }
+
+    /**
+     * Тест получения временной метки.
+     * Проверяет корректность возвращаемого значения времени.
+     */
+    @Test
+    void getTimestamp() {
+        assertEquals(testTime, entry.getTimestamp());
+    }
+
+    /**
+     * Тест проверки успешности попытки входа.
+     * Проверяет корректность возвращаемого статуса.
+     */
+    @Test
+    void isSuccess() {
+        assertTrue(entry.isSuccess());
+    }
+
+    /**
+     * Тест установки ID записи.
+     * Проверяет корректность изменения значения ID.
+     */
+    @Test
+    void setId() {
+        entry.setId(100L);
+        assertEquals(100L, entry.getId());
+    }
+
+    /**
+     * Тест установки ID пользователя.
+     * Проверяет корректность изменения значения.
+     */
+    @Test
+    void setUserId() {
+        entry.setUserId(2L);
+        assertEquals(2L, entry.getUserId());
+    }
+
+    /**
+     * Тест установки email пользователя.
+     * Проверяет корректность изменения значения.
+     */
+    @Test
+    void setEmail() {
+        entry.setEmail("new@mail.com");
+        assertEquals("new@mail.com", entry.getEmail());
+    }
+
+    /**
+     * Тест установки IP-адреса.
+     * Проверяет корректность изменения значения.
+     */
+    @Test
+    void setIp() {
+        entry.setIp("10.0.0.1");
+        assertEquals("10.0.0.1", entry.getIp());
+    }
+
+    /**
+     * Тест установки User-Agent.
+     * Проверяет корректность изменения значения.
+     */
+    @Test
+    void setUserAgent() {
+        entry.setUserAgent("Chrome/120.0");
+        assertEquals("Chrome/120.0", entry.getUserAgent());
+    }
+
+    /**
+     * Тест установки временной метки.
+     * Проверяет корректность изменения значения времени.
+     */
+    @Test
+    void setTimestamp() {
+        final LocalDateTime newTime = LocalDateTime.now().plusDays(1);
+        entry.setTimestamp(newTime);
+        assertEquals(newTime, entry.getTimestamp());
+    }
+
+    /**
+     * Тест установки статуса попытки входа.
+     * Проверяет корректность изменения значения статуса.
+     */
+    @Test
+    void setSuccess() {
+        entry.setSuccess(false);
         assertFalse(entry.isSuccess());
     }
-
-    @Test
-    @DisplayName("Тест 2: Проверка конструктора со всеми параметрами ")
-    void testAllArgsConstructor() {
-        // Подготовка тестовых данных
-        final Long userId = 1L;
-        final String email = "test@mail.com";
-        final String ip = "192.168.0.1";
-        final String userAgent = "Mozilla/4.0";
-        final LocalDateTime timestamp = LocalDateTime.now();
-        final boolean success = true;
-
-        // Вызов тестируемого конструктора
-        final LoginAttemptEntry entry = new LoginAttemptEntry(userId, email, ip, userAgent, timestamp, success);
-
-        // Проверки всех полей объекта
-        assertNotNull(entry);
-        assertNull(entry.getId()); // ID генерируется базой данных
-        assertEquals(userId, entry.getUserId());
-        assertEquals(email, entry.getEmail());
-        assertEquals(ip, entry.getIp());
-        assertEquals(userAgent, entry.getUserAgent());
-        assertEquals(timestamp, entry.getTimestamp());
-        assertEquals(success, entry.isSuccess());
-    }
-
-    @Test
-    @DisplayName("Тест 3:Тест сеттеров и геттеров - должен корректно устанавливать и возвращать значения")
-    void testSettersAndGetters() {
-        // Подготовка тестовых данных
-        final LoginAttemptEntry entry = new LoginAttemptEntry();
-        final Long id = 10L;
-        final Long userId = 2L;
-        final String email = "test@mail.com";
-        final String ip = "192.168.0.1";
-        final String userAgent = "Mozilla/4.0";
-        final LocalDateTime timestamp = LocalDateTime.of(2025, 6, 16, 12, 0);
-        final boolean success = false;
-
-        // Вызов Сеттеров
-        entry.setId(id);
-        entry.setUserId(userId);
-        entry.setEmail(email);
-        entry.setIp(ip);
-        entry.setUserAgent(userAgent);
-        entry.setTimestamp(timestamp);
-        entry.setSuccess(success);
-
-        // Проверки полей объекта
-        assertEquals(id, entry.getId());
-        assertEquals(userId, entry.getUserId());
-        assertEquals(email, entry.getEmail());
-        assertEquals(ip, entry.getIp());
-        assertEquals(userAgent, entry.getUserAgent());
-        assertEquals(timestamp, entry.getTimestamp());
-        assertEquals(success, entry.isSuccess());
-    }
-
-
 }
