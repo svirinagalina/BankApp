@@ -3,7 +3,9 @@ package ru.katacademy.securityservice.util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -13,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JwtUtilTest {
 
     private JwtUtil jwtUtil;
-    private final String testUser = "testUser";
+    private static final String testUser = "testUser";
 
     /**
      * Инициализация перед каждым тестом:
