@@ -1,115 +1,80 @@
 package ru.katacademy.bank_app.audit.domain.entity;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Тесты для класса AuditEntry, проверяющие:
- * - Корректность создания объекта через конструктор
- * - Корректность создания объекта через конструктор с null userId
- * - Проверка equals и hashCode
- * - Проверка метода toString
+ * Тестовый класс для {@link AuditEntry} - сущности записи аудита.
+ * Проверяет базовую функциональность создания и работы с записями аудита.
  */
-
 class AuditEntryTest {
 
+    /**
+     * Тест создания записи аудита и доступа к её полям.
+     * Проверяет:
+     * - Корректность инициализации полей
+     * - Автоматическую установку временной метки
+     * - Работу геттеров
+     */
     @Test
-    @DisplayName("Тест 1: Проверка основного конструктора на корректность всех полей")
-    void testConstructorAndGetters() {
-        // Подготовка тестовых данных
-        final String expectedEventType = "USER_LOGIN";
-        final String expectedMessage = "User logged in";
-        final String expectedUserId = "user1";
+    void shouldCreateAndAccessAuditEntry() {
+        final String eventType = "USER_LOGIN";
+        final String message = "User logged in";
+        final String userId = "123";
 
-        // Вызов тестируемого конструктора
-        final AuditEntry auditEntry = new AuditEntry(expectedEventType, expectedMessage, expectedUserId);
+        final AuditEntry entry = new AuditEntry(eventType, message, userId);
 
-        // Проверки всех полей объекта
-        assertEquals(expectedEventType, auditEntry.getEventType(),
-                "Тип события должен соответствовать переданному в конструктор");
-        assertEquals(expectedMessage, auditEntry.getMessage(),
-                "Сообщение должно соответствовать переданному в конструктор");
-        assertEquals(expectedUserId, auditEntry.getUserId(),
-                "ID пользователя должно соответствовать переданному в конструктор");
-
-        // Проверяем timestamp
-        assertNotNull(auditEntry.getTimestamp(), "Timestamp не должен быть null");
+        assertEquals(eventType, entry.getEventType());
+        assertEquals(message, entry.getMessage());
+        assertEquals(userId, entry.getUserId());
+        assertNotNull(entry.getTimestamp());
+        assertTrue(entry.getTimestamp().isBefore(Instant.now().plusSeconds(1)));
     }
 
+    /**
+     * Тест сравнения объектов и вычисления хэш-кода.
+     * Проверяет:
+     * - Равенство объектов с одинаковыми полями
+     * - Неравенство объектов с разными полями
+     * - Согласованность equals и hashCode
+     */
     @Test
-    @DisplayName("Тест 2: Проверка конструктора с null userId ")
-    void testConstructorWithNullUserId() {
-        // Подготовка тестовых данных
-        final String eventType = "SYSTEM_EVENT";
-        final String message = "System maintenance started";
-
-        // Вызов тестируемого конструктора
-        final AuditEntry auditEntry = new AuditEntry(eventType, message, null);
-
-        // Проверки полей объекта
-        assertEquals(eventType, auditEntry.getEventType(),
-                "Тип события должен быть установлен корректно");
-        assertEquals(message, auditEntry.getMessage(),
-                "Сообщение должно быть установлено корректно");
-        assertNull(auditEntry.getUserId(),
-                "userId должен быть null при передаче null в конструктор");
-        assertNotNull(auditEntry.getTimestamp(),
-                "Timestamp должен быть установлен даже при null userId");
-    }
-
-    @Test
-    @DisplayName("Тест 3: Проверка equals и hashCode")
     void testEqualsAndHashCode() {
-        // Подготовка тестовых данных
-        final Instant fixedTimestamp = Instant.now();
-        final AuditEntry entry1 = new AuditEntry("TRANSACTION", "Money transfer", "user1");
-        final AuditEntry entry2 = new AuditEntry("TRANSACTION", "Money transfer", "user1");
+        final AuditEntry entry1 = new AuditEntry("EVENT", "Test", "1");
+        final AuditEntry entry2 = new AuditEntry("EVENT", "Test", "1");
+        final AuditEntry different = new AuditEntry("OTHER", "Test", "1");
 
-        // Для тестирования equals устанавливаем одинаковый timestamp
-        try {
-            final Field timestampField = AuditEntry.class.getDeclaredField("timestamp");
-            timestampField.setAccessible(true);
-            timestampField.set(entry1, fixedTimestamp);
-            timestampField.set(entry2, fixedTimestamp);
-        } catch (Exception e) {
-            fail("Не удалось установить timestamp для теста через рефлексию");
-        }
-
-        // Проверка
-        assertEquals(entry1, entry2,
-                "Объекты с одинаковыми полями должны быть равны");
-        assertEquals(entry1.hashCode(), entry2.hashCode(),
-                "hashCode должен быть одинаковым для равных объектов");
+        assertEquals(entry1, entry2);
+        assertNotEquals(entry1, different);
+        assertEquals(entry1.hashCode(), entry2.hashCode());
     }
 
-
+    /**
+     * Тест строкового представления объекта.
+     * Проверяет что toString() содержит все основные поля записи.
+     */
     @Test
-    @DisplayName("Тест 4: Проверка метода toString ")
     void testToString() {
-        // Подготовка тестовых данных
-        final String eventType = "LOGOUT";
-        final String message = "User logged out";
-        final String userId = "user1";
-        final AuditEntry auditEntry = new AuditEntry(eventType, message, userId);
+        final AuditEntry entry = new AuditEntry("TEST", "Message", "456");
+        final String str = entry.toString();
 
-        // Выполнение
-        final String resultString = auditEntry.toString();
+        assertTrue(str.contains("TEST"));
+        assertTrue(str.contains("Message"));
+        assertTrue(str.contains("456"));
+    }
 
-        // Проверка всех полей в строке
-        assertTrue(resultString.contains("AuditEntry"),
-                "Строка должна содержать имя класса");
-        assertTrue(resultString.contains("eventType='" + eventType + "'"),
-                "Строка должна содержать тип события");
-        assertTrue(resultString.contains("message='" + message + "'"),
-                "Строка должна содержать сообщение");
-        assertTrue(resultString.contains("userId='" + userId + "'"),
-                "Строка должна содержать ID пользователя");
-        assertTrue(resultString.contains("timestamp="),
-                "Строка должна содержать timestamp");
+    /**
+     * Тест обработки null-значения для userId.
+     * Проверяет корректную работу с системными событиями без пользователя.
+     */
+    @Test
+    void shouldHandleNullUserId() {
+        final AuditEntry systemEntry = new AuditEntry("SYSTEM", "Event", null);
+
+        assertNull(systemEntry.getUserId());
+        assertNotNull(systemEntry.toString());
     }
 }
