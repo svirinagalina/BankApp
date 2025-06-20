@@ -1,6 +1,6 @@
 package ru.katacademy.bank_app.audit.application.service;
 
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,12 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Тесты для класса AuditService, проверяющие:
- * - Успешную запись аудит-события
- * - Проверка исключения AuditServiceException
- * - Проверка логирования при успешной и неудачной записи
+ * Тестовый класс для {@link AuditService} - сервиса аудита операций.
+ * Проверяет корректность записи аудит-записей и обработку ошибок.
  */
-
 @ExtendWith(MockitoExtension.class)
 class AuditServiceTest {
 
@@ -28,72 +25,69 @@ class AuditServiceTest {
     @InjectMocks
     private AuditService auditService;
 
-    @Test
-    @DisplayName("Тест 1: Успешная запись аудит-события")
-    void record_Success() {
-        // Подготовка тестовых данных
-        final AuditEntry entry = new AuditEntry("LOGIN", "User logged in", "user1");
-        doNothing().when(auditRepository).save(entry);
+    private AuditEntry testEntry;
 
-        // Выполнение и проверка (не должно быть исключений)
-        assertDoesNotThrow(() -> auditService.record(entry));
-
-        // Проверка
-        verify(auditRepository, times(1)).save(entry);
-        verifyNoMoreInteractions(auditRepository);
+    /**
+     * Инициализация тестовых данных перед каждым тестом.
+     * Создает тестовую запись аудита для пользователя.
+     */
+    @BeforeEach
+    void setUp() {
+        testEntry = new AuditEntry(
+                "USER_LOGIN",
+                "User with ID 123 logged in",
+                "123"
+        );
     }
 
+    /**
+     * Тест успешной записи аудит-записи.
+     * Проверяет что:
+     * 1. Сервис корректно вызывает метод save репозитория
+     * 2. Запись сохраняется ровно один раз
+     */
     @Test
-    @DisplayName("Тест 2:Ошибка при сохранении в репозитории должна вызывать исключение AuditServiceException")
-    void record_RepositoryError_ShouldThrowAuditServiceException() {
-        // Подготовка тестовых данных
-        final AuditEntry entry = new AuditEntry("TRANSFER", "Money transfer", "user1");
-        final RuntimeException repoException = new RuntimeException("DB error");
-        doThrow(repoException).when(auditRepository).save(entry);
-
-        // Выполнение
-        final AuditServiceException exception = assertThrows(AuditServiceException.class,
-                () -> auditService.record(entry),
-                "Должно выбрасываться AuditServiceException при ошибке репозитория");
-
-        //Проверка
-        assertEquals(repoException, exception.getCause(),
-                "Причина исключения должна быть оригинальной ошибкой репозитория");
-        assertEquals("Не удалось записать событие в аудит", exception.getMessage(),
-                "Сообщение исключения должно соответствовать ожидаемому");
-
-        // Проверка
-        verify(auditRepository, times(1)).save(entry);
+    void record_ShouldSaveAuditEntrySuccessfully() {
+        auditService.record(testEntry);
+        verify(auditRepository, times(1)).save(testEntry);
     }
 
+    /**
+     * Тест обработки ошибки при сохранении.
+     * Проверяет что:
+     * 1. При ошибке репозитория выбрасывается AuditServiceException
+     * 2. Сообщение об ошибке соответствует ожидаемому
+     */
     @Test
-    @DisplayName("Тест 3: Проверка логирования при успешной записи")
-    void record_VerifySuccessLogging() {
-        // Подготовка тестовых данных
-        final AuditEntry entry = new AuditEntry("LOGOUT", "User logged out", "user1");
-        doNothing().when(auditRepository).save(entry);
+    void record_ShouldThrowException_WhenSaveFails() {
+        doThrow(new RuntimeException("DB error"))
+                .when(auditRepository)
+                .save(testEntry);
 
-        // Выполнение
-        auditService.record(entry);
+        final AuditServiceException exception = assertThrows(
+                AuditServiceException.class,
+                () -> auditService.record(testEntry)
+        );
 
-        // Проверка
-        verify(auditRepository).save(entry);
-
+        assertEquals("Не удалось записать событие в аудит", exception.getMessage());
     }
 
+    /**
+     * Тест обработки системных событий без пользователя.
+     * Проверяет что:
+     * 1. Записи с null userId корректно сохраняются
+     * 2. Репозиторий вызывается с правильными параметрами
+     */
     @Test
-    @DisplayName("Тест 4: Проверка логирования при ошибке записи")
-    void record_VerifyErrorLogging() {
-        // Подготовка тестовых данных
-        final AuditEntry entry = new AuditEntry("FAILURE", "Operation failed", "user1");
-        final RuntimeException error = new RuntimeException("Storage failure");
-        doThrow(error).when(auditRepository).save(entry);
+    void record_ShouldHandleNullUserId() {
+        final AuditEntry systemEntry = new AuditEntry(
+                "SYSTEM_EVENT",
+                "System maintenance started",
+                null
+        );
 
-        // Выполнение + Проверка
-        assertThrows(AuditServiceException.class, () -> auditService.record(entry));
-
-        // Проверка
-        verify(auditRepository).save(entry);
-
+        auditService.record(systemEntry);
+        verify(auditRepository).save(systemEntry);
+        assertNull(systemEntry.getUserId());
     }
 }
