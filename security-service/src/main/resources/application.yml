@@ -16,14 +16,18 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-
 management:
   endpoints:
     web:
       exposure:
-        include: health,liveness,readiness,ping
+        include: health,info
   endpoint:
     health:
+      show-details: always
       probes:
         enabled: true
-      show-details: always
+      group:
+        liveness:
+          include: ping
+        readiness:
+          include: jwt,ping

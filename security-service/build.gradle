@@ -29,7 +29,7 @@ checkstyle {
 tasks.spotbugsMain {
 	reports.create("html") {
 		required = true
-		outputLocation = file("$rootDir/reports/spotbugs.html")
+		outputLocation = file("$rootDir/build/reports/spotbugs/spotbugs.html")
 		setStylesheet("fancy-hist.xsl")
 	}
 }

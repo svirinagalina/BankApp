@@ -34,7 +34,7 @@ tasks.spotbugsMain {
 		effort = Effort.DEFAULT
 		reportLevel = Confidence.LOW.LOW
 		required = true
-		outputLocation = file("$rootDir/build/reports/spotbugs")
+		outputLocation = file("$rootDir/build/reports/spotbugs/spotbugs.html")
 		setStylesheet("fancy-hist.xsl")
 	}
 }
@@ -57,6 +57,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'com.h2database:h2'
 
 }
 

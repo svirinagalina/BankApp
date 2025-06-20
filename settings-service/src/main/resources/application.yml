@@ -34,9 +34,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,liveness,readiness,ping
+        include: health,info
   endpoint:
     health:
-      probes:
-        enabled: true
       show-details: always
+      group:
+        readiness:
+          include: db, kafka
+        liveness:
+          include: ping
