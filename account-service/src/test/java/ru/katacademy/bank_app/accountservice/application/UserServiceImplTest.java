@@ -179,4 +179,40 @@ class UserServiceImplTest {
                 .isInstanceOf(InvalidPasswordException.class)
                 .hasMessageContaining("Текущий пароль некорректный");
     }
+    // Тест проверяет, совпадает ли новый пароль со старым
+    @Test
+    void changePassword_ShouldThrowException_WhenNewPasswordSameAsOld() {
+        final Long userId = 1L;
+        final String password = "SamePassword123";
+        final String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+
+        final User user = new User(userId, UserRole.USER, fullName,
+                new Email(email), passwordHash, LocalDateTime.now());
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        ChangePasswordCommand cmd = new ChangePasswordCommand(userId, password, password);
+
+        assertThatThrownBy(() -> userService.changePassword(cmd))
+                .isInstanceOf(InvalidPasswordException.class)
+                .hasMessageContaining("Новый пароль должен отличаться от старого");
+    }
+    // Тест проверяет валидность нового пароля на содержание цифр, если не цифр и(или) символов меньше 8 выбросит исключение
+    @Test
+    void changePassword_ShouldThrowException_WhenNewPasswordIsInvalid() {
+        final Long userId = 1L;
+        final String oldPassword = "OldPass123";
+        final String newPassword = "invalid"; // нет цифр и меньше 8 символов
+
+        final User user = new User(userId, UserRole.USER, fullName,
+                new Email(email), BCrypt.hashpw(oldPassword, BCrypt.gensalt()), LocalDateTime.now());
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        ChangePasswordCommand cmd = new ChangePasswordCommand(userId, oldPassword, newPassword);
+
+        assertThatThrownBy(() -> userService.changePassword(cmd))
+                .isInstanceOf(InvalidPasswordException.class)
+                .hasMessageContaining("Пароль должен состоять не менее чем из 8 символов");
+    }
 }
