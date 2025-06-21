@@ -11,35 +11,34 @@ import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Тест проверяет, что вызывается метод send у KafkaProduсer с корректным топиком и сообщением
+ * Тест проверяет работу методов KafkaUserRegisterEventPublisher
+ * Тест publish_ShouldSendMessageToKafkaTopic имитирует ситуацию, когда пользователь регистрируется в системе.
+ * Проверяет, что метод send у KafkaProduсer вызывается с корректным топиком и сообщением.
  */
-
 public class KafkaUserRegisterEventPublisherTest {
-    //
+    // тест, проверяющий корректно отправляется событие о регистрации пользователя в Kafka
     @Test
     void publish_ShouldSendMessageToKafkaTopic() {
-        // given
-        KafkaProducer kafkaProducer = mock(KafkaProducer.class);
-        KafkaUserRegisterEventPublisher publisher = new KafkaUserRegisterEventPublisher(kafkaProducer);
 
-        long userId = 1L;
-        String fullName = "Ivan Ivanov";
-        String email = "Ivan@gmail.com";
-        LocalDateTime createdAt = LocalDateTime.of(2025, 6, 19, 10, 0);
+        final KafkaProducer kafkaProducer = mock(KafkaProducer.class);
+        final KafkaUserRegisterEventPublisher publisher = new KafkaUserRegisterEventPublisher(kafkaProducer);
 
-        UserRegisterEvent event = new UserRegisterEvent(userId, fullName, email, createdAt);
+        final long userId = 1L;
+        final String fullName = "Ivan Ivanov";
+        final String email = "Ivan@gmail.com";
+        final LocalDateTime createdAt = LocalDateTime.of(2025, 6, 19, 10, 0);
 
-        // when
+        final UserRegisterEvent event = new UserRegisterEvent(userId, fullName, email, createdAt);
+
         publisher.publish(event);
 
-        // then
-        ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
 
         verify(kafkaProducer).send(topicCaptor.capture(), messageCaptor.capture());
 
         assertThat(topicCaptor.getValue()).isEqualTo("user-register-event");
-        String message = messageCaptor.getValue();
+        final String message = messageCaptor.getValue();
 
         assertThat(message).contains(fullName);
         assertThat(message).contains(email);

@@ -25,11 +25,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Тесты для контроллера UserController: проверяется регистрация и получение пользователя по ID
- *
+ * Тест registerUser_shouldReturn201WhenEmailIsValid имитирует ситуацию, когда UserService.register() выбрасывает EmailAlreadyTakenException.
+ * Проверяет, что контроллер вернет HTTP 201 Created и сообщение в JSON-ответе.
+ * Тест registerUser_shouldReturn400WhenEmailFormatIsInvalid имитирует ситуацию, когда UserService.register() выбрасывает EmailAlreadyTakenException.
+ * Проверяет, что контроллер вернет HTTP 400 Bad Request и сообщение в JSON-ответе.
+ * Тест getById_shouldReturn200WhenUserExists имитирует ситуацию, когда UserService.getById() выбрасывает UserNotFoundException.
+ * Проверяет, что контроллер вернет HTTP 200 OK и сообщение в JSON-ответе.
+ * Тест getById_shouldReturn404WhenUserNotFound имитирует ситуацию, когда UserService.getById() выбрасывает UserNotFoundException.
+ * Проверяет, что контроллер вернет HTTP 404 Not Found и сообщение в JSON-ответе.
  * Тест registerUser_shouldReturn409WhenEmailAlreadyExists имитирует ситуацию, когда UserService.register() выбрасывает EmailAlreadyTakenException.
  * Проверяет, что контроллер вернет HTTP 409 Conflict и сообщение в JSON-ответе.
  */
-
 @WebMvcTest(UserController.class)
 @Import(GlobalExceptionHandler.class)
 public class UserControllerTest {
@@ -109,7 +115,7 @@ public class UserControllerTest {
      */
     @Test
     void registerUser_shouldReturn409WhenEmailAlreadyExists() throws Exception {
-        RegisterUserCommand command = new RegisterUserCommand("John", "duplicate@example.com", "Password123");
+        final RegisterUserCommand command = new RegisterUserCommand("John", "duplicate@example.com", "Password123");
 
         given(userService.register(command)).willThrow(new EmailAlreadyTakenException("duplicate@example.com"));
 

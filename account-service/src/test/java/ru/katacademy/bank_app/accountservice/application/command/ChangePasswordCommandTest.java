@@ -3,20 +3,19 @@ package ru.katacademy.bank_app.accountservice.application.command;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
-/*
-Тест на то, что ChangePasswordCommand корректно хранит переданные данные.
+/**
+ * Тест на то, что ChangePasswordCommand корректно создаётся и передаётся в метод changePassword у UserServiceImpl.
  */
-
 public class ChangePasswordCommandTest {
     @Test
     void shouldStoreAndReturnFieldsCorrectly() {
         // given
-        Long userId = 42L;
-        String oldPassword = "oldPass123";
-        String newPassword = "newPass456";
+        final Long userId = 42L;
+        final String oldPassword = "oldPass123";
+        final String newPassword = "newPass456";
 
         // when
-        ChangePasswordCommand command = new ChangePasswordCommand(userId, oldPassword, newPassword);
+        final ChangePasswordCommand command = new ChangePasswordCommand(userId, oldPassword, newPassword);
 
         // then
         assertThat(command.getUserId()).isEqualTo(userId);
@@ -27,7 +26,7 @@ public class ChangePasswordCommandTest {
     @Test
     void shouldAllowFieldModificationUsingSetters() {
         // given
-        ChangePasswordCommand command = new ChangePasswordCommand();
+        final ChangePasswordCommand command = new ChangePasswordCommand();
 
         // when
         command.setUserId(99L);
