@@ -12,7 +12,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -45,7 +45,6 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, includes: [
-                    "ru/katacademy/bank_app/accountservice/domain/entity/**",
                     "ru/katacademy/bank_app/audit/domain/entity/*",
                     "ru/katacademy/bank_app/audit/application/service/*",
             ])
@@ -60,7 +59,7 @@ jacocoTestCoverageVerification {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, includes: [
                     "ru/katacademy/bank_app/audit/domain/entity/*",
-                    "ru/katacademy/bank_app/audit/application.service/*",
+                    "ru/katacademy/bank_app/audit/application/service/*",
             ])
         }))
     }
