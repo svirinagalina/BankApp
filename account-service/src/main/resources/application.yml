@@ -13,6 +13,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  kafka:
+      bootstrap-servers: kafka:9092
 
 ## JPA / Hibernate
 #  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
@@ -26,3 +28,17 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          include: db, kafka
+        liveness:
+          include: ping
