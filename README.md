@@ -50,6 +50,12 @@
 bash:
 ./gradlew spotbugsMain
 
+## Health Check Endpoints
+
+- `/actuator/health` — общее состояние сервиса
+- `/actuator/health/liveness` — сервис жив
+- `/actuator/health/readiness` — сервис готов к обслуживанию
+
 
 ## 🧭 Архитектура микросервисов
 

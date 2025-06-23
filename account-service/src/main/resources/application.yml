@@ -1,11 +1,11 @@
 server:
-  port: 8080
+  port: 8084
 
 spring:
   application:
     name: account-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/mainDB
+    url: jdbc:postgresql://localhost:5433/mainDB
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
@@ -13,12 +13,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
   kafka:
-    bootstrap-servers: kafka:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      bootstrap-servers: kafka:9092
 
 ## JPA / Hibernate
 #  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
@@ -32,3 +28,17 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          include: db, kafka
+        liveness:
+          include: ping
