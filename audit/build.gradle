@@ -1,9 +1,9 @@
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.5.0'
-    id 'io.spring.dependency-management' version '1.1.7'
-    id 'checkstyle'
-    id("com.github.spotbugs") version "6.1.11"
+	id 'java'
+	id 'org.springframework.boot' version '3.5.0'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'checkstyle'
+	id("com.github.spotbugs") version "6.1.11"
     id 'jacoco'
 }
 
@@ -82,14 +82,14 @@ import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
 
 tasks.spotbugsMain {
-    reports.create("html") {
-        ignoreFailures = false
-        effort = Effort.DEFAULT
-        reportLevel = Confidence.LOW.LOW
-        required = true
-        outputLocation = file("$rootDir/build/reports/spotbugs")
-        setStylesheet("fancy-hist.xsl")
-    }
+	reports.create("html") {
+		ignoreFailures =false
+		effort = Effort.DEFAULT
+		reportLevel = Confidence.LOW.LOW
+		required = true
+		outputLocation = file("$rootDir/build/reports/spotbugs/spotbugs.html")
+		setStylesheet("fancy-hist.xsl")
+	}
 }
 
 repositories {
@@ -99,13 +99,18 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.kafka:spring-kafka'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    runtimeOnly 'org.postgresql:postgresql'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
 
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'com.h2database:h2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
