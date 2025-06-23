@@ -38,6 +38,7 @@ jacoco {
 
 test {
     finalizedBy jacocoTestReport
+    useJUnitPlatform()
 }
 
 jacocoTestReport {
@@ -101,7 +102,9 @@ dependencies {
 
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testImplementation 'org.mockito:mockito-core:5.4.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.4.0'
 }
 
 bootJar {

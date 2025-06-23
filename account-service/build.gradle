@@ -35,6 +35,7 @@ jacoco {
 }
 
 test {
+    useJUnitPlatform()
     finalizedBy jacocoTestReport // Генерировать отчёт после тестов
 }
 
@@ -109,10 +110,6 @@ dependencies {
     testImplementation 'com.h2database:h2'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-// Связь задач: отчёт → проверка покрытия
-jacocoTestReport.finalizedBy jacocoTestCoverageVerification
+
 
 

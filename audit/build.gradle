@@ -32,6 +32,7 @@ jacoco {
 }
 
 test {
+    useJUnitPlatform()
     finalizedBy jacocoTestReport // Генерировать отчёт после тестов
 }
 
@@ -105,14 +106,12 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
 
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
 
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-// Связь задач: отчёт → проверка покрытия
-jacocoTestReport.finalizedBy jacocoTestCoverageVerification

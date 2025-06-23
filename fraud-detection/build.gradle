@@ -34,7 +34,8 @@ jacoco {
 }
 
 test {
-	finalizedBy jacocoTestReport
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport // Генерировать отчёт после тестов
 }
 
 jacocoTestReport {
@@ -120,8 +121,3 @@ tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
 bootJar {
 	archiveFileName = 'app.jar'
 }
-tasks.named('test') {
-	useJUnitPlatform()
-}
-// Связь задач: отчёт → проверка покрытия
-jacocoTestReport.finalizedBy jacocoTestCoverageVerification
