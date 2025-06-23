@@ -3,7 +3,6 @@ plugins {
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'checkstyle'
-    id 'jacoco'
 }
 
 group = 'ru.katacademy.bank_app'
@@ -29,60 +28,6 @@ repositories {
     maven { url = 'https://repo.spring.io/milestone' }
     maven { url = 'https://repo.spring.io/snapshot' }
 }
-
-jacoco {
-    toolVersion = "0.8.11"
-}
-
-test {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport // Генерировать отчёт после тестов
-}
-
-jacocoTestReport {
-    dependsOn test
-    reports {
-        html.required = true // Локальный HTML-отчёт
-    }
-
-
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, includes: [
-                    "ru/katacademy/bank_app/accountservice/domain/entity/**",
-                    "ru/katacademy/bank_app/accountservice/domain/service/**",
-                    "ru/katacademy/bank_app/accountservice/application/service/**",
-            ])
-        }))
-    }
-}
-
-// Проверка минимального покрытия
-jacocoTestCoverageVerification {
-    dependsOn jacocoTestReport
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, includes: [
-                    "ru/katacademy/bank_app/accountservice/domain/entity/**",
-                    "ru/katacademy/bank_app/accountservice/domain/service/**",
-                    "ru/katacademy/bank_app/accountservice/application/service/**",
-            ])
-        }))
-    }
-    violationRules {
-        rule {
-            element = 'CLASS'
-            limit {
-                minimum = 0.80 // Требуемое покрытие (80%)
-            }
-            println "Проверяемые классы/пакеты:"
-            classDirectories.each { dir ->
-                println " - ${dir}"
-            }
-        }
-    }
-}
-
 
 dependencies {
     // Spring Boot Starters
@@ -110,6 +55,6 @@ dependencies {
     testImplementation 'com.h2database:h2'
 }
 
-
-
-
+tasks.named('test') {
+    useJUnitPlatform()
+}

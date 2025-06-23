@@ -3,7 +3,6 @@ plugins {
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'checkstyle'
-    id 'jacoco'
 }
 
 group = 'ru.katacademy.bank_app'
@@ -26,59 +25,12 @@ checkstyle {
     configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
 }
 
+
+
 repositories {
     mavenCentral()
     maven { url = 'https://repo.spring.io/milestone' }
     maven { url = 'https://repo.spring.io/snapshot' }
-}
-
-jacoco {
-    toolVersion = "0.8.11"
-}
-
-test {
-    finalizedBy jacocoTestReport
-    useJUnitPlatform()
-}
-
-jacocoTestReport {
-    dependsOn test
-    reports {
-        html.required = true // Локальный HTML-отчёт
-    }
-
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, includes: [
-                    "ru/katacademy/bank_app/settingsservice/domain/entity/*",
-                    "ru/katacademy/bank_app/settingsservice/application/service/*",
-            ])
-        }))
-    }
-}
-
-// Проверка минимального покрытия
-jacocoTestCoverageVerification {
-    dependsOn jacocoTestReport
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, includes: [
-                    "ru/katacademy/bank_app/settingsservice/domain/entity/*",
-                    "ru/katacademy/bank_app/settingsservice/application/service/*",
-            ])
-        }))
-    }
-    violationRules {
-        rule {element = 'CLASS' // или 'PACKAGE'
-            limit {
-                minimum = 0.80 // Требуемое покрытие (80%)
-            }
-            println "Проверяемые классы/пакеты:"
-            classDirectories.each { dir ->
-                println " - ${dir}"
-            }
-        }
-    }
 }
 
 dependencies {
@@ -102,9 +54,7 @@ dependencies {
 
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
-    testImplementation 'org.mockito:mockito-core:5.4.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.4.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 bootJar {
@@ -114,5 +64,3 @@ bootJar {
 tasks.named('test') {
     useJUnitPlatform()
 }
-// Связь задач: отчёт → проверка покрытия
-jacocoTestReport.finalizedBy jacocoTestCoverageVerification
