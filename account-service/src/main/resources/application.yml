@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8084
 
 spring:
   application:
@@ -16,11 +16,7 @@ spring:
   kafka:
       bootstrap-servers: kafka:9092
 
-## JPA / Hibernate
-#  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-#  spring.jpa.hibernate.ddl-auto=create-drop
-#  spring.jpa.show-sql=true
-#  spring.jpa.properties.hibernate.format_sql=true
+
 
 springdoc:
   api-docs:

@@ -13,6 +13,7 @@ import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_app.accountservice.presentation.controller.UserController;
+import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
 
@@ -23,7 +24,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Тесты для контроллера UserController: проверяется регистрация и получение пользователя по ID.
+ * Тесты для контроллера UserController: проверяется регистрация и получение пользователя по ID
+ * Тест registerUser_shouldReturn201WhenEmailIsValid имитирует ситуацию, когда UserService.register() выбрасывает EmailAlreadyTakenException.
+ * Проверяет, что контроллер вернет HTTP 201 Created и сообщение в JSON-ответе.
+ * Тест registerUser_shouldReturn400WhenEmailFormatIsInvalid имитирует ситуацию, когда UserService.register() выбрасывает EmailAlreadyTakenException.
+ * Проверяет, что контроллер вернет HTTP 400 Bad Request и сообщение в JSON-ответе.
+ * Тест getById_shouldReturn200WhenUserExists имитирует ситуацию, когда UserService.getById() выбрасывает UserNotFoundException.
+ * Проверяет, что контроллер вернет HTTP 200 OK и сообщение в JSON-ответе.
+ * Тест getById_shouldReturn404WhenUserNotFound имитирует ситуацию, когда UserService.getById() выбрасывает UserNotFoundException.
+ * Проверяет, что контроллер вернет HTTP 404 Not Found и сообщение в JSON-ответе.
+ * Тест registerUser_shouldReturn409WhenEmailAlreadyExists имитирует ситуацию, когда UserService.register() выбрасывает EmailAlreadyTakenException.
+ * Проверяет, что контроллер вернет HTTP 409 Conflict и сообщение в JSON-ответе.
  */
 @WebMvcTest(UserController.class)
 @Import(GlobalExceptionHandler.class)
@@ -98,6 +109,23 @@ public class UserControllerTest {
 
         mockMvc.perform(get("/api/users/{id}", userId))
                 .andExpect(status().isNotFound());
+    }
+    /**
+     * POST /api/users/register — email уже зарегистрирован → 409 Conflict
+     */
+    @Test
+    void registerUser_shouldReturn409WhenEmailAlreadyExists() throws Exception {
+        final RegisterUserCommand command = new RegisterUserCommand("John", "duplicate@example.com", "Password123");
+
+        given(userService.register(command)).willThrow(new EmailAlreadyTakenException("duplicate@example.com"));
+
+        mockMvc.perform(post("/api/users/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(command)))
+                .andExpect(status().isConflict())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Email уже занят: duplicate@example.com"))
+                .andExpect(jsonPath("$.status").value(409));
     }
 }
 
