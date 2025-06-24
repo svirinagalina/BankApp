@@ -21,13 +21,28 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: mainDB
+      POSTGRES_DB: userDB
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  user-service_postgres:
+    image: postgres:15
+    container_name: user-service-postgres
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: mainDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+      - ./main.sql:/docker-entrypoint-initdb.d/main.sql
 
   kafka:
     image: bitnami/kafka:3.6
@@ -196,6 +211,35 @@ services:
         OTEL_TRACES_EXPORTER: otlp
         OTEL_METRICS_EXPORTER: otlp
         OTEL_LOGS_EXPORTER: otlp
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  auth-statistics-service:
+    build:
+      context: ./auth-statistics-service
+      dockerfile: Dockerfile
+    container_name: auth-statistics-service
+    depends_on:
+      - kafka
+      - postgres
+    ports:
+      - "8086:8080"
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mainDB
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_CONSUMER_GROUP_ID: auth-statistics-group
+      SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET: earliest
+      OTEL_SERVICE_NAME: auth-statistics-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s

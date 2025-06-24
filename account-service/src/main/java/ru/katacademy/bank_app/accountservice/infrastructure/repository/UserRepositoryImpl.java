@@ -1,5 +1,6 @@
 package ru.katacademy.bank_app.accountservice.infrastructure.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserEntityMapper;
@@ -36,6 +37,7 @@ public class UserRepositoryImpl implements UserRepository {
      *
      * @param jpaRepository репозиторий JPA для работы с User.
      */
+    @Autowired
     public UserRepositoryImpl(JpaUserRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
