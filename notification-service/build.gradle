@@ -18,7 +18,8 @@ tasks.spotbugsMain {
     reports {
         html {
             required = true
-            outputLocation = file("$rootDir/build/reports/spotbugs")
+            // Исправлено: теперь outputLocation указывает на файл, а не на директорию
+            outputLocation = file("$rootDir/build/reports/spotbugs/spotbugsMain.html")
             stylesheet = 'fancy-hist.xsl'
         }
     }
@@ -62,6 +63,8 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.testcontainers:kafka'
     testImplementation 'org.awaitility:awaitility:4.2.0'
+
+    implementation 'org.apache.commons:commons-compress:1.26.1'
 }
 
 springBoot {

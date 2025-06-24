@@ -38,3 +38,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# SpotBugs
+/reports/
+/**/build/reports/
+/**/spotbugs.html
