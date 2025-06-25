@@ -26,50 +26,39 @@ import java.util.Arrays;
 public class LoggingAspect {
 
     @Pointcut("execution(public * ru.katacademy.bank_app.accountservice.application.service..*(..))")
-//    @Pointcut("execution(public * *(..))")
     public void businessServiceMethods() {}
 
     @Around("businessServiceMethods()")
     public Object logMethodExecution(ProceedingJoinPoint joinPoint) throws Throwable {
-        /*
-          Получаем имя класса и метода.
-         */
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        String methodName = signature.getDeclaringType().getSimpleName() + "." + signature.getName();
-        /*
-         * Маскирование параметров. Каждый аргумент проходит через метод maskSensitiveData(), чтобы скрыть
-         * чувствительные данные
-         */
-        Object[] args = Arrays.stream(joinPoint.getArgs())
+
+        final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        final String methodName = signature.getDeclaringType().getSimpleName() + "." + signature.getName();
+
+        final Object[] args = Arrays.stream(joinPoint.getArgs())
                 .map(this::maskSensitiveData)
                 .toArray();
 
         log.info("-> {} Вызывается с аргументами: {}", methodName, args);
-        /*
-         * Вызов метода и измерение времени. Логирование результатов, маскируя результат.
-         * Обработка исключений
-         */
-        long start = System.currentTimeMillis();
+
+        final long start = System.currentTimeMillis();
         try {
-            Object result = joinPoint.proceed();
-            long duration = System.currentTimeMillis() - start;
+            final Object result = joinPoint.proceed();
+            final long duration = System.currentTimeMillis() - start;
             log.info("<- {} returned: {} ({}ms)", methodName, maskSensitiveData(result), duration);
             return result;
         } catch (Throwable ex) {
-            long duration = System.currentTimeMillis() - start;
+            final long duration = System.currentTimeMillis() - start;
             log.error("<- {} threw {} after {}ms", methodName, ex.getClass().getSimpleName(), duration);
             throw ex;
         }
     }
 
-    /**
-     * Этот метод заменяет все чувствительные значения (password, token, hash)
-     * в строковом представлении аргументов и возвращаемых значений на ***.
-     */
     private Object maskSensitiveData(Object input) {
-        if (input == null) return null;
+        if (input == null) {
+            return null;
+        }
 
-        String str = input.toString();
+        final String str = input.toString();
         return str
                 .replaceAll("(?i)(\"?password\"?\\s*[:=]\\s*)\".*?\"", "$1\"***\"")
                 .replaceAll("(?i)(\"?token\"?\\s*[:=]\\s*)\".*?\"", "$1\"***\"")
