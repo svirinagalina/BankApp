@@ -1,12 +1,13 @@
+# SpotBugs
+/reports/
+/build/
+
 HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-reports/spotbugs.html
-**/build/reports/spotbugs/
-reports/
 
 ### STS ###
 .apt_generated
@@ -21,8 +22,6 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.target
-target
 .idea
 *.iws
 *.iml
