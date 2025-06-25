@@ -18,6 +18,13 @@ import reactor.core.publisher.Mono;
 public class LoggingFilter implements GlobalFilter, Ordered {
 
     /**
+     * Определяет порядок выполнения фильтра в цепочке.
+     * Фильтры с меньшим значением выполняются раньше. Значение -1 означает, что фильтр будет
+     * выполнен раньше большинства других стандартных фильтров.
+     */
+    private static final int LOGGING_FILTER_ORDER = -1;
+
+    /**
      * @param exchange объект ServerWebExchange, содержащий информацию о запросе и ответе.
      * @param chain цепочка фильтров, для передачи управления после выполнения логики.
      * @return Mono<Void> — завершение обработки фильтра.
@@ -29,15 +36,10 @@ public class LoggingFilter implements GlobalFilter, Ordered {
     }
 
     /**
-     * Определяет порядок выполнения фильтра в цепочке.
-     *
-     * Фильтры с меньшим значением выполняются раньше. Значение -1 означает, что фильтр будет
-     * выполнен раньше большинства других стандартных фильтров.
-     *
-     * @return int — приоритет, чем меньше значение, тем выше приоритет.
+     * @return int — возвращаем порядок, чем меньше значение, тем выше приоритет.
      */
     @Override
     public int getOrder() {
-        return -1;
+        return LOGGING_FILTER_ORDER;
     }
 }
