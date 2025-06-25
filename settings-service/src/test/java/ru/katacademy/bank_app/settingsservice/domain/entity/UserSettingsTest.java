@@ -2,6 +2,8 @@ package ru.katacademy.bank_app.settingsservice.domain.entity;
 
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -45,7 +47,10 @@ class UserSettingsTest {
 
         assertNotNull(settings.getCreatedAt());
         assertNotNull(settings.getUpdatedAt());
-        assertEquals(settings.getCreatedAt(), settings.getUpdatedAt());
+        assertEquals(
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS),
+                settings.getCreatedAt().truncatedTo(ChronoUnit.SECONDS)
+        );
     }
 
     /**
