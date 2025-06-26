@@ -218,6 +218,16 @@ services:
       retries: 3
       start_period: 20s
 
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - "8765:8765"
+    depends_on:
+      - account-service
+      - security-service
+      - settings-service
+
 volumes:
   postgres_data:
   kafka_data:
