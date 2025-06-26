@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.accountservice.infrastructure.repository;
+package ru.katacademy.bank_app.accountservice.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

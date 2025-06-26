@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 reports/spotbugs.html
+reports/spotbugs-bank-shared.html
 
 ### STS ###
 .apt_generated

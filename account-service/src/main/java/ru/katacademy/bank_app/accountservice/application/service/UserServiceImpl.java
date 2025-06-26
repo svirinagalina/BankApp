@@ -1,5 +1,6 @@
 package ru.katacademy.bank_app.accountservice.application.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordChangeEventPublisher passwordChangeEventPublisher;
 
+    @Autowired
     public UserServiceImpl(
             UserRepository userRepository,
             UserMapper userMapper,
