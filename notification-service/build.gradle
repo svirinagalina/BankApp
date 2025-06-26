@@ -15,11 +15,15 @@ java {
 }
 
 tasks.spotbugsMain {
-    reports.create("html") {
-        required = true
-        outputLocation = file("$rootDir/build/reports/spotbugs/spotbugs.html")
-        setStylesheet("fancy-hist.xsl")
+    reports {
+        html {
+            required = true
+            // Исправлено: теперь outputLocation указывает на файл, а не на директорию
+            outputLocation = file("$rootDir/build/reports/spotbugs/spotbugsMain.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
     }
+    // reportLevel и effort убраны, используются дефолтные значения
 }
 
 repositories {
@@ -34,7 +38,10 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka:3.1.2'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    implementation 'org.postgresql:postgresql:42.7.3'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
 
     // JPA + H2
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -57,6 +64,8 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.testcontainers:kafka'
     testImplementation 'org.awaitility:awaitility:4.2.0'
+
+    implementation 'org.apache.commons:commons-compress:1.26.1'
 }
 
 springBoot {

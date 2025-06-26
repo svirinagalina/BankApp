@@ -1,4 +1,4 @@
-#version: '3.8'
+version: '3.8'
 
 services:
   otel-collector:
@@ -179,7 +179,7 @@ services:
     ports:
       - "8087:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userDB
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notifications_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
@@ -246,6 +246,16 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - "8765:8765"
+    depends_on:
+      - account-service
+      - security-service
+      - settings-service
 
 volumes:
   postgres_data:
