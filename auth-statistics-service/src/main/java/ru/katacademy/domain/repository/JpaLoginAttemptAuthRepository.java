@@ -1,7 +1,8 @@
-package ru.katacademy.infrastructure.repository;
+package ru.katacademy.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
+import ru.katacademy.infrastructure.repository.LoginAttemptAuthRepositoryImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;

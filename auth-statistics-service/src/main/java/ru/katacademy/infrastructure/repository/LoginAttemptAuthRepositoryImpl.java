@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.katacademy.domain.entity.LoginAttempt;
+import ru.katacademy.domain.repository.JpaLoginAttemptAuthRepository;
 import ru.katacademy.domain.repository.LoginAttemptAuthRepository;
 import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
 import ru.katacademy.infrastructure.mapper.LoginAttemptMapper;
