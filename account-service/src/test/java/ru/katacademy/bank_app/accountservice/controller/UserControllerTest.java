@@ -36,7 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Тест registerUser_shouldReturn409WhenEmailAlreadyExists имитирует ситуацию, когда UserService.register() выбрасывает EmailAlreadyTakenException.
  * Проверяет, что контроллер вернет HTTP 409 Conflict и сообщение в JSON-ответе.
  */
-@WebMvcTest(UserController.class)
+@WebMvcTest(controllers = UserController.class,
+        excludeAutoConfiguration = org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class)
 @Import(GlobalExceptionHandler.class)
 public class UserControllerTest {
 
