@@ -22,3 +22,7 @@ management:
           include: db
         liveness:
           include: ping
+logging:
+  level:
+    ROOT: INFO
+    org.springframework: INFO

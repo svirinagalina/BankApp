@@ -48,8 +48,7 @@ public class UserControllerTest {
     private UserService userService;
 
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * POST /api/users/register — успешная регистрация пользователя

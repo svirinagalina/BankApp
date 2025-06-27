@@ -13,8 +13,9 @@ include("settings-service")
 include("security-service")
 include("fraud-detection")
 include("audit")
-include("user-service")
+//include("user-service")
 include("notification-service")
 include("account-service")
 include ("api-gateway")
+include 'auth-statistics-service'
 
