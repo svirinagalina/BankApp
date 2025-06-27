@@ -44,6 +44,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation(project(":bank-shared"))
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation project(':audit')
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
