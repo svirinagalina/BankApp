@@ -56,6 +56,26 @@ bash:
 - `/actuator/health/liveness` — сервис жив
 - `/actuator/health/readiness` — сервис готов к обслуживанию
 
+# Аспект аудита
+### Описание
+Аспект автоматически фиксирует события для критических бизнес-операций.
+
+### Поддерживаемые действия
+- CREATE_ACCOUNT
+- CHANGE_PASSWORD
+
+### Как использовать
+Добавьте аннотацию `@Auditable(action = "...")` к нужному методу.
+
+### Формат события
+```json
+{
+  "action": "Регистрация аккаунта",
+  "timestamp": "2025-06-27T16:00:00",
+  "username": "user@example.com",
+  "parameters": "param1, 123",
+  "status": "SUCCESS"
+}
 
 ## 🧭 Архитектура микросервисов
 
@@ -122,4 +142,6 @@ CORS открыт для всех источников по умолчанию. 
 ## 🚀 Как запустить
 
 ```bash
-./gradlew bootRun
+/gradlew clean build
+docker compose build
+docker compose up

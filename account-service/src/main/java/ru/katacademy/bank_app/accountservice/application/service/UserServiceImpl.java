@@ -1,5 +1,6 @@
 package ru.katacademy.bank_app.accountservice.application.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -7,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_app.accountservice.infrastructure.messaging.PasswordChangeEventPublisher;
+import ru.katacademy.bank_app.audit.annotation.Auditable;
 import ru.katacademy.bank_shared.exception.DomainException;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.InvalidPasswordException;
@@ -44,6 +46,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordChangeEventPublisher passwordChangeEventPublisher;
 
+    @Autowired
     public UserServiceImpl(
             UserRepository userRepository,
             UserMapper userMapper,
@@ -65,6 +68,7 @@ public class UserServiceImpl implements UserService {
      * @throws EmailAlreadyTakenException если email уже используется
      * @throws DomainException            если произошла ошибка при регистрации
      */
+    @Auditable(action = "Регистрация аккаунта")
     @Transactional
     @Override
     public UserDto register(RegisterUserCommand cmd) throws DomainException {
@@ -117,6 +121,7 @@ public class UserServiceImpl implements UserService {
      *                                  Если новый пароль не соответствует критериям (менее 8 символов,
      *                                  Если не содержит латинские буквы и цифры от 0 до 9).
      */
+    @Auditable(action = "Смена пароля")
     @Transactional
     public void changePassword(ChangePasswordCommand command) {
         final User user = userRepository
