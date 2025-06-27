@@ -122,4 +122,6 @@ CORS открыт для всех источников по умолчанию. 
 ## 🚀 Как запустить
 
 ```bash
-./gradlew bootRun
+/gradlew clean build
+docker compose build
+docker compose up
