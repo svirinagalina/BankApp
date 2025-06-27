@@ -1,0 +1,25 @@
+server:
+  port: 8765
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: account-service
+          uri: http://account-service:8080
+          predicates:
+            - Path=/api/accounts/**
+        - id: security-service
+          uri: http://security-service:8080
+          predicates:
+            - Path=/api/security/**
+
+      default-filters:
+        - AddResponseHeader=X-Gateway, bank-gateway
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
