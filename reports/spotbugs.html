@@ -4,7 +4,7 @@
 <html>
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-      <title>SpotBugs (4.8.6) analysis for security-service (spotbugsMain) of release 0.0.1-SNAPSHOT</title>
+      <title>SpotBugs (4.8.6) analysis for bank-app (spotbugsMain) of release 0.0.1-SNAPSHOT</title>
       <style type="text/css">
          html, body, div, form {
             margin:0px;
@@ -889,18 +889,55 @@
          );
 
          var classStats = new Array(
-               {className: "ru.katacademy.securityservice.SecurityServiceApplication", packageName: "ru.katacademy.securityservice", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
-               {className: "ru.katacademy.securityservice.config.CorsConfig", packageName: "ru.katacademy.securityservice.config", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
-               {className: "ru.katacademy.securityservice.config.SecurityConfig", packageName: "ru.katacademy.securityservice.config", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
-               {className: "ru.katacademy.securityservice.presentation.controller.JwtController", packageName: "ru.katacademy.securityservice.presentation.controller", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
-               {className: "ru.katacademy.securityservice.util.JwtUtil", packageName: "ru.katacademy.securityservice.util", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"}
+               {className: "ru.katacademy.bank_app.BankAppApplication", packageName: "ru.katacademy.bank_app", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.application.command.CreateAccountCommand", packageName: "ru.katacademy.bank_app.account.application.command", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.application.dto.AccountDto", packageName: "ru.katacademy.bank_app.account.application.dto", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.application.mapper.AccountMapper", packageName: "ru.katacademy.bank_app.account.application.mapper", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.application.port.out.TransferEventPublisher", packageName: "ru.katacademy.bank_app.account.application.port.out", isInterface: "true", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.application.service.AccountService", packageName: "ru.katacademy.bank_app.account.application.service", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.application.service.TransferValidator", packageName: "ru.katacademy.bank_app.account.application.service", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.domain.entity.Account", packageName: "ru.katacademy.bank_app.account.domain.entity", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.domain.enumtype.AccountStatus", packageName: "ru.katacademy.bank_app.account.domain.enumtype", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.domain.repository.AccountRepository", packageName: "ru.katacademy.bank_app.account.domain.repository", isInterface: "true", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.infrastructure.messaging.KafkaTransferEventPublisher", packageName: "ru.katacademy.bank_app.account.infrastructure.messaging", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.infrastructure.persistence.entity.AccountEntity", packageName: "ru.katacademy.bank_app.account.infrastructure.persistence.entity", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.infrastructure.persistence.mapper.AccountEntityMapper", packageName: "ru.katacademy.bank_app.account.infrastructure.persistence.mapper", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.infrastructure.repository.AccountRepositoryImpl", packageName: "ru.katacademy.bank_app.account.infrastructure.repository", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.account.infrastructure.repository.JpaAccountRepository", packageName: "ru.katacademy.bank_app.account.infrastructure.repository", isInterface: "true", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.kafka.KafkaConfig", packageName: "ru.katacademy.bank_app.kafka", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.kafka.KafkaConfiguration", packageName: "ru.katacademy.bank_app.kafka", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.kafka.KafkaConsumer", packageName: "ru.katacademy.bank_app.kafka", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.kafka.KafkaErrorHandlerConfig", packageName: "ru.katacademy.bank_app.kafka", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.notification.application.FraudActionService", packageName: "ru.katacademy.bank_app.notification.application", isInterface: "true", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.notification.application.NotificationService", packageName: "ru.katacademy.bank_app.notification.application", isInterface: "true", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.notification.infrastructure.FraudActionServiceImpl", packageName: "ru.katacademy.bank_app.notification.infrastructure", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.notification.infrastructure.FraudDetectionConsumer", packageName: "ru.katacademy.bank_app.notification.infrastructure", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.notification.infrastructure.NotificationConsumer", packageName: "ru.katacademy.bank_app.notification.infrastructure", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.notification.infrastructure.NotificationServiceImpl", packageName: "ru.katacademy.bank_app.notification.infrastructure", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.notification.infrastructure.SettingsServiceConsumer", packageName: "ru.katacademy.bank_app.notification.infrastructure", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.notification.template.TransferNotificationTemplate", packageName: "ru.katacademy.bank_app.notification.template", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {className: "ru.katacademy.bank_app.shared.exception.ExceptionConfig", packageName: "ru.katacademy.bank_app.shared.exception", isInterface: "false", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"}
          );
 
          var packageStats = new Array(
-               {packageName: "ru.katacademy.securityservice", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
-               {packageName: "ru.katacademy.securityservice.config", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
-               {packageName: "ru.katacademy.securityservice.presentation.controller", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
-               {packageName: "ru.katacademy.securityservice.util", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"}
+               {packageName: "ru.katacademy.bank_app", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.application.command", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.application.dto", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.application.mapper", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.application.port.out", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.application.service", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.domain.entity", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.domain.enumtype", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.domain.repository", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.infrastructure.messaging", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.infrastructure.persistence.entity", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.infrastructure.persistence.mapper", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.account.infrastructure.repository", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.kafka", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.notification.application", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.notification.infrastructure", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.notification.template", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"},
+               {packageName: "ru.katacademy.bank_app.shared.exception", totalBugs: "0", bugsP1: "0", bugsP2: "0", bugsP3: "0", bugsP4: "0"}
          );
 
          var bugs = new Array(
@@ -912,7 +949,7 @@
    </head>
    <body>
       <h3>
-         <a href="https://spotbugs.github.io">SpotBugs</a> (4.8.6) analysis for security-service (spotbugsMain) of release 0.0.1-SNAPSHOT</h3>
+         <a href="https://spotbugs.github.io">SpotBugs</a> (4.8.6) analysis for bank-app (spotbugsMain) of release 0.0.1-SNAPSHOT</h3>
       <div id="menuWrapper">
          <div id="navcontainer">
             <ul id="navlist">
@@ -995,8 +1032,8 @@
                   <th>Bugs Experimental</th>
                </tr>
                <tr>
-                  <td class="summary-name">Overall (4 packages, 5 classes)</td>
-                  <td class="summary-size">64</td>
+                  <td class="summary-name">Overall (18 packages, 28 classes)</td>
+                  <td class="summary-size">372</td>
                   <td class="summary-priority-all">0</td>
                   <td class="summary-priority-1">0</td>
                   <td class="summary-priority-2">0</td>
@@ -1009,86 +1046,121 @@
             <div id="analyzed-files">
                <h3>Analyzed Files:</h3>
                <ul>
-                  <li>/Users/mihailbystrov/Documents/JAVA/KATA/bank-app1/security-service/build/classes/java/main/ru/katacademy/securityservice/SecurityServiceApplication.class</li>
-                  <li>/Users/mihailbystrov/Documents/JAVA/KATA/bank-app1/security-service/build/classes/java/main/ru/katacademy/securityservice/config/CorsConfig.class</li>
-                  <li>/Users/mihailbystrov/Documents/JAVA/KATA/bank-app1/security-service/build/classes/java/main/ru/katacademy/securityservice/config/SecurityConfig.class</li>
-                  <li>/Users/mihailbystrov/Documents/JAVA/KATA/bank-app1/security-service/build/classes/java/main/ru/katacademy/securityservice/presentation/controller/JwtController.class</li>
-                  <li>/Users/mihailbystrov/Documents/JAVA/KATA/bank-app1/security-service/build/classes/java/main/ru/katacademy/securityservice/util/JwtUtil.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\BankAppApplication.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\application\command\CreateAccountCommand.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\application\dto\AccountDto.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\application\mapper\AccountMapper.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\application\port\out\TransferEventPublisher.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\application\service\AccountService.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\application\service\TransferValidator.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\domain\entity\Account.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\domain\enumtype\AccountStatus.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\domain\repository\AccountRepository.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\infrastructure\messaging\KafkaTransferEventPublisher.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\infrastructure\persistence\entity\AccountEntity.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\infrastructure\persistence\mapper\AccountEntityMapper.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\infrastructure\repository\AccountRepositoryImpl.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\account\infrastructure\repository\JpaAccountRepository.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\kafka\KafkaConfig.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\kafka\KafkaConfiguration.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\kafka\KafkaConsumer.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\kafka\KafkaErrorHandlerConfig.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\notification\application\FraudActionService.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\notification\application\NotificationService.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\notification\infrastructure\FraudActionServiceImpl.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\notification\infrastructure\FraudDetectionConsumer.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\notification\infrastructure\NotificationConsumer.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\notification\infrastructure\NotificationServiceImpl.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\notification\infrastructure\SettingsServiceConsumer.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\notification\template\TransferNotificationTemplate.class</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\build\classes\java\main\ru\katacademy\bank_app\shared\exception\ExceptionConfig.class</li>
                </ul>
             </div>
             <div id="used-libraries">
                <h3>Used Libraries:</h3>
                <ul>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-classic/1.5.18/fc371f3fc97a639de2d67947cffb7518ec5e3d40/logback-classic-1.5.18.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/ch.qos.logback/logback-core/1.5.18/6c0375624f6f36b4e089e2488ba21334a11ef13f/logback-core-1.5.18.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.19.0/fd1e7c56de1e5b658563c8c66d5074cceb4e3a0b/jackson-annotations-2.19.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.19.0/a90640e59ea42632a8e331ff1d6b706cf306050a/jackson-core-2.19.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.19.0/b3f7506f6414fb04760561eec11a0880165c2a4a/jackson-databind-2.19.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/2.19.0/2d735ab4ecebf5c2bf248d4036fd4ba6d73d0cc1/jackson-dataformat-yaml-2.19.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.datatype/jackson-datatype-jdk8/2.19.0/69312135ff6d6646203b9681fa48505f369210a6/jackson-datatype-jdk8-2.19.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.datatype/jackson-datatype-jsr310/2.19.0/4c98a2fa8b35b5ffe102438f747f7b526619fde7/jackson-datatype-jsr310-2.19.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.module/jackson-module-parameter-names/2.19.0/4963234952362539ca73c85b6a423c851f04f1d/jackson-module-parameter-names-2.19.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/com.fasterxml/classmate/1.7.0/e98374da1f2143ac8e6e0a95036994bb19137a3/classmate-1.7.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/io.jsonwebtoken/jjwt-api/0.11.5/f742940045619d06383e7df37b21ac422b476cf1/jjwt-api-0.11.5.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/io.micrometer/micrometer-commons/1.15.0/a796f0418b2e0fe42988a1ca6e240d8b3fb5e954/micrometer-commons-1.15.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/io.micrometer/micrometer-observation/1.15.0/1bcd42cb00aead4d441038fa86b0e6b41922e254/micrometer-observation-1.15.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/io.swagger.core.v3/swagger-annotations-jakarta/2.2.15/951eda18dbce0397347056aceff38d02710ec866/swagger-annotations-jakarta-2.2.15.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/io.swagger.core.v3/swagger-core-jakarta/2.2.15/6c85064b85f895b7f0c0819d950995274c0931a4/swagger-core-jakarta-2.2.15.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/io.swagger.core.v3/swagger-models-jakarta/2.2.15/664bc63998b703b3e695a00f502f6091b8c7815f/swagger-models-jakarta-2.2.15.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/jakarta.activation/jakarta.activation-api/2.1.3/fa165bd70cda600368eee31555222776a46b881f/jakarta.activation-api-2.1.3.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/jakarta.annotation/jakarta.annotation-api/2.1.1/48b9bda22b091b1f48b13af03fe36db3be6e1ae3/jakarta.annotation-api-2.1.1.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/jakarta.validation/jakarta.validation-api/3.0.2/92b6631659ba35ca09e44874d3eb936edfeee532/jakarta.validation-api-3.0.2.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/jakarta.xml.bind/jakarta.xml.bind-api/4.0.2/6cd5a999b834b63238005b7144136379dc36cad2/jakarta.xml.bind-api-4.0.2.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/javax.validation/validation-api/2.0.1.Final/cb855558e6271b1b32e716d24cb85c7f583ce09e/validation-api-2.0.1.Final.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.17.0/b17d2136f0460dcc0d2016ceefca8723bdf4ee70/commons-lang3-3.17.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.apache.kafka/kafka-clients/3.9.1/86ca079953ed5606257ff298c24666b26da6985b/kafka-clients-3.9.1.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.24.3/b02c125db8b6d295adf72ae6e71af5d83bce2370/log4j-api-2.24.3.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-to-slf4j/2.24.3/da1143e2a2531ee1c2d90baa98eb50a28a39d5a7/log4j-to-slf4j-2.24.3.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.apache.tomcat.embed/tomcat-embed-core/10.1.41/bcf9c79a4508fd36c93babc83823c09b3aa2d510/tomcat-embed-core-10.1.41.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.apache.tomcat.embed/tomcat-embed-el/10.1.41/5ca28d87f558ce31b9952dc9592f46633dc5d7a3/tomcat-embed-el-10.1.41.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.apache.tomcat.embed/tomcat-embed-websocket/10.1.41/d696393d5949252ed8d561184df118b3ca5efd07/tomcat-embed-websocket-10.1.41.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.glassfish/javax.el/3.0.0/dd532526e7c8de48e40419e6af1183658a973379/javax.el-3.0.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.hibernate.validator/hibernate-validator/6.0.13.Final/af4232bf90ecd33c71147d67185dbb1cfe8f33df/hibernate-validator-6.0.13.Final.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.jboss.logging/jboss-logging/3.6.1.Final/886afbb445b4016a37c8960a7aef6ebd769ce7e5/jboss-logging-3.6.1.Final.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.38/57f8f5e02e92a30fd21b80cbd426a4172b5f8e29/lombok-1.18.38.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.slf4j/jul-to-slf4j/2.0.17/524cb6ccc2b68a57604750e1ab8b13b5a786a6aa/jul-to-slf4j-2.0.17.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.17/d9e58ac9c7779ba3bf8142aff6c830617a7fe60f/slf4j-api-2.0.17.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springdoc/springdoc-openapi-starter-common/2.2.0/352343daae911b5d95c718c4a3c461cf94b4707b/springdoc-openapi-starter-common-2.2.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springdoc/springdoc-openapi-starter-webmvc-api/2.2.0/3a7a3a7ecd2537203961d83cabc6d642f294ddb/springdoc-openapi-starter-webmvc-api-2.2.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springdoc/springdoc-openapi-starter-webmvc-ui/2.2.0/178d8ed6714d78b8b475c45bc60642a9232fcb70/springdoc-openapi-starter-webmvc-ui-2.2.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-autoconfigure/3.5.0/a7f8ba40022dd75f20ac0eafe117437a1a7f3935/spring-boot-autoconfigure-3.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-json/3.5.0/af98a526ea3f68c179a6c6199bb1dbe864f43b93/spring-boot-starter-json-3.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-logging/3.5.0/7db0461d8895f00a9841bf5558501fe90e7eba4c/spring-boot-starter-logging-3.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-security/3.5.0/f33d61f93d8a0ded9a1142996d2663105a237e76/spring-boot-starter-security-3.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-tomcat/3.5.0/2e22a33e6f9444a7248581a23541fea5c1f6c216/spring-boot-starter-tomcat-3.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-web/3.5.0/29c6198f7e5cd7c4b9a27045d93879e161d6cdd0/spring-boot-starter-web-3.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter/3.5.0/f8b02201e89d294514420a586624aa7338d61f4f/spring-boot-starter-3.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot/3.5.0/ec86afc460265a0219bfafe187acb6c596ac2de1/spring-boot-3.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.kafka/spring-kafka/3.3.6/7b80a444ab74745e4f5c272675eeecabfe0caea4/spring-kafka-3.3.6.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.retry/spring-retry/2.0.12/62a14736086ffd6f382f0df3bf066a5a34f174fa/spring-retry-2.0.12.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-config/6.5.0/722e3b1f1e0fa3732f98d6dc69622f6edec2fa1f/spring-security-config-6.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-core/6.5.0/8aaee0c3b38897272e21dc5545451493c60dbdd0/spring-security-core-6.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-crypto/6.5.0/d3f68d9c0ea8ff9c02db090db5f8838481f8c5a/spring-security-crypto-6.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-web/6.5.0/fe36d58e9f3b8510ad8495e2dd4df9ece8e5ee7c/spring-security-web-6.5.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-aop/6.2.7/3df3ee9217cb62e65382718351e56f1eeb76e74c/spring-aop-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-beans/6.2.7/64119950b73943f67196705e43acddd7bf714c45/spring-beans-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context/6.2.7/e0f3850bba7ff52016429e8d2fa39b5107f1fde6/spring-context-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/6.2.7/525a228b8b4323568b7aa9e49c1e1df27838adf1/spring-core-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-expression/6.2.7/fa525916c85df246fcb70c771d039523dd6f12d9/spring-expression-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-jcl/6.2.7/16b5f3446a6fcf097f4910c935086d08db657653/spring-jcl-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-messaging/6.2.7/4d969084e3b1915ce04d8768d89fe9c092191500/spring-messaging-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-tx/6.2.7/6cf5d200c297fa8cc0b4cf39c1a20b310d2c3d52/spring-tx-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/6.2.7/1bd08eba2f2fd69eef49473e42fe124a20e7f844/spring-web-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.springframework/spring-webmvc/6.2.7/a1954b3a51f585c6b8582831661fec981d2571e/spring-webmvc-6.2.7.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.webjars/swagger-ui/5.2.0/c48d665a3f3a5d73afa34982953d3c31acc1d1dd/swagger-ui-5.2.0.jar</li>
-                  <li>/Users/mihailbystrov/.gradle/caches/modules-2/files-2.1/org.yaml/snakeyaml/2.4/e0666b825b796f85521f02360e77f4c92c5a7a07/snakeyaml-2.4.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\ch.qos.logback\logback-classic\1.5.18\fc371f3fc97a639de2d67947cffb7518ec5e3d40\logback-classic-1.5.18.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\ch.qos.logback\logback-core\1.5.18\6c0375624f6f36b4e089e2488ba21334a11ef13f\logback-core-1.5.18.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.core\jackson-annotations\2.19.0\fd1e7c56de1e5b658563c8c66d5074cceb4e3a0b\jackson-annotations-2.19.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.core\jackson-core\2.19.0\a90640e59ea42632a8e331ff1d6b706cf306050a\jackson-core-2.19.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.core\jackson-databind\2.19.0\b3f7506f6414fb04760561eec11a0880165c2a4a\jackson-databind-2.19.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.dataformat\jackson-dataformat-yaml\2.19.0\2d735ab4ecebf5c2bf248d4036fd4ba6d73d0cc1\jackson-dataformat-yaml-2.19.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.datatype\jackson-datatype-jdk8\2.19.0\69312135ff6d6646203b9681fa48505f369210a6\jackson-datatype-jdk8-2.19.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.datatype\jackson-datatype-jsr310\2.19.0\4c98a2fa8b35b5ffe102438f747f7b526619fde7\jackson-datatype-jsr310-2.19.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\com.fasterxml.jackson.module\jackson-module-parameter-names\2.19.0\4963234952362539ca73c85b6a423c851f04f1d\jackson-module-parameter-names-2.19.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\com.fasterxml\classmate\1.7.0\e98374da1f2143ac8e6e0a95036994bb19137a3\classmate-1.7.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\com.zaxxer\HikariCP\6.3.0\bebd113244c9d9926c6b792f28110ed6380cacc2\HikariCP-6.3.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\io.micrometer\micrometer-commons\1.15.0\a796f0418b2e0fe42988a1ca6e240d8b3fb5e954\micrometer-commons-1.15.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\io.micrometer\micrometer-observation\1.15.0\1bcd42cb00aead4d441038fa86b0e6b41922e254\micrometer-observation-1.15.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\io.swagger.core.v3\swagger-annotations-jakarta\2.2.15\951eda18dbce0397347056aceff38d02710ec866\swagger-annotations-jakarta-2.2.15.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\io.swagger.core.v3\swagger-core-jakarta\2.2.15\6c85064b85f895b7f0c0819d950995274c0931a4\swagger-core-jakarta-2.2.15.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\io.swagger.core.v3\swagger-models-jakarta\2.2.15\664bc63998b703b3e695a00f502f6091b8c7815f\swagger-models-jakarta-2.2.15.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\jakarta.activation\jakarta.activation-api\2.1.3\fa165bd70cda600368eee31555222776a46b881f\jakarta.activation-api-2.1.3.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\jakarta.annotation\jakarta.annotation-api\2.1.1\48b9bda22b091b1f48b13af03fe36db3be6e1ae3\jakarta.annotation-api-2.1.1.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\jakarta.persistence\jakarta.persistence-api\3.1.0\66901fa1c373c6aff65c13791cc11da72060a8d6\jakarta.persistence-api-3.1.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\jakarta.transaction\jakarta.transaction-api\2.0.1\51a520e3fae406abb84e2e1148e6746ce3f80a1a\jakarta.transaction-api-2.0.1.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\jakarta.validation\jakarta.validation-api\3.0.2\92b6631659ba35ca09e44874d3eb936edfeee532\jakarta.validation-api-3.0.2.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\jakarta.xml.bind\jakarta.xml.bind-api\4.0.2\6cd5a999b834b63238005b7144136379dc36cad2\jakarta.xml.bind-api-4.0.2.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\javax.validation\validation-api\2.0.1.Final\cb855558e6271b1b32e716d24cb85c7f583ce09e\validation-api-2.0.1.Final.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\junit\junit\4.13.1\cdd00374f1fee76b11e2a9d127405aa3f6be5b6a\junit-4.13.1.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.antlr\antlr4-runtime\4.13.0\5a02e48521624faaf5ff4d99afc88b01686af655\antlr4-runtime-4.13.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-lang3\3.17.0\b17d2136f0460dcc0d2016ceefca8723bdf4ee70\commons-lang3-3.17.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.apache.kafka\kafka-clients\3.9.1\86ca079953ed5606257ff298c24666b26da6985b\kafka-clients-3.9.1.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-api\2.24.3\b02c125db8b6d295adf72ae6e71af5d83bce2370\log4j-api-2.24.3.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-to-slf4j\2.24.3\da1143e2a2531ee1c2d90baa98eb50a28a39d5a7\log4j-to-slf4j-2.24.3.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.apache.tomcat.embed\tomcat-embed-core\10.1.41\bcf9c79a4508fd36c93babc83823c09b3aa2d510\tomcat-embed-core-10.1.41.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.apache.tomcat.embed\tomcat-embed-el\10.1.41\5ca28d87f558ce31b9952dc9592f46633dc5d7a3\tomcat-embed-el-10.1.41.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.apache.tomcat.embed\tomcat-embed-websocket\10.1.41\d696393d5949252ed8d561184df118b3ca5efd07\tomcat-embed-websocket-10.1.41.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.aspectj\aspectjweaver\1.9.24\9b5aeb0cea9f958b9c57fb80e62996e95a3e9379\aspectjweaver-1.9.24.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.glassfish\javax.el\3.0.0\dd532526e7c8de48e40419e6af1183658a973379\javax.el-3.0.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.hamcrest\hamcrest-core\3.0\254f69f4b0ca22198acfc19fcdd5f96140431c3e\hamcrest-core-3.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.hamcrest\hamcrest\3.0\8fd9b78a8e6a6510a078a9e30e9e86a6035cfaf7\hamcrest-3.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.hibernate.orm\hibernate-core\6.6.15.Final\9ff5f41fc240a56d7076193094602c62a5294ea5\hibernate-core-6.6.15.Final.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.hibernate.validator\hibernate-validator\6.0.13.Final\af4232bf90ecd33c71147d67185dbb1cfe8f33df\hibernate-validator-6.0.13.Final.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.jboss.logging\jboss-logging\3.6.1.Final\886afbb445b4016a37c8960a7aef6ebd769ce7e5\jboss-logging-3.6.1.Final.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.postgresql\postgresql\42.7.2\86ed42574cd68662b05d3b00432a34e9a34cb12c\postgresql-42.7.2.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.projectlombok\lombok\1.18.38\57f8f5e02e92a30fd21b80cbd426a4172b5f8e29\lombok-1.18.38.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.slf4j\jul-to-slf4j\2.0.17\524cb6ccc2b68a57604750e1ab8b13b5a786a6aa\jul-to-slf4j-2.0.17.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.slf4j\slf4j-api\2.0.17\d9e58ac9c7779ba3bf8142aff6c830617a7fe60f\slf4j-api-2.0.17.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springdoc\springdoc-openapi-starter-common\2.2.0\352343daae911b5d95c718c4a3c461cf94b4707b\springdoc-openapi-starter-common-2.2.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springdoc\springdoc-openapi-starter-webmvc-api\2.2.0\3a7a3a7ecd2537203961d83cabc6d642f294ddb\springdoc-openapi-starter-webmvc-api-2.2.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springdoc\springdoc-openapi-starter-webmvc-ui\2.2.0\178d8ed6714d78b8b475c45bc60642a9232fcb70\springdoc-openapi-starter-webmvc-ui-2.2.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.boot\spring-boot-autoconfigure\3.5.0\a7f8ba40022dd75f20ac0eafe117437a1a7f3935\spring-boot-autoconfigure-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.boot\spring-boot-starter-data-jpa\3.5.0\1f1b632678d5516b5866a82b282541b18f6bf84c\spring-boot-starter-data-jpa-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.boot\spring-boot-starter-jdbc\3.5.0\5e0188ba4c52ec7ba36b1618ff7f9738bffa1eb\spring-boot-starter-jdbc-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.boot\spring-boot-starter-json\3.5.0\af98a526ea3f68c179a6c6199bb1dbe864f43b93\spring-boot-starter-json-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.boot\spring-boot-starter-logging\3.5.0\7db0461d8895f00a9841bf5558501fe90e7eba4c\spring-boot-starter-logging-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.boot\spring-boot-starter-tomcat\3.5.0\2e22a33e6f9444a7248581a23541fea5c1f6c216\spring-boot-starter-tomcat-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.boot\spring-boot-starter-web\3.5.0\29c6198f7e5cd7c4b9a27045d93879e161d6cdd0\spring-boot-starter-web-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.boot\spring-boot-starter\3.5.0\f8b02201e89d294514420a586624aa7338d61f4f\spring-boot-starter-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.boot\spring-boot\3.5.0\ec86afc460265a0219bfafe187acb6c596ac2de1\spring-boot-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.data\spring-data-commons\3.5.0\cae371875e7267078e1d9047db769dc598156812\spring-data-commons-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.data\spring-data-jpa\3.5.0\177be0a4199ea3300ee63008bbe91c8c7e639610\spring-data-jpa-3.5.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.kafka\spring-kafka\3.3.6\7b80a444ab74745e4f5c272675eeecabfe0caea4\spring-kafka-3.3.6.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework.retry\spring-retry\2.0.12\62a14736086ffd6f382f0df3bf066a5a34f174fa\spring-retry-2.0.12.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-aop\6.2.7\3df3ee9217cb62e65382718351e56f1eeb76e74c\spring-aop-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-aspects\6.2.7\52461ec85ce1dc6e80fdca92c85bab9faebc0509\spring-aspects-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-beans\6.2.7\64119950b73943f67196705e43acddd7bf714c45\spring-beans-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-context\6.2.7\e0f3850bba7ff52016429e8d2fa39b5107f1fde6\spring-context-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-core\6.2.7\525a228b8b4323568b7aa9e49c1e1df27838adf1\spring-core-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-expression\6.2.7\fa525916c85df246fcb70c771d039523dd6f12d9\spring-expression-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-jcl\6.2.7\16b5f3446a6fcf097f4910c935086d08db657653\spring-jcl-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-jdbc\6.2.7\9c2a6ac46e3af69b226401678591b6fe0350a617\spring-jdbc-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-messaging\6.2.7\4d969084e3b1915ce04d8768d89fe9c092191500\spring-messaging-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-orm\6.2.7\a8966e1cf3591397b2b1381742877d55367f0b21\spring-orm-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-tx\6.2.7\6cf5d200c297fa8cc0b4cf39c1a20b310d2c3d52\spring-tx-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-web\6.2.7\1bd08eba2f2fd69eef49473e42fe124a20e7f844\spring-web-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.springframework\spring-webmvc\6.2.7\a1954b3a51f585c6b8582831661fec981d2571e\spring-webmvc-6.2.7.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.webjars\swagger-ui\5.2.0\c48d665a3f3a5d73afa34982953d3c31acc1d1dd\swagger-ui-5.2.0.jar</li>
+                  <li>C:\Users\пользователь\.gradle\caches\modules-2\files-2.1\org.yaml\snakeyaml\2.4\e0666b825b796f85521f02360e77f4c92c5a7a07\snakeyaml-2.4.jar</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\bank-shared\build\libs\bank-shared-0.0.1-SNAPSHOT-plain.jar</li>
                </ul>
             </div>
             <div id="source-files">
                <h3>Source Files:</h3>
                <ul>
-                  <li>/Users/mihailbystrov/Documents/JAVA/KATA/bank-app1/security-service/src/main/java</li>
-                  <li>/Users/mihailbystrov/Documents/JAVA/KATA/bank-app1/security-service/src/main/resources</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\src\main\java</li>
+                  <li>C:\Users\пользователь\Desktop\BA_performance-tests\src\main\resources</li>
                </ul>
             </div>
             <div id="plugins">
