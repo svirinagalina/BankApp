@@ -1,48 +1,103 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.0'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id 'checkstyle'
-	id("com.github.spotbugs") version "6.1.11"
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'checkstyle'
+    id("com.github.spotbugs") version "6.1.11"
+    id 'jacoco'
 }
 
 group = 'ru.katacademy.bank_app'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 checkstyle {
-	toolVersion = '10.12.3'
-	configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    toolVersion = '10.12.3'
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+}
+
+jacoco {
+    toolVersion = "0.8.11" // Версия JaCoCo
+}
+
+
+test {
+    useJUnitPlatform {
+    }
+
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true // Локальный HTML-отчёт
+    }
+
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, includes: [
+                    "ru/katacademy/bank_app/audit/domain/entity/*",
+                    "ru/katacademy/bank_app/audit/application/service/*",
+            ])
+        }))
+    }
+}
+
+// Проверка минимального покрытия
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, includes: [
+                    "ru/katacademy/bank_app/audit/domain/entity/*",
+                    "ru/katacademy/bank_app/audit/application/service/*",
+            ])
+        }))
+    }
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                minimum = 0.80 // Требуемое покрытие (80%)
+            }
+            println "Проверяемые классы/пакеты:"
+            classDirectories.each { dir ->
+                println " - ${dir}"
+            }
+        }
+    }
 }
 
 import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
+
 tasks.spotbugsMain {
-	reports.create("html") {
-		ignoreFailures =false
-		effort = Effort.DEFAULT
-		reportLevel = Confidence.LOW.LOW
-		required = true
-		outputLocation = file("$rootDir/build/reports/spotbugs/spotbugs.html")
-		setStylesheet("fancy-hist.xsl")
-	}
+    reports.create("html") {
+        ignoreFailures = false
+        effort = Effort.DEFAULT
+        reportLevel = Confidence.LOW.LOW
+        required = true
+        outputLocation = file("$rootDir/build/reports/spotbugs/spotbugs.html")
+        setStylesheet("fancy-hist.xsl")
+    }
 }
 
 repositories {
-	mavenCentral()
-	maven { url = 'https://repo.spring.io/milestone' }
-	maven { url = 'https://repo.spring.io/snapshot' }
+    mavenCentral()
+    maven { url = 'https://repo.spring.io/milestone' }
+    maven { url = 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
@@ -57,10 +112,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation 'com.h2database:h2'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'com.h2database:h2'
 
 }
 
