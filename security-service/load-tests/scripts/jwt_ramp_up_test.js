@@ -98,7 +98,6 @@ export function handleSummary(data) {
         '100 VU': getStageMetrics('100 VU')
     };
 
-    // Анализ узких мест
     const bottlenecks = [];
     if (data.metrics.http_req_duration.values['p(95)'] > 300) {
         bottlenecks.push(`- **p95 превышает SLA 300мс** (${format(data.metrics.http_req_duration.values['p(95)'])}мс)`);

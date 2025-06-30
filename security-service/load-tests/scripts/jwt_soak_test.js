@@ -21,7 +21,6 @@
 import http from 'k6/http';
 import { check } from 'k6';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
-import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 import * as jsrsasign from 'https://cdn.jsdelivr.net/npm/jsrsasign@8.0.20/lib/jsrsasign.min.js';
 
 function generateToken(userId) {
@@ -38,13 +37,13 @@ function generateToken(userId) {
 const tokens = Array(10).fill().map((_, i) => generateToken(`user${i}`));
 
 export let options = {
-    vus: 50,                         // Оптимальная нагрузка из ramp-up теста
-    duration: '30m',                  // Продолжительность теста
-    discardResponseBodies: true,     // Экономия памяти
-    noConnectionReuse: false,        // Реалистичный сценарий (keep-alive)
+    vus: 50,
+    duration: '30m',
+    discardResponseBodies: true,
+    noConnectionReuse: false,
     thresholds: {
-        'http_req_duration{type:all}': ['p(95)<400'], // Ослабленный SLA для длительного теста
-        'http_req_failed': ['rate<0.001'],            // < 0.1% ошибок
+        'http_req_duration{type:all}': ['p(95)<400'],
+        'http_req_failed': ['rate<0.001'],
     }
 };
 
@@ -67,9 +66,69 @@ export default function () {
 }
 
 export function handleSummary(data) {
+    const format = (num, decimals = 2) =>
+        typeof num === 'number' ? num.toFixed(decimals) : 'N/A';
+
+    const slaChecks = [];
+    if (data.metrics['http_req_duration{type:all}'].values['p(95)'] > 400) {
+        slaChecks.push(` **p95 latency превышает SLA 400ms** (${format(data.metrics['http_req_duration{type:all}'].values['p(95)'])}ms)`);
+    } else {
+        slaChecks.push(`**p95 latency в пределах SLA** (${format(data.metrics['http_req_duration{type:all}'].values['p(95)'])}ms)`);
+    }
+
+    if (data.metrics.http_req_failed.values.rate > 0.001) {
+        slaChecks.push(`**Уровень ошибок превышает 0.1%** (${format(data.metrics.http_req_failed.values.rate * 100)}%)`);
+    } else {
+        slaChecks.push(`**Уровень ошибок в пределах нормы** (${format(data.metrics.http_req_failed.values.rate * 100)}%)`);
+    }
+
+    const bottlenecks = [];
+
+    const lastThirdDuration = data.metrics['http_req_duration{type:all}'].values['p(95)'] * 1.2;
+    if (data.metrics['http_req_duration{type:all}'].values['p(95)'] > lastThirdDuration) {
+        bottlenecks.push(`- **Деградация производительности**: p95 вырос на ${format((data.metrics['http_req_duration{type:all}'].values['p(95)'] / lastThirdDuration - 1) * 100)}% за время теста`);
+    }
+
+    if (data.metrics.http_req_failed.values.rate > 0 &&
+        data.metrics.http_req_failed.values.rate < 0.001) {
+        bottlenecks.push(`- **Накопление ошибок**: обнаружены спорадические ошибки (${data.metrics.http_req_failed.values.count} всего)`);
+    }
+
+    const targetRPS = 120;
+    if (data.metrics.http_reqs.values.rate < targetRPS * 0.9) {
+        bottlenecks.push(`- **Низкая пропускная способность**: RPS ${format(data.metrics.http_reqs.values.rate)} при целевом ${targetRPS}`);
+    }
+
+    const mdReport = `# Отчет SOAK-теста JWT верификации
+
+## Основные параметры теста
+| Параметр               | Значение          |
+|------------------------|------------------|
+| Длительность          | 30 минут         |
+| Виртуальных пользователей | 50 VU         |
+| Всего запросов        | ${data.metrics.http_reqs.values.count} |
+| Средний RPS           | ${format(data.metrics.http_reqs.values.rate)} |
+
+## Ключевые метрики производительности
+- **p95 latency:** ${format(data.metrics['http_req_duration{type:all}'].values['p(95)'])} ms
+- **Максимальная задержка:** ${format(data.metrics['http_req_duration{type:all}'].values.max)} ms
+- **Уровень ошибок:** ${format(data.metrics.http_req_failed.values.rate * 100)}%
+- **Пропускная способность:** ${format(data.metrics.http_reqs.values.rate)} запр/сек
+
+## Проверка SLA
+${slaChecks.join('\n')}
+
+## Узкие места (Bottlenecks)
+${
+        bottlenecks.length > 0
+            ? bottlenecks.join('\n')
+            : '- Критических узких мест не обнаружено'
+    }
+
+`;
     return {
         'stdout': textSummary(data, { indent: ' ', enableColors: true }),
         'reports/soak-summary.json': JSON.stringify(data, null, 2),
-        'reports/soak-report.html': htmlReport(data, { title: "JWT Soak Test" })
+        'reports/soak-report.md': mdReport
     };
 }

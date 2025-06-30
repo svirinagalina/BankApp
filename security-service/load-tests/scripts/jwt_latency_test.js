@@ -105,13 +105,12 @@ export function handleSummary(data) {
         errorRate: getMetric('http_req_failed', 'rate')
     };
 
-    // Анализ узких мест
     const bottlenecks = [];
     if (metrics.avg > 50) bottlenecks.push("- Среднее время ответа превышает 50мс");
     if (metrics.max > 500) bottlenecks.push("- Обнаружены выбросы задержки (>500мс)");
     if (metrics.errors > 0) bottlenecks.push(`- Найдены ошибки: ${metrics.errors}`);
 
-    // Генерация Markdown отчета
+    //  Markdown
     const mdReport = `# Отчет по тестированию JWT верификации
 
 

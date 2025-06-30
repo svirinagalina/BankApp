@@ -37,14 +37,12 @@
  * - vus:                Используемые виртуальные пользователи
  *
  * Генерация отчетов:
- * - HTML-отчет:        reports/throughput-report.html
  * - JSON-дамп:         reports/throughput-summary.json
  * - Консольный вывод:  Статистика в текстовом виде
  */
 import http from 'k6/http';
 import { check } from 'k6';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
-import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 export const options = {
     scenarios: {
@@ -109,6 +107,60 @@ export function handleSummary(data) {
     const targetRPS = 100;
     const actualRPS = data.metrics.http_reqs.rate;
     const rpsPercentage = (actualRPS / targetRPS * 100).toFixed(1);
+    const getSafe = (obj, prop, def = 0) => obj && obj[prop] !== undefined ? obj[prop] : def;
+
+    const httpReqs = getSafe(data.metrics.http_reqs, 'values', {count: 0, rate: 0});
+    const httpDuration = getSafe(data.metrics.http_req_duration, 'values', {avg: 0, p95: 0, max: 0});
+    const httpFailed = getSafe(data.metrics.http_req_failed, 'values', {count: 0, rate: 0});
+    const vus = getSafe(data.metrics.vus, 'values', {max: 0});
+
+    const durationSec = data.state ? (data.state.testRunDurationMs / 1000).toFixed(0) : '0';
+    const targetRate = 5;
+
+    const fmt = (num) => num !== undefined ? num.toFixed(2) : 'N/A';
+    const fmtPerc = (num) => num !== undefined ? (num * 100).toFixed(2) + '%' : 'N/A';
+
+    const getP95 = () => {
+        return data.metrics['http_req_duration{status:201}']?.values?.['p(95)']
+            || data.metrics.http_req_duration?.values?.['p(95)']
+            || 0;
+    };
+
+    const bottlenecks = [];
+    if (httpReqs.rate < targetRate) {
+        bottlenecks.push(`Низкий RPS (${fmt(httpReqs.rate)} при целевом ${targetRate})`);
+    }
+    if (getP95() > 1000) {
+        bottlenecks.push(`Превышен p95 latency (${fmt(getP95())} мс при SLA 1000мс)`);
+    }
+    if (httpFailed.rate > 0.05) {
+        bottlenecks.push(`Высокий уровень ошибок (${fmtPerc(httpFailed.rate)} при допустимом 5%)`);
+    }
+    if (vus.max >= 10) {
+        bottlenecks.push(`Достигнут максимум виртуальных пользователей (${vus.max} VUs)`);
+    }
+
+    const mdReport = `# Отчёт по тесту пропускной способности API регистрации
+
+## Ключевые метрики
+| Метрика               | Значение          |
+|------------------------|-------------------|
+| Фактический RPS       | ${fmt(httpReqs.rate)} |
+| Успешных запросов     | ${httpReqs.count} (${fmtPerc(1 - httpFailed.rate)}) |
+| Среднее время ответа  | ${fmt(httpDuration.avg)} мс |
+| p95 время ответа      | ${fmt(getP95())} мс |
+| Максимальная задержка | ${fmt(httpDuration.max)} мс |
+| Уровень ошибок        | ${fmtPerc(httpFailed.rate)} |
+| Использовано VUs      | ${vus.max} |
+| Целевой RPS           | ${targetRate} запр/сек |
+| Длительность          | ${durationSec} сек|
+
+## Узкие места
+${bottlenecks.length > 0
+        ? bottlenecks.map(b => `-  ${b}`).join('\n')
+        : '- Все показатели соответствуют SLA'}
+`;
+
 
     return {
         'stdout': textSummary(data, {
@@ -116,7 +168,7 @@ export function handleSummary(data) {
             enableColors: true
         }),
         'reports/throughput-summary.json': JSON.stringify(data, null, 2),
-        'reports/throughput-report.html': htmlReport(data)
+        'reports/throughput-report.md': mdReport
     }
 }
 

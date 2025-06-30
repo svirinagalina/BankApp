@@ -42,15 +42,13 @@
  * - vus:                Используемые виртуальные пользователи
  *
  * Генерация отчетов:
- * - HTML-отчет:        reports/soak-report.html
  * - JSON-дамп:         reports/soak-summary.json
  * - Консольный вывод:  Статистика в текстовом виде с цветовой разметкой
  */
 
 import http from 'k6/http';
-import { check, sleep } from 'k6';
+import { check } from 'k6';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
-import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 export const options = {
     scenarios: {
@@ -96,9 +94,77 @@ export default function () {
 }
 
 export function handleSummary(data) {
+    const format = (num, decimals = 2) =>
+        typeof num === 'number' ? num.toFixed(decimals) : 'N/A';
+
+    const slaChecks = [];
+    if (data.metrics.http_req_duration.values['p(95)'] > 500) {
+        slaChecks.push(`**p95 latency превышает SLA 500ms** (${format(data.metrics.http_req_duration.values['p(95)'])}ms)`);
+    } else {
+        slaChecks.push(`**p95 latency в пределах SLA** (${format(data.metrics.http_req_duration.values['p(95)'])}ms)`);
+    }
+
+    if (data.metrics.http_req_failed.values.rate > 0.01) {
+        slaChecks.push(`**Уровень ошибок превышает 1%** (${format(data.metrics.http_req_failed.values.rate * 100)}%)`);
+    } else {
+        slaChecks.push(`**Уровень ошибок в пределах нормы** (${format(data.metrics.http_req_failed.values.rate * 100)}%)`);
+    }
+
+    const bottlenecks = [];
+
+    const firstQuarterP95 = data.metrics.http_req_duration.values['p(95)'] * 0.8;
+    if (data.metrics.http_req_duration.values['p(95)'] > firstQuarterP95 * 1.5) {
+        bottlenecks.push(`- **Деградация производительности**: p95 вырос на ${format((data.metrics.http_req_duration.values['p(95)'] / firstQuarterP95 - 1) * 100)}% за время теста`);
+    }
+
+    if (data.metrics.http_req_failed.values.rate > 0 &&
+        data.metrics.http_req_failed.values.rate < 0.01) {
+        bottlenecks.push(`- **Накопление ошибок**: обнаружены спорадические ошибки (${data.metrics.http_req_failed.values.count} всего)`);
+    }
+
+    const targetRPS = 5;
+    if (data.metrics.http_reqs.values.rate < targetRPS * 0.8) {
+        bottlenecks.push(`- **Нестабильный RPS**: средний ${format(data.metrics.http_reqs.values.rate)} при целевом ${targetRPS}`);
+    }
+
+    const mdReport = `# Отчет SOAK-теста API регистрации пользователей
+
+## Основные параметры теста
+| Параметр               | Значение          |
+|------------------------|------------------|
+| Длительность          | 30 минут         |
+| Целевой RPS          | 5 запр/сек       |
+| Виртуальных пользователей | 5-10 VU      |
+| Всего запросов        | ${data.metrics.http_reqs.values.count} |
+| Средний RPS           | ${format(data.metrics.http_reqs.values.rate)} |
+
+## Ключевые метрики производительности
+- **p95 latency:** ${format(data.metrics.http_req_duration.values['p(95)'])} ms
+- **Максимальная задержка:** ${format(data.metrics.http_req_duration.values.max)} ms
+- **Уровень ошибок:** ${format(data.metrics.http_req_failed.values.rate * 100)}%
+- **Использовано VUs:** ${data.metrics.vus.values.max}
+
+## Проверка SLA
+${slaChecks.join('\n')}
+
+## Узкие места (Bottlenecks)
+${
+        bottlenecks.length > 0
+            ? bottlenecks.join('\n')
+            : '- Критических узких мест не обнаружено'
+    }
+
+## Узкие места (Bottlenecks)
+${
+        bottlenecks.length > 0
+            ? bottlenecks.join('\n')
+            : '- Критических узких мест не обнаружено'
+    }
+
+`;
     return {
         'stdout': textSummary(data, { indent: ' ', enableColors: true }),
         'reports/soak-summary.json': JSON.stringify(data, null, 2),
-        'reports/soak-report.html': htmlReport(data)
+        'reports/soak-report.md': mdReport
     };
 }

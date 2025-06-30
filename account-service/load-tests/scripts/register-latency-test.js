@@ -25,12 +25,10 @@
  *
  * Отчёты:
  * - reports/latency-summary.json: сырые данные
- * - reports/latency-report.html: визуализация
  */
 
 import http from 'k6/http';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
-import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 export const options = {
     vus: 1,
@@ -63,9 +61,47 @@ export default function () {
 }
 
 export function handleSummary(data) {
+    const getMetric = (metric, field, defaultValue = 0) => {
+    return data.metrics[metric]?.values?.[field] ?? defaultValue;
+};
+
+    const metrics = {
+        duration: data.state?.testRunDurationMs ? (data.state.testRunDurationMs / 1000).toFixed(1) : 0,
+        count: getMetric('http_reqs', 'count'),
+        avg: getMetric('http_req_duration', 'avg'),
+        p95: getMetric('http_req_duration', 'p(95)'),
+        max: getMetric('http_req_duration', 'max'),
+        waiting: getMetric('http_req_waiting', 'avg'),
+        errors: getMetric('http_req_failed', 'count'),
+        errorRate: getMetric('http_req_failed', 'rate')
+    };
+
+    const bottlenecks = [];
+    if (metrics.p95 > 500) bottlenecks.push("- **Превышен p95 latency** (SLA: <500мс)");
+    if (metrics.max > 1000) bottlenecks.push("- **Критические выбросы задержки** (>1000мс)");
+    if (metrics.errors > 0) bottlenecks.push(`- **Ошибки запросов**: ${metrics.errors} (${(metrics.errorRate * 100).toFixed(2)}%)`);
+    if (metrics.waiting > metrics.avg * 0.7) bottlenecks.push("- **Высокое время ожидания ответа сервера**");
+
+    const mdReport = `# Отчет LATENCY-теста регистрации пользователей
+
+## Ключевые метрики
+| Метрика               | Значение       |
+|-----------------------|----------------|
+| Среднее время ответа | ${metrics.avg.toFixed(2)} мс |
+| 95-й перцентиль (p95) | ${metrics.p95.toFixed(2)} мс |
+| Максимальная задержка | ${metrics.max.toFixed(2)} мс |
+| Время ожидания (waiting) | ${metrics.waiting.toFixed(2)} мс |
+| Успешных запросов    | ${metrics.count - metrics.errors}/${metrics.count} |
+| Уровень ошибок       | ${(metrics.errorRate * 100).toFixed(2)}% |
+| Всего запросов      | ${metrics.count} |
+| Длительность теста  | ${metrics.duration} сек |
+
+## Узкие места
+${bottlenecks.length > 0 ? bottlenecks.join('\n') : "- Система работает стабильно, узких мест не обнаружено"}
+`;
     return {
         'stdout': textSummary(data, { indent: ' ', enableColors: true }),
         'reports/latency-summary.json': JSON.stringify(data, null, 2),
-        'reports/latency-report.html': htmlReport(data)
+        'reports/latency-report.md': mdReport
     };
 }
