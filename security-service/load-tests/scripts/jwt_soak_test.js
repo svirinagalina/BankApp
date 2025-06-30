@@ -70,10 +70,10 @@ export function handleSummary(data) {
         typeof num === 'number' ? num.toFixed(decimals) : 'N/A';
 
     const slaChecks = [];
-    if (data.metrics['http_req_duration{type:all}'].values['p(95)'] > 400) {
-        slaChecks.push(` **p95 latency превышает SLA 400ms** (${format(data.metrics['http_req_duration{type:all}'].values['p(95)'])}ms)`);
+    if (data.metrics.http_req_duration.values['p(95)'] > 400) {
+        slaChecks.push(` **p95 latency превышает SLA 400ms** (${format(data.metrics.http_req_duration.values['p(95)'])}ms)`);
     } else {
-        slaChecks.push(`**p95 latency в пределах SLA** (${format(data.metrics['http_req_duration{type:all}'].values['p(95)'])}ms)`);
+        slaChecks.push(`**p95 latency в пределах SLA** (${format(data.metrics.http_req_duration.values['p(95)'])}ms)`);
     }
 
     if (data.metrics.http_req_failed.values.rate > 0.001) {
@@ -81,12 +81,15 @@ export function handleSummary(data) {
     } else {
         slaChecks.push(`**Уровень ошибок в пределах нормы** (${format(data.metrics.http_req_failed.values.rate * 100)}%)`);
     }
+    const failedChecks = data.metrics.checks ? data.metrics.checks.fails : 0;
+    const totalChecks = data.metrics.checks ? data.metrics.checks.passes + failedChecks : 0;
+    const failedChecksRate = totalChecks > 0 ? failedChecks / totalChecks : 0;
 
     const bottlenecks = [];
 
-    const lastThirdDuration = data.metrics['http_req_duration{type:all}'].values['p(95)'] * 1.2;
-    if (data.metrics['http_req_duration{type:all}'].values['p(95)'] > lastThirdDuration) {
-        bottlenecks.push(`- **Деградация производительности**: p95 вырос на ${format((data.metrics['http_req_duration{type:all}'].values['p(95)'] / lastThirdDuration - 1) * 100)}% за время теста`);
+    const lastThirdDuration = data.metrics.http_req_duration.values['p(95)'] * 1.2;
+    if (data.metrics.http_req_duration.values['p(95)'] > lastThirdDuration) {
+        bottlenecks.push(`- **Деградация производительности**: p95 вырос на ${format((data.metrics.http_req_duration.values['p(95)'] / lastThirdDuration - 1) * 100)}% за время теста`);
     }
 
     if (data.metrics.http_req_failed.values.rate > 0 &&
@@ -108,12 +111,14 @@ export function handleSummary(data) {
 | Виртуальных пользователей | 50 VU         |
 | Всего запросов        | ${data.metrics.http_reqs.values.count} |
 | Средний RPS           | ${format(data.metrics.http_reqs.values.rate)} |
+| Проверок (checks)     | ${totalChecks} (${failedChecks} failed) |
 
 ## Ключевые метрики производительности
-- **p95 latency:** ${format(data.metrics['http_req_duration{type:all}'].values['p(95)'])} ms
-- **Максимальная задержка:** ${format(data.metrics['http_req_duration{type:all}'].values.max)} ms
+- **p95 latency:** ${format(data.metrics.http_req_duration.values['p(95)'])} ms
+- **Максимальная задержка:** ${format(data.metrics.http_req_duration.values.max)} ms
 - **Уровень ошибок:** ${format(data.metrics.http_req_failed.values.rate * 100)}%
 - **Пропускная способность:** ${format(data.metrics.http_reqs.values.rate)} запр/сек
+- **Ошибки проверок:** ${format(failedChecksRate * 100)}%
 
 ## Проверка SLA
 ${slaChecks.join('\n')}

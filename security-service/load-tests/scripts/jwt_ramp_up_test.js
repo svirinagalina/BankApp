@@ -91,12 +91,6 @@ export function handleSummary(data) {
         };
     };
 
-    const stages = {
-        '0-50 VU': getStageMetrics('0-50 VU'),
-        '50-70 VU': getStageMetrics('50-70 VU'),
-        '70-100 VU': getStageMetrics('70-100 VU'),
-        '100 VU': getStageMetrics('100 VU')
-    };
 
     const bottlenecks = [];
     if (data.metrics.http_req_duration.values['p(95)'] > 300) {
@@ -111,14 +105,6 @@ export function handleSummary(data) {
 
 - **Всего запросов:** ${data.metrics.http_reqs.values.count}
 - **Длительность:** ${(data.state.testRunDurationMs / 1000).toFixed(0)}s
-
-## Результаты по этапам
-| Этап       | RPS   | p95 (мс) | Ошибки |
-|------------|-------|----------|--------|
-| 0-50 VU    | ${format(stages['0-50 VU'].rps)} | ${format(stages['0-50 VU'].p95)} | ${format(stages['0-50 VU'].errors * 100)}% |
-| 50-70 VU   | ${format(stages['50-70 VU'].rps)} | ${format(stages['50-70 VU'].p95)} | ${format(stages['50-70 VU'].errors * 100)}% |
-| 70-100 VU  | ${format(stages['70-100 VU'].rps)} | ${format(stages['70-100 VU'].p95)} | ${format(stages['70-100 VU'].errors * 100)}% |
-| 100 VU     | ${format(stages['100 VU'].rps)} | ${format(stages['100 VU'].p95)} | ${format(stages['100 VU'].errors * 100)}% |
 
 ## Итоговые метрики
 - **Средний RPS:** ${format(data.metrics.http_reqs.values.rate)}
