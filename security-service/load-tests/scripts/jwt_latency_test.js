@@ -13,7 +13,6 @@
  *
  * Ожидаемый ответ:
  * - Статус:            200 OK
- * - Тело:              JSON с claims (sub, iat, exp)
  *
  * Нагрузочный профиль:
  * ----------------------------------
@@ -50,7 +49,6 @@
  * ----------------------------------
  * - stdout:             Текстовая сводка в консоли
  * - reports/latency-summary.json: Полные сырые данные в JSON
- * - reports/latency-report.html:  Визуализированный HTML-отчёт
  *
  * Пример интерпретации:
  * ----------------------------------
@@ -60,7 +58,7 @@
 import http from 'k6/http';
 import { check } from 'k6';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
-import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
+import * as jsrsasign from 'https://cdn.jsdelivr.net/npm/jsrsasign@8.0.20/lib/jsrsasign.min.js';
 
 export let options = {
     vus: 1,
@@ -69,24 +67,69 @@ export let options = {
     noConnectionReuse: true,
 };
 
-const validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJpYXQiOjE3NTA2NTU4MjEsImV4cCI6MTc1MDY2MzAyMX0.AgBP2KTLmyOBGr1ioym0lCzK4Dw1RXBHfluLMsMNZQk";
+function generateToken(userId) {
+    const header = { alg: 'HS256', typ: 'JWT' };
+    const payload = {
+        sub: userId,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 3600
+    };
+    const secret = "testsecretkeyfortestpurposesonly1234567890";
+    return jsrsasign.KJUR.jws.JWS.sign("HS256", JSON.stringify(header), JSON.stringify(payload), secret);
+}
+
+const token = Array(10).fill().map((_, i) => generateToken(`user${i}`));
 
 export default function () {
-    let response = http.post(
-        'http://localhost:8085/api/security/verify',
-        validToken,
-        { headers: { 'Content-Type': 'application/json' } }
+    const currentToken = token[__VU % token.length];
+    const res = http.post('http://localhost:8085/api/security/verify',
+        currentToken,
+        {headers: {'Content-Type': 'application/json'}}
     );
 
-    check(response, {
-        'Status is 200': (r) => r.status === 200,
+    check(res, {
+        'is status 200': (r) => r.status === 200,
     });
-
 }
 export function handleSummary(data) {
+    const getMetric = (metric, field, defaultValue = 0) => {
+        return data.metrics[metric]?.values?.[field] ?? defaultValue;
+    };
+
+    const metrics = {
+        duration: data.state?.testRunDurationMs ? (data.state.testRunDurationMs / 1000).toFixed(1) : 0,
+        count: getMetric('http_reqs', 'count'),
+        avg: getMetric('http_req_duration', 'avg'),
+        max: getMetric('http_req_duration', 'max'),
+        errors: getMetric('http_req_failed', 'count'),
+        errorRate: getMetric('http_req_failed', 'rate')
+    };
+
+    // Анализ узких мест
+    const bottlenecks = [];
+    if (metrics.avg > 50) bottlenecks.push("- Среднее время ответа превышает 50мс");
+    if (metrics.max > 500) bottlenecks.push("- Обнаружены выбросы задержки (>500мс)");
+    if (metrics.errors > 0) bottlenecks.push(`- Найдены ошибки: ${metrics.errors}`);
+
+    // Генерация Markdown отчета
+    const mdReport = `# Отчет по тестированию JWT верификации
+
+
+## Результаты
+| Метрика               | Значение       |
+|-----------------------|----------------|
+| Среднее время ответа | ${metrics.avg.toFixed(2)} мс |
+| Максимальное время   | ${metrics.max.toFixed(2)} мс |
+| Успешных запросов    | ${500 - metrics.errors}/${500} |
+| Уровень ошибок       | ${(metrics.errorRate * 100).toFixed(2)}% |
+| Длительность теста       | ${metrics.duration} сек |
+
+## Узкие места
+${bottlenecks.length > 0 ? bottlenecks.join('\n') : "- Система работает стабильно, узких мест не обнаружено"}
+`;
     return {
         'stdout': textSummary(data, { indent: ' ', enableColors: true }),
         'reports/latency-summary.json': JSON.stringify(data, null, 2),
-        'reports/latency-report.html': htmlReport(data)
+        'reports/latency-report.md': mdReport
     };
 }
