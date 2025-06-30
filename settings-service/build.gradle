@@ -69,7 +69,8 @@ jacocoTestCoverageVerification {
         }))
     }
     violationRules {
-        rule {element = 'CLASS' // или 'PACKAGE'
+        rule {
+            element = 'CLASS' // или 'PACKAGE'
             limit {
                 minimum = 0.80 // Требуемое покрытие (80%)
             }
@@ -105,7 +106,7 @@ dependencies {
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.h2database:h2'
- }
+}
 
 bootJar {
     archiveFileName = 'app.jar'
