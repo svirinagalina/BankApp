@@ -43,6 +43,7 @@
 import http from 'k6/http';
 import { check } from 'k6';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
+import { b64encode } from 'k6/encoding';
 
 export const options = {
     scenarios: {
@@ -79,6 +80,7 @@ function generateTestData(vuId) {
         password: `ValidPass123!${vuId}`
     };
 }
+const BASIC_AUTH = b64encode("admin:admin123");
 
 export default function () {
     const data = generateTestData(__VU);
@@ -87,7 +89,8 @@ export default function () {
         JSON.stringify(data),
         {
             headers: { 'Content-Type': 'application/json',
-                'X-Debug': 'true'},
+                'X-Debug': 'true',
+                'Authorization': `Basic ${BASIC_AUTH}`},
             timeout: '15s',
             retries: 1
         }
