@@ -4,6 +4,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'checkstyle'
 	id("com.github.spotbugs") version "6.1.11"
+	id "jacoco"
 }
 
 group = 'ru.katacademy'
@@ -40,6 +41,55 @@ repositories {
 	maven { url = 'https://repo.spring.io/snapshot' }
 }
 
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+test {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport // Генерировать отчёт после тестов
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.required = true // Локальный HTML-отчёт
+	}
+
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, includes: [
+					"ru/katacademy/securityservice/util/*",
+			])
+		}))
+	}
+}
+
+// Проверка минимального покрытия
+jacocoTestCoverageVerification {
+	dependsOn jacocoTestReport
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, includes: [
+					"ru/katacademy/securityservice/util/*",
+
+			])
+		}))
+	}
+	violationRules {
+		rule {element = 'CLASS'
+			limit {
+				minimum = 0.80 // Требуемое покрытие (80%)
+			}
+			println "Проверяемые классы/пакеты:"
+			classDirectories.each { dir ->
+				println " - ${dir}"
+			}
+		}
+	}
+}
+
 dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -69,8 +119,6 @@ dependencies {
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation("org.mockito:mockito-core:5.17.0")
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// Testcontainers для Kafka
 	testImplementation 'org.testcontainers:junit-jupiter'
@@ -79,6 +127,3 @@ dependencies {
 
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
