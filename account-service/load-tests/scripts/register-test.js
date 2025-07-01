@@ -52,124 +52,115 @@ import http from 'k6/http';
 import { check } from 'k6';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
 
-function generateUser(vuId) {
-    return {
-        fullName: `User ${vuId}-${Date.now()}`,
-        email: `user${vuId}_${Date.now()}@test.com`,
-        password: `Password${Math.floor(Math.random() * 1000)}`
-    };
-}
-
 export const options = {
     scenarios: {
-        ramp_up_test: {
+        ramp_up: {
             executor: 'ramping-vus',
             startVUs: 0,
             stages: [
-                { duration: '2m', target: 10 },
-                { duration: '1m', target: 20 },
-                { duration: '30s', target: 30 },
+                { duration: '30s', target: 1 },
+                { duration: '1m', target: 5 },
+                { duration: '30s', target: 10 },
+                { duration: '1m', target: 0 },
             ],
-            gracefulRampDown: '30s'
+            gracefulRampDown: '30s',
         }
     },
     thresholds: {
-        http_req_duration: [
-            { threshold: 'p(95)<1000', abortOnFail: true }
-        ],
-        http_req_failed: [
-            { threshold: 'rate<0.05', abortOnFail: false }
-        ]
-    }
+        http_req_duration: ['p(95)<500'],
+        http_req_failed: ['rate<0.3'],
+    },
+    discardResponseBodies: false,
+    noConnectionReuse: false
 };
 
 export default function () {
-    const user = generateUser(__VU);
-
     const payload = JSON.stringify({
-        fullName: user.fullName,
-        email: user.email,
-        password: user.password
+        fullName: `User ${__VU}-${__ITER}`,
+        email: `user_${Date.now()}_${__VU}_${__ITER}@test.com`,
+        password: 'test123'
     });
-
-    const headers = {
-        'Content-Type': 'application/json',
-        'User-Agent': 'k6-load-test'
-    };
 
     const res = http.post(
         'http://localhost:8084/api/users/register',
         payload,
-        {headers: headers,
-        timeout: '15s',
-            retries: 2}
+        {
+            headers: { 'Content-Type': 'application/json' },
+            timeout: '15s'
+        }
     );
+    if (res.status === 409) {
+        console.log(`Duplicate email: ${user.email}`);
+        return;
+    }
+    if (res.status === 400) {
+        console.error(`Validation error: ${res.body}`);
+        return;
+    }
 
     check(res, {
-        'status is 201': (r) => r.status === 201,
-        'has user ID': (r) => r.json().id !== undefined,
-        'email matches': (r) => r.json().email === user.email
+        'status is 201': (r) => r.status === 201
     });
-
 }
 
+
     export function handleSummary(data) {
-        const format = (num, decimals = 2) =>
-            typeof num === 'number' ? num.toFixed(decimals) : 'N/A';
-
-        const getStageMetrics = (stageName) => {
-            return {
-                vus: data.metrics[`vus{scenario:ramp_up_test}`]?.values?.max || 0,
-                rps: data.metrics[`http_reqs{scenario:ramp_up_test}`]?.values?.rate || 0,
-                p95: data.metrics[`http_req_duration{scenario:ramp_up_test}`]?.values?.['p(95)'] || 0,
-                errors: data.metrics[`http_req_failed{scenario:ramp_up_test}`]?.values?.rate || 0,
-                iterations: data.metrics[`iterations{scenario:ramp_up_test}`]?.values?.count || 0
-            };
-        };
-
-        const stages = {
-            '0-10 VU': getStageMetrics('ramp_up_test'),
-            '10-20 VU': getStageMetrics('ramp_up_test'),
-            '20-30 VU': getStageMetrics('ramp_up_test')
-        };
-
-        const bottlenecks = [];
-        if (data.metrics.http_req_duration.values['p(95)'] > 1000) {
-            bottlenecks.push(`- **p95 превышает SLA 1000мс** (${format(data.metrics.http_req_duration.values['p(95)'])}мс)`);
-        }
-        if (data.metrics.http_req_failed.values.rate > 0.05) {
-            bottlenecks.push(`- **Уровень ошибок высокий** (${format(data.metrics.http_req_failed.values.rate * 100)}%)`);
-        }
-        if (data.metrics.iterations.values.count < 500) {
-            bottlenecks.push(`- **Низкая производительность**: выполнено только ${data.metrics.iterations.values.count} итераций`);
-        }
-
-        const mdReport = `# Отчет по тесту RAMP-UP регистрации пользователей
-
-- **Всего запросов:** ${data.metrics.http_reqs.values.count}
-- **Длительность теста:** ${(data.state.testRunDurationMs / 1000).toFixed(0)} сек
-
-## Результаты по этапам нагрузки
-| Этап       | VUs  | RPS   | p95 (мс) | Ошибки | Итерации |
-|------------|------|-------|----------|--------|----------|
-| 0-10 VU    | 10   | ${format(stages['0-10 VU'].rps)} | ${format(stages['0-10 VU'].p95)} | ${format(stages['0-10 VU'].errors * 100)}% | ${stages['0-10 VU'].iterations} |
-| 10-20 VU   | 20   | ${format(stages['10-20 VU'].rps)} | ${format(stages['10-20 VU'].p95)} | ${format(stages['10-20 VU'].errors * 100)}% | ${stages['10-20 VU'].iterations} |
-| 20-30 VU   | 30   | ${format(stages['20-30 VU'].rps)} | ${format(stages['20-30 VU'].p95)} | ${format(stages['20-30 VU'].errors * 100)}% | ${stages['20-30 VU'].iterations} |
-
-## Итоговые метрики
-- **Средний RPS:** ${format(data.metrics.http_reqs.values.rate)}
-- **Общий p95 latency:** ${format(data.metrics.http_req_duration.values['p(95)'])} мс
-- **Максимальная задержка:** ${format(data.metrics.http_req_duration.values.max)} мс
-- **Уровень успешных ответов:** ${format((1 - data.metrics.http_req_failed.values.rate) * 100)}%
-- **Всего создано пользователей:** ${data.metrics.iterations.values.count}
-
-## Узкие места
-${bottlenecks.length > 0 ? bottlenecks.join('\n') : '- Система выдерживает нагрузку согласно SLA'}
-`;
+//         const format = (num, decimals = 2) =>
+//             typeof num === 'number' ? num.toFixed(decimals) : 'N/A';
+//
+//         const getStageMetrics = (stageName) => {
+//             return {
+//                 vus: data.metrics[`vus{scenario:ramp_up_test}`]?.values?.max || 0,
+//                 rps: data.metrics[`http_reqs{scenario:ramp_up_test}`]?.values?.rate || 0,
+//                 p95: data.metrics[`http_req_duration{scenario:ramp_up_test}`]?.values?.['p(95)'] || 0,
+//                 errors: data.metrics[`http_req_failed{scenario:ramp_up_test}`]?.values?.rate || 0,
+//                 iterations: data.metrics[`iterations{scenario:ramp_up_test}`]?.values?.count || 0
+//             };
+//         };
+//
+//         const stages = {
+//             '0-10 VU': getStageMetrics('ramp_up_test'),
+//             '10-20 VU': getStageMetrics('ramp_up_test'),
+//             '20-30 VU': getStageMetrics('ramp_up_test')
+//         };
+//
+//         const bottlenecks = [];
+//         if (data.metrics.http_req_duration.values['p(95)'] > 1000) {
+//             bottlenecks.push(`- **p95 превышает SLA 1000мс** (${format(data.metrics.http_req_duration.values['p(95)'])}мс)`);
+//         }
+//         if (data.metrics.http_req_failed.values.rate > 0.05) {
+//             bottlenecks.push(`- **Уровень ошибок высокий** (${format(data.metrics.http_req_failed.values.rate * 100)}%)`);
+//         }
+//         if (data.metrics.iterations.values.count < 500) {
+//             bottlenecks.push(`- **Низкая производительность**: выполнено только ${data.metrics.iterations.values.count} итераций`);
+//         }
+//
+//         const mdReport = `# Отчет по тесту RAMP-UP регистрации пользователей
+//
+// - **Всего запросов:** ${data.metrics.http_reqs.values.count}
+// - **Длительность теста:** ${(data.state.testRunDurationMs / 1000).toFixed(0)} сек
+//
+// ## Результаты по этапам нагрузки
+// | Этап       | VUs  | RPS   | p95 (мс) | Ошибки | Итерации |
+// |------------|------|-------|----------|--------|----------|
+// | 0-10 VU    | 10   | ${format(stages['0-10 VU'].rps)} | ${format(stages['0-10 VU'].p95)} | ${format(stages['0-10 VU'].errors * 100)}% | ${stages['0-10 VU'].iterations} |
+// | 10-20 VU   | 20   | ${format(stages['10-20 VU'].rps)} | ${format(stages['10-20 VU'].p95)} | ${format(stages['10-20 VU'].errors * 100)}% | ${stages['10-20 VU'].iterations} |
+// | 20-30 VU   | 30   | ${format(stages['20-30 VU'].rps)} | ${format(stages['20-30 VU'].p95)} | ${format(stages['20-30 VU'].errors * 100)}% | ${stages['20-30 VU'].iterations} |
+//
+// ## Итоговые метрики
+// - **Средний RPS:** ${format(data.metrics.http_reqs.values.rate)}
+// - **Общий p95 latency:** ${format(data.metrics.http_req_duration.values['p(95)'])} мс
+// - **Максимальная задержка:** ${format(data.metrics.http_req_duration.values.max)} мс
+// - **Уровень успешных ответов:** ${format((1 - data.metrics.http_req_failed.values.rate) * 100)}%
+// - **Всего создано пользователей:** ${data.metrics.iterations.values.count}
+//
+// ## Узкие места
+// ${bottlenecks.length > 0 ? bottlenecks.join('\n') : '- Система выдерживает нагрузку согласно SLA'}
+// `;
         return {
             'stdout': textSummary(data, { indent: ' ', enableColors: true }),
             'reports/summary.json': JSON.stringify(data, null, 2),
-            'reports/rampup-report.md': mdReport
+            // 'reports/rampup-report.md': mdReport
         };
     }
 

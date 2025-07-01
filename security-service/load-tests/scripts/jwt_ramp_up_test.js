@@ -49,7 +49,7 @@ export let options = {
     discardResponseBodies: true,
     noConnectionReuse: true,
     thresholds: {
-        'http_req_duration{type:all}': ['p(95)<300'], // SLA
+        'http_req_duration{type:all}': ['p(95)<300'],
         'http_req_failed': ['rate<0.01'],
     }
 };
@@ -100,7 +100,6 @@ export function handleSummary(data) {
         bottlenecks.push(`- **Уровень ошибок высокий** (${format(data.metrics.http_req_failed.values.rate * 100)}%)`);
     }
 
-    // Генерация Markdown
     const mdReport = `# Отчет по тесту RAMP-UP JWT верификации
 
 - **Всего запросов:** ${data.metrics.http_reqs.values.count}
