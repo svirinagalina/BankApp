@@ -32,7 +32,7 @@ class MetricsAspectTest {
         when(joinPoint.getSignature()).thenReturn(signature);
         when(signature.toShortString()).thenReturn("mockMethod()");
 
-        Object result = aspect.measureExecutionTime(joinPoint);
+        final Object result = aspect.measureExecutionTime(joinPoint);
 
         verify(joinPoint, times(1)).proceed();
         assert result.equals("result");

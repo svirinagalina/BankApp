@@ -26,15 +26,14 @@ public class MetricsAspect {
 
     @Around("execution(* ru.katacademy.bank_app.accountservice.application.service..*(..))")
     public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        long start = System.nanoTime();
-        long duration;
+        final long start = System.nanoTime();
         try {
-            Object result = joinPoint.proceed();
-            duration = (System.nanoTime() - start) / 1_000_000;
+            final Object result = joinPoint.proceed();
+            final long duration = (System.nanoTime() - start) / 1_000_000;
             logger.info("Метод {} выполнен успешно за {} мс", joinPoint.getSignature().toShortString(), duration);
             return result;
         } catch (Throwable ex) {
-            duration = (System.nanoTime() - start) / 1_000_000;
+            final long duration = (System.nanoTime() - start) / 1_000_000;
             logger.error("Метод {} завершился с ошибкой через {} мс: {}", joinPoint.getSignature().toShortString(), duration, ex.getMessage());
             throw ex;
         }
