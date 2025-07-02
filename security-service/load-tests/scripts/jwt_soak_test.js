@@ -41,6 +41,7 @@ export let options = {
     duration: '30m',
     discardResponseBodies: true,
     noConnectionReuse: false,
+    summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)', 'count'],
     thresholds: {
         'http_req_duration{type:all}': ['p(95)<400'],
         'http_req_failed': ['rate<0.001'],
@@ -81,9 +82,11 @@ export function handleSummary(data) {
     } else {
         slaChecks.push(`**Уровень ошибок в пределах нормы** (${format(data.metrics.http_req_failed.values.rate * 100)}%)`);
     }
-    const failedChecks = data.metrics.checks ? data.metrics.checks.fails : 0;
-    const totalChecks = data.metrics.checks ? data.metrics.checks.passes + failedChecks : 0;
-    const failedChecksRate = totalChecks > 0 ? failedChecks / totalChecks : 0;
+    const checks = data.metrics?.checks?.values || {};
+    const failedChecks = checks.fails || 0;
+    const passedChecks = checks.passes || 0;
+    const totalChecks = failedChecks + passedChecks;
+    const failedChecksRate = totalChecks > 0 ? (failedChecks / totalChecks) * 100 : 0;
 
     const bottlenecks = [];
 
@@ -118,7 +121,7 @@ export function handleSummary(data) {
 - **Максимальная задержка:** ${format(data.metrics.http_req_duration.values.max)} ms
 - **Уровень ошибок:** ${format(data.metrics.http_req_failed.values.rate * 100)}%
 - **Пропускная способность:** ${format(data.metrics.http_reqs.values.rate)} запр/сек
-- **Ошибки проверок:** ${format(failedChecksRate * 100)}%
+- **Ошибки проверок:** ${format(failedChecksRate)}%
 
 ## Проверка SLA
 ${slaChecks.join('\n')}
