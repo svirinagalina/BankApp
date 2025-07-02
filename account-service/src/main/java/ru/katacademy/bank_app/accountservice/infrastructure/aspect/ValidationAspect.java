@@ -34,7 +34,7 @@ public class ValidationAspect {
     @Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping)")
     public void postMapping() {
     }
-//
+
 //    @Pointcut("@annotation(org.springframework.web.bind.annotation.PutMapping)")
 //    public void putMapping() {}
 //
