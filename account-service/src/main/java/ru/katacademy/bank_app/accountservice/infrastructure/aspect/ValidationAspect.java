@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Aspect
@@ -28,7 +27,7 @@ public class ValidationAspect {
 
     private final Validator validator;
 
-//    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
+//   @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
 //    public void requestMapping() {}
 
     @Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping)")
@@ -75,7 +74,7 @@ public class ValidationAspect {
                 if (!violations.isEmpty()) {
                     errors.addAll(violations.stream()
                             .map(v -> v.getPropertyPath() + ": " + v.getMessage())
-                            .collect(Collectors.toList()));
+                            .toList());
                 }
             }
         }
