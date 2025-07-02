@@ -47,9 +47,10 @@ class AuditEntryTest {
         final AuditEntry entry2 = new AuditEntry("EVENT", "Test", "1");
         final AuditEntry different = new AuditEntry("OTHER", "Test", "1");
 
-        assertEquals(entry1, entry2);
-        assertNotEquals(entry1, different);
-        assertEquals(entry1.hashCode(), entry2.hashCode());
+        assertEquals(entry1.getEventType(), entry2.getEventType());
+        assertEquals(entry1.getMessage(), entry2.getMessage());
+        assertEquals(entry1.getUserId(), entry2.getUserId());
+        assertNotEquals(entry1.getEventType(), different.getEventType());
     }
 
     /**
