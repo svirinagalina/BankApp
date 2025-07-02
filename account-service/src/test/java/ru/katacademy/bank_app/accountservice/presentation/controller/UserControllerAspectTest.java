@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,12 +21,16 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_app.accountservice.infrastructure.aspect.ValidationAspect;
+import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
-@Import({ValidationAspect.class, UserControllerAspectTest.MockConfig.class})
+@Import({ValidationAspect.class, UserControllerAspectTest.MockConfig.class, GlobalExceptionHandler.class})
 class UserControllerAspectTest {
 
     @Autowired
@@ -42,6 +47,12 @@ class UserControllerAspectTest {
         }
     }
 
+    @BeforeEach
+    public void setUp() {
+        // Устанавливаем кодировку в UTF-8
+        System.setProperty("file.encoding", "UTF-8");
+    }
+
     @Test
     void whenValidInput_thenReturns200() throws Exception {
         final RegisterUserCommand validCommand = new RegisterUserCommand("Ivan", "ivan@mail.com", "securePassword");
@@ -49,13 +60,16 @@ class UserControllerAspectTest {
         mockMvc.perform(post("/api/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validCommand)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
     void whenInvalidInput_thenReturns400AndErrors() throws Exception {
+        System.out.println("Тест начался");
+
         // 1. Подготовка невалидных данных
-        final RegisterUserCommand invalidCommand = new RegisterUserCommand("IVAN", "invalid-email", "DADAD");
+        final RegisterUserCommand invalidCommand = new RegisterUserCommand("", "invalid-email", "");
+        System.out.println("Данные подготовлены");
 
         // 2. Выполнение запроса с подробным логированием
         final MvcResult result = mockMvc.perform(post("/api/users/register")
@@ -63,6 +77,8 @@ class UserControllerAspectTest {
                         .content(objectMapper.writeValueAsString(invalidCommand)))
                 .andDo(print()) // Важно для отладки!
                 .andReturn();
+
+        System.out.println("Запрос выполнен");
 
         // 3. Проверка статуса вручную
         assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -78,7 +94,20 @@ class UserControllerAspectTest {
 
         // 6. Проверка структуры ответа
         final JsonNode json = objectMapper.readTree(content);
-        assertThat(json.has("message")).isTrue();
-        assertThat(json.get("message").asText()).contains("Имя не может быть пустым");
+        // Проверяем наличие ключа "messages"
+        assertThat(json.has("messages")).isTrue();
+        assertThat(json.get("messages").isArray()).isTrue();
+
+        // Преобразуем массив сообщений в список строк
+        final List<String> errorMessages = new ArrayList<>();
+        json.get("messages").forEach(msgNode -> errorMessages.add(msgNode.asText()));
+
+        System.out.println("Ошибки: " + errorMessages); // Печать ошибок
+
+        // Проверяем, что все ошибки присутствуют:
+        assertThat(errorMessages).contains("Имя не может быть пустым");
+        assertThat(errorMessages).contains("Некорректный email адрес");
+        assertThat(errorMessages).contains("Пароль не может быть пустым");
     }
 }
+

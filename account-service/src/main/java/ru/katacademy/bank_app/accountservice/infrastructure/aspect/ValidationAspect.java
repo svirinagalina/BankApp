@@ -1,22 +1,23 @@
 package ru.katacademy.bank_app.accountservice.infrastructure.aspect;
 
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
+import ru.katacademy.bank_shared.exception.ValidationException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -60,7 +61,6 @@ public class ValidationAspect {
         final Parameter[] parameters = method.getParameters();
         final List<String> errors = new ArrayList<>();
 
-        // Проверяем аргументы на наличие ошибок валидации
         for (int i = 0; i < args.length; i++) {
             final Object arg = args[i];
             if (arg == null || i >= parameters.length) {
@@ -80,18 +80,11 @@ public class ValidationAspect {
             }
         }
 
-        // Если ошибки есть, возвращаем 400 и список ошибок
         if (!errors.isEmpty()) {
-            final Map<String, Object> responseBody = new HashMap<>();
-            responseBody.put("status", HttpStatus.BAD_REQUEST.value());
-            responseBody.put("errors", errors);  // Вернуть ошибки
-            return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+            // Вместо возврата ResponseEntity, бросаем кастомное исключение
+            throw new ValidationException(errors);
         }
 
-        // Если ошибок нет, возвращаем успешный ответ, но также с пустым массивом "errors"
-        final Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("status", HttpStatus.OK.value());
-        responseBody.put("errors", Collections.emptyList());  // Пустой массив
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+        return joinPoint.proceed();
     }
 }
