@@ -46,12 +46,18 @@ public class GlobalExceptionHandler {
         return buildResponse(e.getMessage(), HttpStatus.CONFLICT, request);
     }
 
+
     /**
      * Обрабатывает исключение MethodArgumentNotValidException, возникающее при провале валидации
-     * данных из тела запроса (@Valid).
+     * данных из тела запроса, когда аннотированы параметры метода контроллера аннотацией @Valid.
+     * Этот метод перехватывает исключение, которое возникает, если входные данные, переданные в
+     * контроллер, не соответствуют правилам валидации. Обычно это может происходить при
+     * несоответствии значений параметров запроса или тела запроса, которые должны проходить валидацию.
      *
-//     * @param  исключение, содержащее информацию о недопустимых аргументах запроса
-     * @return ResponseEntity с первым сообщением об ошибке, текущим временем и статусом 400 Bad Request
+     * @param ex исключение, содержащее информацию о недопустимых аргументах запроса.
+     *           Содержит объект BindingResult, который хранит все ошибки валидации.
+     * @return ResponseEntity с сообщением об ошибке валидации, текущим временем и статусом 400 Bad Request.
+     * В ответе будет передан список ошибок, сгенерированных в процессе валидации.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -83,7 +89,6 @@ public class GlobalExceptionHandler {
         responseBody.put("errors", ex.getErrors());
         return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
     }
-
 
 
     /**
