@@ -6,6 +6,17 @@ plugins {
 	id 'com.github.spotbugs'
 	id'jacoco'
 }
+dependencyManagement {
+	imports {
+		mavenBom 'com.fasterxml.jackson:jackson-bom:2.17.0'
+	}
+}
+
+// Убираем Scala-модуль
+configurations.all {
+	exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-scala_2.13'
+}
+
 group = 'ru.katacademy.bank_app'
 version = '0.0.1-SNAPSHOT'
 java {
@@ -95,6 +106,7 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation(project(":bank-shared"))
+
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'

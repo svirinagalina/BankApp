@@ -24,7 +24,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * Дата: 02.07.2025
  */
-@SpringBootTest
+@SpringBootTest(properties = {
+        // Точка входа клиента/шаблона — наш EmbeddedKafka-брокер
+        "spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}",
+        // Если у вас вдруг остались смещённые оффсеты, всегда начинать с earliest
+        "spring.kafka.consumer.auto-offset-reset=earliest"
+})
 @EmbeddedKafka(partitions = 1, topics = {"transfer-completed-events"})
 @DirtiesContext
 public class FraudDetectionKafkaIntegrationTest {
@@ -38,7 +43,7 @@ public class FraudDetectionKafkaIntegrationTest {
     /**
      * Локальный consumer — обрабатывает сообщение из Kafka и сигнализирует о приёме.
      */
-    @KafkaListener(topics = "transfer-completed-events", groupId = "fraud")
+    @KafkaListener(topics = "transfer-completed-events", groupId = "fraud-test-group")
     public void listenTest(String message) {
         receivedMessage.set(message);
         latch.countDown();
