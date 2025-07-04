@@ -1,6 +1,7 @@
 package ru.katacademy.bank_shared.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,21 +46,30 @@ public class GlobalExceptionHandler {
         return buildResponse(e.getMessage(), HttpStatus.CONFLICT, request);
     }
 
+
     /**
      * Обрабатывает исключение MethodArgumentNotValidException, возникающее при провале валидации
-     * данных из тела запроса (@Valid).
+     * данных из тела запроса, когда аннотированы параметры метода контроллера аннотацией @Valid.
+     * Этот метод перехватывает исключение, которое возникает, если входные данные, переданные в
+     * контроллер, не соответствуют правилам валидации. Обычно это может происходить при
+     * несоответствии значений параметров запроса или тела запроса, которые должны проходить валидацию.
      *
-     * @param e исключение, содержащее информацию о недопустимых аргументах запроса
-     * @return ResponseEntity с первым сообщением об ошибке, текущим временем и статусом 400 Bad Request
+     * @param ex исключение, содержащее информацию о недопустимых аргументах запроса.
+     *           Содержит объект BindingResult, который хранит все ошибки валидации.
+     * @return ResponseEntity с сообщением об ошибке валидации, текущим временем и статусом 400 Bad Request.
+     * В ответе будет передан список ошибок, сгенерированных в процессе валидации.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException e, HttpServletRequest request) {
-        final String message = e.getBindingResult().getFieldErrors().stream()
-                .map(err -> err.getField() + ": " + err.getDefaultMessage())
-                .findFirst()
-                .orElse("Validation failed");
-        return buildResponse(message, HttpStatus.BAD_REQUEST, request);
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        final List<String> messages = ex.getBindingResult().getAllErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .toList();
+        Map<String, Object> response = new HashMap<>();
+        response.put("messages", messages);
+        return ResponseEntity.badRequest().body(response);
     }
+
 
     /**
      * Обрабатывает исключение InvalidEmailException и возвращает HTTP 400 Bad Request.
@@ -70,6 +81,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleInvalidEmailException(InvalidEmailException e, HttpServletRequest request) {
         return buildResponse(e.getMessage(), HttpStatus.BAD_REQUEST, request);
     }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationException(ValidationException ex) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("status", HttpStatus.BAD_REQUEST.value());
+        responseBody.put("errors", ex.getErrors());
+        return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+    }
+
 
     /**
      * Обрабатывает исключение UserNotFoundException и возвращает HTTP 404 Not Found.
