@@ -49,7 +49,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -234,7 +233,7 @@ public class JwtRampUpTest {
 
             Path loadTestsDir = currentDir.getParent();
 
-            Path reportPath = loadTestsDir.resolve("reports/latency-report.md");
+            Path reportPath = loadTestsDir.resolve("reports/rampup-report.md");
 
             Files.createDirectories(reportPath.getParent());
 
