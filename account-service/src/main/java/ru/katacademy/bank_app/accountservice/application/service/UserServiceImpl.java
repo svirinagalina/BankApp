@@ -1,26 +1,25 @@
 package ru.katacademy.bank_app.accountservice.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
+import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
+import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
+import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
+import ru.katacademy.bank_app.accountservice.domain.entity.User;
+import ru.katacademy.bank_app.accountservice.domain.factory.UserFactory;
+import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
+import ru.katacademy.bank_app.accountservice.domain.repository.UserRepository;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_app.accountservice.infrastructure.messaging.PasswordChangeEventPublisher;
 import ru.katacademy.bank_app.audit.annotation.Auditable;
 import ru.katacademy.bank_shared.exception.DomainException;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.InvalidPasswordException;
-import ru.katacademy.bank_shared.valueobject.Email;
-import ru.katacademy.bank_app.accountservice.domain.repository.UserRepository;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
-import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
-import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
-import ru.katacademy.bank_app.accountservice.domain.entity.User;
-import ru.katacademy.bank_app.accountservice.domain.factory.UserFactory;
-import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
-import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
+import ru.katacademy.bank_shared.valueobject.Email;
 
 import java.util.Optional;
 
@@ -116,7 +115,7 @@ public class UserServiceImpl implements UserService {
      * </ol>
      *
      * @param command Команда, содержащая идентификатор пользователя и пароли.
-     * @throws UserNotFoundException Если пользователь с указанным идентификатором не найден.
+     * @throws UserNotFoundException    Если пользователь с указанным идентификатором не найден.
      * @throws InvalidPasswordException Если текущий пароль не совпадает с хешем. Если новый пароль совпадает с текущим.
      *                                  Если новый пароль не соответствует критериям (менее 8 символов,
      *                                  Если не содержит латинские буквы и цифры от 0 до 9).
@@ -144,6 +143,9 @@ public class UserServiceImpl implements UserService {
                     "а также содержать латинские буквы и числа от 0 до 9");
         }
 
+        // Сохраняем старый хеш до изменений
+        final String oldPasswordHash = user.getPasswordHash();
+
         // Устанавливаем и сохраняем новый пароль
         final String newEnteredPasswordHash = BCrypt.hashpw(command.getNewPassword(), BCrypt.gensalt());
         user.setPasswordHash(newEnteredPasswordHash);
@@ -152,19 +154,18 @@ public class UserServiceImpl implements UserService {
         // Публикуем событие о смене пароля
         final PasswordChangedEvent event = new PasswordChangedEvent(
                 user.getId(),
-                user.getPasswordHash(),  // передаем новый хеш
-                newEnteredPasswordHash
+                oldPasswordHash,  // значение пароля до изменений
+                user.getPasswordHash()  // передаем обновленное значение
         );
-
         passwordChangeEventPublisher.publish(event);
     }
 
 
     /**
      * Вспомогательный метод для changePassword().
-     *
+     * <p>
      * Проверяет, что указанный пароль является валидным.
-     *
+     * <p>
      * Этот метод проверяет, соответствует ли пароль следующим критериям:
      * - Должен содержать не менее 8 символов.
      * - Должен включать как минимум одну латинскую букву (верхнего или нижнего регистра).
@@ -173,9 +174,9 @@ public class UserServiceImpl implements UserService {
      * @param input строка, представляющая пароль для проверки. Не может быть null.
      * @return true, если пароль соответствует критериям; иначе false.
      * @throws IllegalArgumentException если input является null.
-     *
-     * Автор: Колпаков А.С..
-     * Дата: 2025-04-30
+     *                                  <p>
+     *                                  Автор: Колпаков А.С..
+     *                                  Дата: 2025-04-30
      */
     private static boolean isValidPassword(String input) {
         if (input == null) {
