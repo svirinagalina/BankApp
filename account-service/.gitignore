@@ -6,6 +6,8 @@ build/
 !**/src/test/**/build/
 .reports/spotbugs.html
 spotbugs.html
+**/target/
+!**/load-tests/scripts/target
 
 ### STS ###
 .apt_generated

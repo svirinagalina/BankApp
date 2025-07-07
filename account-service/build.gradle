@@ -99,6 +99,7 @@ dependencies {
     implementation(project(":bank-shared"))
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation project(':audit')
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'

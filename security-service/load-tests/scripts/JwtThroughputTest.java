@@ -43,6 +43,7 @@
  *   <li>Собирает статистику в многопоточной среде (CopyOnWriteArrayList)</li>
  * </ul>
  */
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
@@ -238,61 +239,13 @@ public class JwtThroughputTest {
                 totalRequests,
                 actualRps, TARGET_RPS,
                 avgLatency,
-                (double)p95,
+                (double) p95,
                 maxLatency,
                 errorCount.get(), errorRate * 100,
                 bottlenecks.stream().collect(Collectors.joining("\n"))
         );
 
-        System.out.println(mdReport);
-
-        try {
-            Path currentDir = Path.of(JwtLatencyTest.class.getProtectionDomain()
-                            .getCodeSource().getLocation().toURI())
-                    .getParent();
-
-            Path loadTestsDir = currentDir.getParent();
-
-            Path reportPath = loadTestsDir.resolve("reports/jwt-throughput-report.md");
-
-            Files.createDirectories(reportPath.getParent());
-
-            Files.write(reportPath, mdReport.getBytes(StandardCharsets.UTF_8));
-
-            System.out.println("Отчет сохранен: " + reportPath.toAbsolutePath());
-        } catch (IOException e) {
-            System.err.println("Ошибка при сохранении отчетов: " + e.getMessage());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static List<String> detectBottlenecks(long p95, long maxLatency, double errorRate) {
-        List<String> bottlenecks = new ArrayList<>();
-
-        if (p95 > 50) {
-            bottlenecks.add(String.format("- Высокий p95 (%.2f мс): 5%% запросов обрабатываются дольше 50 мс", (double)p95));
-        }
-
-        if (maxLatency > 300) {
-            bottlenecks.add(String.format("- Выбросы задержки (до %d мс): Есть отдельные медленные запросы", maxLatency));
-        }
-
-        if (errorRate > 0) {
-            bottlenecks.add(String.format("- Ошибки (%d): Проверьте логи сервера", errorCount.get()));
-        }
-
-        if (bottlenecks.isEmpty()) {
-            bottlenecks.add("- Явных узких мест не обнаружено");
-        }
-
-        return bottlenecks;
-    }
-
-    private static String generateJsonReport(TestResults results, long p95, double avgLatency,
-                                             long maxLatency, int totalRequests,
-                                             double errorRate, double actualRps) {
-        return String.format(
+        String jsonReport = String.format(
                 "{\n" +
                         "  \"metrics\": {\n" +
                         "    \"duration_sec\": %.1f,\n" +
@@ -319,14 +272,77 @@ public class JwtThroughputTest {
                 TARGET_RPS,
                 actualRps,
                 avgLatency,
-                (double)p95,
+                (double) p95,
                 maxLatency,
                 errorCount.get(),
                 errorRate,
                 P95_THRESHOLD_MS,
                 MAX_ERROR_RATE
         );
+
+        System.out.println(mdReport);
+
+        try {
+            Path currentDir = Path.of(JwtThroughputTest.class.getProtectionDomain()
+                            .getCodeSource().getLocation().toURI())
+                    .getParent();
+
+            Path loadTestsDir = currentDir.getParent();
+
+            Path reportPath = loadTestsDir.resolve("reports/jwt-throughput-report.md");
+
+            Files.createDirectories(reportPath.getParent());
+
+            Files.write(reportPath, mdReport.getBytes(StandardCharsets.UTF_8));
+
+            System.out.println("Отчет сохранен: " + reportPath.toAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Ошибка при сохранении отчетов: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            Path currentDir = Path.of(JwtThroughputTest.class.getProtectionDomain()
+                            .getCodeSource().getLocation().toURI())
+                    .getParent();
+
+            Path loadTestsDir = currentDir.getParent();
+            Path reportPath = loadTestsDir.resolve("reports/jwt-throughput-summary.json");
+
+            Files.createDirectories(reportPath.getParent());
+            Files.write(reportPath, jsonReport.getBytes(StandardCharsets.UTF_8));
+
+            System.out.println("Отчет сохранен: " + reportPath.toAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Не удалось сохранить отчет: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
     }
+
+    private static List<String> detectBottlenecks(long p95, long maxLatency, double errorRate) {
+        List<String> bottlenecks = new ArrayList<>();
+
+        if (p95 > 50) {
+            bottlenecks.add(String.format("- Высокий p95 (%.2f мс): 5%% запросов обрабатываются дольше 50 мс", (double) p95));
+        }
+
+        if (maxLatency > 300) {
+            bottlenecks.add(String.format("- Выбросы задержки (до %d мс): Есть отдельные медленные запросы", maxLatency));
+        }
+
+        if (errorRate > 0) {
+            bottlenecks.add(String.format("- Ошибки (%d): Проверьте логи сервера", errorCount.get()));
+        }
+
+        if (bottlenecks.isEmpty()) {
+            bottlenecks.add("- Явных узких мест не обнаружено");
+        }
+
+        return bottlenecks;
+    }
+
 
     static class TestResults {
         long testDurationMs;

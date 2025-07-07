@@ -39,6 +39,7 @@
  *   <li>Уровень ошибок не должен превышать 1%</li>
  * </ul>
  */
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
@@ -198,7 +199,7 @@ public class JwtRampUpTest {
 
         List<String> bottlenecks = new ArrayList<>();
         if (p95 > P95_THRESHOLD_MS) {
-            bottlenecks.add(String.format("- **p95 превышает SLA 300мс** (%.2f мс)", (double)p95));
+            bottlenecks.add(String.format("- **p95 превышает SLA 300мс** (%.2f мс)", (double) p95));
         }
         if (errorRate > MAX_ERROR_RATE) {
             bottlenecks.add(String.format("- **Уровень ошибок высокий** (%.2f%%)", errorRate * 100));
@@ -217,27 +218,78 @@ public class JwtRampUpTest {
                 totalRequests,
                 results.testDurationMs / 1000.0,
                 rps,
-                (double)p95,
+                (double) p95,
                 maxLatency,
                 errorRate * 100,
                 bottlenecks.isEmpty() ? "- Система выдерживает нагрузку согласно SLA" :
                         bottlenecks.stream().collect(Collectors.joining("%n"))
         );
 
+        String jsonReport = String.format(
+                "{%n" +
+                        "  \"metrics\": {%n" +
+                        "    \"total_requests\": %d,%n" +
+                        "    \"successful_requests\": %d,%n" +
+                        "    \"failed_requests\": %d,%n" +
+                        "    \"error_rate\": %.4f,%n" +
+                        "    \"rps\": %.2f,%n" +
+                        "    \"latency\": {%n" +
+                        "      \"avg\": %.2f,%n" +
+                        "      \"p95\": %d,%n" +
+                        "      \"max\": %d%n" +
+                        "    },%n" +
+                        "    \"max_threads\": %d%n" +
+                        "  },%n" +
+                        "  \"thresholds\": {%n" +
+                        "    \"p95\": %d,%n" +
+                        "    \"max_error_rate\": %.2f%n" +
+                        "  }%n" +
+                        "}",
+                successCount.get() + errorCount.get(),
+                successCount.get(),
+                errorCount.get(),
+                errorRate,
+                rps,
+                avgLatency,
+                p95,
+                maxLatency,
+                STAGES.stream().mapToInt(s -> s.targetThreads).max().orElse(0),
+                P95_THRESHOLD_MS,
+                MAX_ERROR_RATE
+        );
+
         System.out.println(mdReport);
 
         try {
-            Path currentDir = Path.of(JwtLatencyTest.class.getProtectionDomain()
+            Path currentDir = Path.of(JwtRampUpTest.class.getProtectionDomain()
                             .getCodeSource().getLocation().toURI())
                     .getParent();
 
             Path loadTestsDir = currentDir.getParent();
 
-            Path reportPath = loadTestsDir.resolve("reports/rampup-report.md");
+            Path reportPath = loadTestsDir.resolve("reports/jwt-rampup-report.md");
 
             Files.createDirectories(reportPath.getParent());
 
             Files.write(reportPath, mdReport.getBytes(StandardCharsets.UTF_8));
+
+            System.out.println("Отчет сохранен: " + reportPath.toAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Не удалось сохранить отчет: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Path currentDir = Path.of(JwtRampUpTest.class.getProtectionDomain()
+                            .getCodeSource().getLocation().toURI())
+                    .getParent();
+
+            Path loadTestsDir = currentDir.getParent();
+            Path reportPath = loadTestsDir.resolve("reports/jwt-rampup-summary.json");
+
+            Files.createDirectories(reportPath.getParent());
+            Files.write(reportPath, jsonReport.getBytes(StandardCharsets.UTF_8));
 
             System.out.println("Отчет сохранен: " + reportPath.toAbsolutePath());
         } catch (IOException e) {

@@ -1,3 +1,52 @@
+/**
+ * SOAK-тест для проверки устойчивости сервиса верификации JWT при длительной нагрузке.
+ *
+ * <p><b>Цель теста:</b> выявление проблем с памятью, утечек ресурсов и деградации производительности
+ * при продолжительной работе сервиса.</p>
+ *
+ * <h2>Параметры тестирования</h2>
+ * <ol>
+ *   <li>Количество виртуальных пользователей - 50</li>
+ *   <li>Продолжительность теста - 30 минут</li>
+ *   <li>Ожидаемая пропускная способность (RPS) - 120 запросов/сек</li>
+ *   <li>Количество тестовых токенов - 10</li>
+ *
+ * <h2>Методика тестирования</h2>
+ * <ol>
+ *   <li>Генерация набора из 10 валидных JWT-токенов (алгоритм HS256)</li>
+ *   <li>Создание постоянной нагрузки с фиксированным количеством пользователей</li>
+ *   <li>Отправка POST-запросов на эндпоинт /api/security/verify</li>
+ *   <li>Мониторинг метрик производительности в реальном времени</li>
+ *   <li>Анализ деградации производительности в последней трети теста</li>
+ * </ol>
+ *
+ * <h2>Ключевые метрики</h2>
+ * <ul>
+ *   <li><b>Производительность:</b>
+ *     <ul>
+ *       <li>p90, p95, p99 - перцентили времени ответа</li>
+ *       <li>RPS - фактическая пропускная способность</li>
+ *       <li>Деградация производительности (%)</li>
+ *     </ul>
+ *   </li>
+ *   <li><b>Надежность:</b>
+ *     <ul>
+ *       <li>Уровень ошибок (%)</li>
+ *       <li>Количество failed checks</li>
+ *       <li>Критические ошибки (таймауты, 5xx)</li>
+ *     </ul>
+ *   </li>
+ * </ul>
+ *
+ * <h2>SLA критерии</h2>
+ * <table border="1">
+ *   <tr><th>Метрика</th><th>Целевое значение</th></tr>
+ *   <tr><td>p95 latency</td><td>&lt; 400 мс</td></tr>
+ *   <tr><td>Уровень ошибок</td><td>&lt; 0.1%</td></tr>
+ *   <tr><td>Деградация производительности</td><td>&lt; 20% за время теста</td></tr>
+ * </table>
+ */
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
@@ -8,29 +57,26 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class JwtSoakTest {
     private static final String ENDPOINT = "http://localhost:8085/api/security/verify";
     private static final String SECRET_KEY = "testsecretkeyfortestpurposesonly1234567890";
     private static final List<String> TOKENS = generateTokens(10);
 
-    // Параметры теста
     private static final int VIRTUAL_USERS = 50;
     private static final int DURATION_MINUTES = 30;
     private static final int EXPECTED_RPS = 120;
 
-    // SLA параметры
     private static final long P95_THRESHOLD_MS = 400;
     private static final double MAX_ERROR_RATE = 0.001;
     private static final long RESPONSE_TIMEOUT_MS = 10_000;
 
-    // Метрики
     private static final List<Long> latencies = new CopyOnWriteArrayList<>();
     private static final AtomicInteger successCount = new AtomicInteger();
     private static final AtomicInteger errorCount = new AtomicInteger();
@@ -86,7 +132,6 @@ public class JwtSoakTest {
         long testStartTime = System.currentTimeMillis();
         lastThirdStartTime.set(testStartTime + (DURATION_MINUTES * 60_000 * 2 / 3));
 
-        // Запускаем сбор статистики каждые 30 секунд
         statsCollector.scheduleAtFixedRate(() -> {
             System.out.printf("[Progress] %d/%d minutes, Requests: %d, Errors: %d%n",
                     (System.currentTimeMillis() - testStartTime) / 60_000,
@@ -95,14 +140,14 @@ public class JwtSoakTest {
                     errorCount.get());
         }, 1, 1, TimeUnit.MINUTES);
 
-        // Запускаем виртуальных пользователей
         for (int i = 0; i < VIRTUAL_USERS; i++) {
+            final int tokenIndex = i % TOKENS.size();
             executor.submit(() -> {
                 Random random = new Random();
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
-                        sendRequest(i % TOKENS.size());
-                        Thread.sleep(random.nextInt(1000)); // Имитация поведения пользователя
+                        sendRequest(tokenIndex);
+                        Thread.sleep(random.nextInt(1000));
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
@@ -110,14 +155,11 @@ public class JwtSoakTest {
             });
         }
 
-        // Ждем завершения теста
         Thread.sleep(DURATION_MINUTES * 60_000);
 
-        // Останавливаем все
         executor.shutdownNow();
         statsCollector.shutdownNow();
 
-        // Генерируем отчет
         generateReport(testStartTime);
     }
 
@@ -144,7 +186,6 @@ public class JwtSoakTest {
                 latencies.add(latencyMs);
             }
 
-            // Проверки (checks)
             if (responseCode == 200) {
                 passedChecks.incrementAndGet();
             } else {
@@ -176,7 +217,6 @@ public class JwtSoakTest {
 
         Collections.sort(latencies);
 
-        // Общие метрики
         long testDurationMs = System.currentTimeMillis() - testStartTime;
         int totalRequests = successCount.get() + errorCount.get();
         double actualRps = totalRequests / (testDurationMs / 1000.0);
@@ -184,14 +224,12 @@ public class JwtSoakTest {
         int totalChecks = passedChecks.get() + failedChecks.get();
         double failedChecksRate = totalChecks > 0 ? (double) failedChecks.get() / totalChecks * 100 : 0;
 
-        // Расчет перцентилей
         double avgLatency = latencies.stream().mapToLong(Long::longValue).average().orElse(0);
         long p95 = latencies.get((int) (latencies.size() * 0.95));
         long p90 = latencies.get((int) (latencies.size() * 0.90));
         long p99 = latencies.get((int) (latencies.size() * 0.99));
         long maxLatency = latencies.get(latencies.size() - 1);
 
-        // Анализ деградации производительности (последняя треть теста)
         List<Long> lastThirdLatencies = latencies.stream()
                 .filter(l -> System.currentTimeMillis() - testStartTime > lastThirdStartTime.get())
                 .collect(Collectors.toList());
@@ -201,7 +239,6 @@ public class JwtSoakTest {
         double perfDegradation = !lastThirdLatencies.isEmpty() ?
                 ((double) lastThirdP95 / p95 - 1) * 100 : 0;
 
-        // Проверка SLA
         List<String> slaChecks = new ArrayList<>();
         if (p95 <= P95_THRESHOLD_MS) {
             slaChecks.add(String.format("**p95 latency в пределах SLA** (%.2f ms)", (double) p95));
@@ -215,7 +252,6 @@ public class JwtSoakTest {
             slaChecks.add(String.format("**Уровень ошибок превышает 0.1%%** (%.4f%%)", errorRate * 100));
         }
 
-        // Выявление узких мест
         List<String> bottlenecks = new ArrayList<>();
         if (perfDegradation > 20) {
             bottlenecks.add(String.format("- **Деградация производительности**: p95 вырос на %.2f%% за время теста", perfDegradation));
@@ -233,7 +269,6 @@ public class JwtSoakTest {
             bottlenecks.add("- Критических узких мест не обнаружено");
         }
 
-        // Формирование отчета
         String mdReport = String.format(
                 "# Отчет SOAK-теста JWT верификации%n%n" +
                         "## Основные параметры теста%n" +
@@ -252,6 +287,7 @@ public class JwtSoakTest {
                         "- **Уровень ошибок:** %.4f%%%n" +
                         "- **Пропускная способность:** %.2f запр/сек%n" +
                         "- **Ошибки проверок:** %.2f%%%n%n" +
+                        "- **Среднее время ответа:** %.2f ms%n" +
                         "## Проверка SLA%n%s%n%n" +
                         "## Узкие места (Bottlenecks)%n%s%n",
                 DURATION_MINUTES,
@@ -266,8 +302,58 @@ public class JwtSoakTest {
                 errorRate * 100,
                 actualRps,
                 failedChecksRate,
+                avgLatency,
                 String.join("%n", slaChecks),
                 String.join("%n", bottlenecks)
+        );
+
+        String jsonReport = String.format(
+                "{%n" +
+                        "  \"metrics\": {%n" +
+                        "    \"duration_min\": %d,%n" +
+                        "    \"virtual_users\": %d,%n" +
+                        "    \"requests\": {%n" +
+                        "      \"total\": %d,%n" +
+                        "      \"successful\": %d,%n" +
+                        "      \"failed\": %d%n" +
+                        "    },%n" +
+                        "    \"rps\": %.2f,%n" +
+                        "    \"latency\": {%n" +
+                        "      \"avg\": %.2f,%n" +
+                        "      \"p90\": %d,%n" +
+                        "      \"p95\": %d,%n" +
+                        "      \"p99\": %d,%n" +
+                        "      \"max\": %d%n" +
+                        "    },%n" +
+                        "    \"error_rate\": %.4f,%n" +
+                        "    \"checks\": {%n" +
+                        "      \"total\": %d,%n" +
+                        "      \"failed\": %d%n" +
+                        "    }%n" +
+                        "  },%n" +
+                        "  \"thresholds\": {%n" +
+                        "    \"target_rps\": %d,%n" +
+                        "    \"p95_latency\": %d,%n" +
+                        "    \"max_error_rate\": %.4f%n" +
+                        "  }%n" +
+                        "}",
+                DURATION_MINUTES,
+                VIRTUAL_USERS,
+                totalRequests,
+                successCount.get(),
+                errorCount.get(),
+                actualRps,
+                avgLatency,
+                p90,
+                p95,
+                p99,
+                maxLatency,
+                errorRate,
+                totalChecks,
+                failedChecks.get(),
+                EXPECTED_RPS,
+                P95_THRESHOLD_MS,
+                MAX_ERROR_RATE
         );
 
         System.out.println(mdReport);
@@ -288,6 +374,24 @@ public class JwtSoakTest {
             System.out.println("Отчет сохранен: " + reportPath.toAbsolutePath());
         } catch (IOException e) {
             System.err.println("Ошибка при сохранении отчетов: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Path currentDir = Path.of(JwtSoakTest.class.getProtectionDomain()
+                            .getCodeSource().getLocation().toURI())
+                    .getParent();
+
+            Path loadTestsDir = currentDir.getParent();
+            Path reportPath = loadTestsDir.resolve("reports/soak-summary.json");
+
+            Files.createDirectories(reportPath.getParent());
+            Files.write(reportPath, jsonReport.getBytes(StandardCharsets.UTF_8));
+
+            System.out.println("Отчет сохранен: " + reportPath.toAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Не удалось сохранить отчет: " + e.getMessage());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

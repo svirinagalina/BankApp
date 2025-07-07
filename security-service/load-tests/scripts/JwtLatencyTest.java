@@ -27,6 +27,7 @@
  * - p95 < 50 мс
  * - Ошибок: 0%
  */
+
 import java.net.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -163,10 +164,13 @@ public class JwtLatencyTest {
         long p99 = getPercentile(99);
 
         double errorRate = (double) errorCount.get() / TOTAL_REQUESTS * 100;
+        double rps = TOTAL_REQUESTS / ((double) latencies.stream().mapToLong(Long::longValue).sum() / 1000);
 
         List<String> bottlenecks = new ArrayList<>();
-        if (avg > SLA_THRESHOLD_MS) bottlenecks.add("- Средняя задержка превышает SLA-порог (" + SLA_THRESHOLD_MS + "ms)");
-        if (max > MAX_LATENCY_THRESHOLD_MS) bottlenecks.add("- Обнаружены выбросы высокой задержки (> " + MAX_LATENCY_THRESHOLD_MS + "ms)");
+        if (avg > SLA_THRESHOLD_MS)
+            bottlenecks.add("- Средняя задержка превышает SLA-порог (" + SLA_THRESHOLD_MS + "ms)");
+        if (max > MAX_LATENCY_THRESHOLD_MS)
+            bottlenecks.add("- Обнаружены выбросы высокой задержки (> " + MAX_LATENCY_THRESHOLD_MS + "ms)");
         if (errorCount.get() > 0) bottlenecks.add("- Found errors: " + errorCount.get());
 
         String report = "# Отчет по тестированию JWT верификации\n\n" +
@@ -185,6 +189,41 @@ public class JwtLatencyTest {
                         "- Система работает стабильно, узких мест не обнаружено" :
                         String.join("\n", bottlenecks));
 
+        String jsonReport = String.format(
+                "{%n" +
+                        "  \"metrics\": {%n" +
+                        "    \"total_requests\": %d,%n" +
+                        "    \"successful_requests\": %d,%n" +
+                        "    \"failed_requests\": %d,%n" +
+                        "    \"error_rate\": %.4f,%n" +
+                        "    \"rps\": %.2f,%n" +
+                        "    \"latency\": {%n" +
+                        "      \"avg\": %.2f,%n" +
+                        "      \"p90\": %d,%n" +
+                        "      \"p95\": %d,%n" +
+                        "      \"p99\": %d,%n" +
+                        "      \"max\": %d%n" +
+                        "    }%n" +
+                        "  },%n" +
+                        "  \"thresholds\": {%n" +
+                        "    \"avg_latency\": %d,%n" +
+                        "    \"max_latency\": %d%n" +
+                        "  }%n" +
+                        "}",
+                TOTAL_REQUESTS,
+                successCount.get(),
+                errorCount.get(),
+                errorRate,
+                rps,
+                avg,
+                p90,
+                p95,
+                p99,
+                max,
+                SLA_THRESHOLD_MS,
+                MAX_LATENCY_THRESHOLD_MS
+        );
+
         System.out.println(report);
 
         try {
@@ -199,6 +238,24 @@ public class JwtLatencyTest {
             Files.createDirectories(reportPath.getParent());
 
             Files.write(reportPath, report.getBytes(StandardCharsets.UTF_8));
+
+            System.out.println("Отчет сохранен: " + reportPath.toAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Не удалось сохранить отчет: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Path currentDir = Path.of(JwtLatencyTest.class.getProtectionDomain()
+                            .getCodeSource().getLocation().toURI())
+                    .getParent();
+
+            Path loadTestsDir = currentDir.getParent();
+            Path reportPath = loadTestsDir.resolve("reports/latency-summary.json");
+
+            Files.createDirectories(reportPath.getParent());
+            Files.write(reportPath, jsonReport.getBytes(StandardCharsets.UTF_8));
 
             System.out.println("Отчет сохранен: " + reportPath.toAbsolutePath());
         } catch (IOException e) {
