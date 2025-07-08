@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Этот класс выполняет тестирование контроллера UserController с использованием мок-сервиса для UserService.
  * Он тестирует сценарии с валидными и невалидными данными, проверяя, что контроллер правильно обрабатывает запросы.
  */
+@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(UserController.class)
 @Import({ValidationAspect.class, UserControllerAspectTest.MockConfig.class, GlobalExceptionHandler.class})
 class UserControllerAspectTest {

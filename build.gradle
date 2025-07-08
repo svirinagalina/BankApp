@@ -51,7 +51,6 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation(project(":bank-shared"))
-	implementation 'junit:junit:4.13.1'
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -61,9 +60,14 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 
 	// Testing
+	testImplementation('org.testcontainers:junit-jupiter') {
+		exclude group: 'junit', module: 'junit'
+	}
+	testImplementation('org.testcontainers:postgresql') {
+		exclude group: 'junit', module: 'junit'
+	}
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:postgresql'
 }
 
 tasks.named('test') {
