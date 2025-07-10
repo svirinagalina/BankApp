@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
  *
  * @author Глеб Ткачёв
  */
-
 @Aspect
 @Component
 public class ErrorHandlingAspect {

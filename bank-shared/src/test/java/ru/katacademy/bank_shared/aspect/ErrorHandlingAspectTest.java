@@ -27,7 +27,6 @@ import static org.mockito.Mockito.when;
  *   <li>Отсутствие ретраев для неретраемых исключений.</li>
  * </ul>
  */
-
 class ErrorHandlingAspectTest {
 
     @InjectMocks

@@ -23,7 +23,6 @@ import java.lang.annotation.Target;
  *
  * @author Глеб Ткачёв
  */
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RetryableOperation {
