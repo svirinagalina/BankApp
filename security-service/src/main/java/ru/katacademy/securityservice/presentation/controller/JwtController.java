@@ -1,7 +1,10 @@
 package ru.katacademy.securityservice.presentation.controller;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.katacademy.securityservice.util.JwtUtil;
 import java.util.Map;
 
@@ -59,9 +62,5 @@ public class JwtController {
         } catch (JwtException e) {
             return ResponseEntity.status(401).body("Invalid token" + e.getMessage());
         }
-    }
-    @GetMapping("/generate-test-token")
-    public String generateTestToken() {
-        return jwtUtil.generateToken("test-user"); // subject = "test-user"
     }
 }

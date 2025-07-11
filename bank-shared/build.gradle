@@ -22,6 +22,18 @@ dependencies {
 
 	compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 	annotationProcessor 'com.github.spotbugs:spotbugs-annotations:4.8.3'
+
+	testImplementation platform('org.junit:junit-bom:5.9.2')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testImplementation 'org.mockito:mockito-core:4.8.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
+	testImplementation 'org.junit.platform:junit-platform-launcher'
+
+	compileOnly 'org.springframework.boot:spring-boot-starter-aop'
+}
+
+test {
+	useJUnitPlatform()
 }
 
 repositories {

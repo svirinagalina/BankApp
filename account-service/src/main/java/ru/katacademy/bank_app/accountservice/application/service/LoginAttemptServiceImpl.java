@@ -1,11 +1,14 @@
 package ru.katacademy.bank_app.accountservice.application.service;
 
+import org.apache.kafka.common.KafkaException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.accountservice.domain.entity.LoginAttemptEntry;
 import ru.katacademy.bank_app.accountservice.domain.events.LoginAttemptedEvent;
 import ru.katacademy.bank_app.accountservice.domain.repository.LoginAttemptRepository;
 import ru.katacademy.bank_app.accountservice.domain.service.LoginAttemptService;
+import ru.katacademy.bank_shared.aspect.RetryableOperation;
 
 
 import java.time.LocalDateTime;
@@ -42,6 +45,12 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
      *                  Автор: Колпаков А.С..
      *                  Дата: 2025-05-05
      */
+    @Override
+    @RetryableOperation(
+            maxAttempts = 4,
+            backoffDelayMs = 1000,
+            retryOn = { DataAccessException.class, KafkaException.class }
+    )
     public void recordLoginAttempt(Long userId, String email, String ip, String userAgent, boolean success) {
         final LoginAttemptEntry entry = new LoginAttemptEntry(
                 userId,

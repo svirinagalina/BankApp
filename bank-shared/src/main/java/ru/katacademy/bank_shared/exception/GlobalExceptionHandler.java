@@ -103,6 +103,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * «Поймать» всё, что осталось — чтобы Spring не превращал это в 403.
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String,Object>> handleAllOtherExceptions(Exception ex, HttpServletRequest request) {
+        return buildResponse("Internal error: " + ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    /**
      * Формирует HTTP-ответ в виде JSON-объекта.
      *
      * @param message сообщение об ошибке
