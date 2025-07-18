@@ -5,6 +5,7 @@ import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
 import ru.katacademy.infrastructure.repository.LoginAttemptAuthRepositoryImpl;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -48,4 +49,40 @@ public interface JpaLoginAttemptAuthRepository extends JpaRepository<JpaLoginAtt
      * @return список попыток входа или пустой список, если ничего не найдено
      */
     List<JpaLoginAttempt> findBySuccess(boolean success);
+
+    /**
+     * Находит все попытки входа в указанном временном диапазоне.
+     *
+     * @param userId идентификатор пользователя (не может быть {@code null})
+     * @param start начальная дата диапазона
+     * @param end   конечная дата диапазона
+     * @return список попыток входа или пустой список, если ничего не найдено
+     */
+    List<JpaLoginAttempt> findByUserIdAndTimestampBetween(Long userId, LocalDateTime start, LocalDateTime end);
+
+    /**
+     * Находит все попытки входа по указанному результату.
+     *
+     * @param userId идентификатор пользователя (не может быть {@code null})
+     * @param success результат попытки:
+     *                {@code true} - успешные,
+     *                {@code false} - неудачные
+     * @return список попыток входа или пустой список, если ничего не найдено
+     */
+
+    List<JpaLoginAttempt> findByUserIdAndSuccess(Long userId, Boolean success);
+
+    /**
+     * Находит все попытки входа в указанном временном диапазоне и результату.
+     *
+     * @param userId идентификатор пользователя (не может быть {@code null})
+     * @param start начальная дата диапазона
+     * @param end   конечная дата диапазона
+     * @param success результат попытки:
+     *                {@code true} - успешные,
+     *                {@code false} - неудачные
+     * @return список попыток входа или пустой список, если ничего не найдено
+     */
+    List<JpaLoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(
+            Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
 }

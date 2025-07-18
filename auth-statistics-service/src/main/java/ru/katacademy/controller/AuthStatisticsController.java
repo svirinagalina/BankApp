@@ -88,11 +88,14 @@ public class AuthStatisticsController {
      * @return список {@link LoginAttempt} с учетом примененных фильтров
      */
     private List<LoginAttempt> getLoginAttempts(Long userId, LocalDateTime start, LocalDateTime end, Boolean success) {
+        if (start != null && end != null && success != null) {
+            return loginAttemptAuthRepository.findByUserIdAndTimestampBetweenAndSuccess(userId,start,end,success);
+        }
         if (start != null && end != null) {
-            return loginAttemptAuthRepository.findByTimestamp(start, end);
+            return loginAttemptAuthRepository.findByUserIdAndTimestampBetween(userId,start,end);
         }
         if (success != null) {
-            return loginAttemptAuthRepository.findBySuccess(success);
+            return loginAttemptAuthRepository.findByUserIdAndSuccess(userId,success);
         }
         return loginAttemptAuthRepository.findByUserId(userId);
     }

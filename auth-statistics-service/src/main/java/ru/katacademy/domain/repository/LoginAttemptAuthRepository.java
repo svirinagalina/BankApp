@@ -49,4 +49,40 @@ public interface LoginAttemptAuthRepository {
      * @return сохраненный объект с заполненными полями
      */
     LoginAttempt save(LoginAttempt attempt);
+
+
+
+    /**
+     * Находит все попытки входа по идентификатору пользователя в указанном временном диапазоне.
+     *
+     * @param userId идентификатор пользователя
+     * @param start  начальная дата диапазона
+     * @param end    конечная дата диапазона
+     * @return список попыток входа или пустой список, если ничего не найдено
+     */
+    List<LoginAttempt> findByUserIdAndTimestampBetween(Long userId, LocalDateTime start, LocalDateTime end);
+
+    /**
+     * Находит все попытки входа по идентификатору пользователя и результату.
+     *
+     * @param userId  идентификатор пользователя
+     * @param success результат попытки:
+     *                {@code true} - успешные,
+     *                {@code false} - неудачные
+     * @return список попыток входа или пустой список, если ничего не найдено
+     */
+    List<LoginAttempt> findByUserIdAndSuccess(Long userId, Boolean success);
+
+    /**
+     * Находит все попытки входа по идентификатору пользователя, в указанном временном диапазоне и с указанным результатом.
+     *
+     * @param userId  идентификатор пользователя
+     * @param start   начальная дата диапазона
+     * @param end     конечная дата диапазона
+     * @param success результат попытки:
+     *                {@code true} - успешные,
+     *                {@code false} - неудачные
+     * @return список попыток входа или пустой список, если ничего не найдено
+     */
+    List<LoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
 }

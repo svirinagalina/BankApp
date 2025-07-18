@@ -51,4 +51,7 @@ public class LoginAttempt {
      * Информация о браузере/устройстве пользователя.
      */
     private String userAgent;
+
+
+
 }
