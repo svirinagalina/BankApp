@@ -37,4 +37,22 @@ public interface LoginAttemptJpaRepository
      * @return список JPA‑сущностей
      */
     List<LoginAttemptEntity> findBySuccess(boolean success);
+
+    List<LoginAttemptEntity> findByUserIdAndTimestampBetween(
+            Long userId,
+            LocalDateTime start,
+            LocalDateTime end
+    );
+
+    List<LoginAttemptEntity> findByUserIdAndSuccess(
+            Long userId,
+            boolean success
+    );
+
+    List<LoginAttemptEntity> findByUserIdAndTimestampBetweenAndSuccess(
+            Long userId,
+            LocalDateTime start,
+            LocalDateTime end,
+            boolean success
+    );
 }

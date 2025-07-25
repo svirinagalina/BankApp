@@ -108,4 +108,26 @@ public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepositor
         LoginAttemptEntity saved = jpaRepository.save(entity);
         return mapper.toDomain(saved);
     }
+
+    @Override
+    public List<LoginAttempt> findByUserIdAndTimestampBetween(Long userId, LocalDateTime start, LocalDateTime end) {
+        return jpaRepository.findByUserIdAndTimestampBetween(userId, start, end).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<LoginAttempt> findByUserIdAndSuccess(Long userId, Boolean success) {
+        return jpaRepository.findByUserIdAndSuccess(userId, success).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
+    public List<LoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(
+            Long userId, LocalDateTime start, LocalDateTime end, Boolean success) {
+        return jpaRepository.findByUserIdAndTimestampBetweenAndSuccess(userId, start, end, success).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
 }
