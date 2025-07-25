@@ -5,7 +5,6 @@ import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
 import ru.katacademy.infrastructure.repository.LoginAttemptAuthRepositoryImpl;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,31 +33,12 @@ public interface JpaLoginAttemptAuthRepository extends JpaRepository<JpaLoginAtt
     /**
      * Находит все попытки входа в указанном временном диапазоне.
      *
-     * @param start начальная дата диапазона
-     * @param end   конечная дата диапазона
-     * @return список попыток входа или пустой список, если ничего не найдено
-     */
-    List<JpaLoginAttempt> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
-
-    /**
-     * Находит все попытки входа по указанному результату.
-     *
-     * @param success результат попытки:
-     *                {@code true} - успешные,
-     *                {@code false} - неудачные
-     * @return список попыток входа или пустой список, если ничего не найдено
-     */
-    List<JpaLoginAttempt> findBySuccess(boolean success);
-
-    /**
-     * Находит все попытки входа в указанном временном диапазоне.
-     *
      * @param userId идентификатор пользователя (не может быть {@code null})
      * @param start начальная дата диапазона
      * @param end   конечная дата диапазона
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<JpaLoginAttempt> findByUserIdAndTimestampBetween(Long userId, LocalDateTime start, LocalDateTime end);
+    List<JpaLoginAttempt> findByUserIdAndTimestamp(Long userId, LocalDateTime start, LocalDateTime end);
 
     /**
      * Находит все попытки входа по указанному результату.
@@ -69,7 +49,6 @@ public interface JpaLoginAttemptAuthRepository extends JpaRepository<JpaLoginAtt
      *                {@code false} - неудачные
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-
     List<JpaLoginAttempt> findByUserIdAndSuccess(Long userId, Boolean success);
 
     /**
@@ -83,6 +62,5 @@ public interface JpaLoginAttemptAuthRepository extends JpaRepository<JpaLoginAtt
      *                {@code false} - неудачные
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<JpaLoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(
-            Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
+    List<JpaLoginAttempt> findByUserIdAndTimestampAndSuccess(Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
 }

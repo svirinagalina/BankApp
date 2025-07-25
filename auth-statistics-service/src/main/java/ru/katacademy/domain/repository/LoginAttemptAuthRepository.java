@@ -24,35 +24,6 @@ public interface LoginAttemptAuthRepository {
     List<LoginAttempt> findByUserId(Long userId);
 
     /**
-     * Находит все попытки входа в указанном временном диапазоне.
-     *
-     * @param start начальная дата диапазона
-     * @param end   конечная дата диапазона
-     * @return список попыток входа или пустой список, если ничего не найдено
-     */
-    List<LoginAttempt> findByTimestamp(LocalDateTime start, LocalDateTime end);
-
-    /**
-     * Находит все попытки входа по указанному результату.
-     *
-     * @param success результат попытки:
-     *                {@code true} - успешные,
-     *                {@code false} - неудачные
-     * @return список попыток входа или пустой список, если ничего не найдено
-     */
-    List<LoginAttempt> findBySuccess(boolean success);
-
-    /**
-     * Сохраняет или обновляет информацию о попытке входа.
-     *
-     * @param attempt объект попытки входа для сохранения
-     * @return сохраненный объект с заполненными полями
-     */
-    LoginAttempt save(LoginAttempt attempt);
-
-
-
-    /**
      * Находит все попытки входа по идентификатору пользователя в указанном временном диапазоне.
      *
      * @param userId идентификатор пользователя
@@ -60,7 +31,7 @@ public interface LoginAttemptAuthRepository {
      * @param end    конечная дата диапазона
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<LoginAttempt> findByUserIdAndTimestampBetween(Long userId, LocalDateTime start, LocalDateTime end);
+    List<LoginAttempt> findByUserIdAndTimestamp(Long userId, LocalDateTime start, LocalDateTime end);
 
     /**
      * Находит все попытки входа по идентификатору пользователя и результату.
@@ -84,5 +55,13 @@ public interface LoginAttemptAuthRepository {
      *                {@code false} - неудачные
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<LoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
+    List<LoginAttempt> findByUserIdAndTimestampAndSuccess(Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
+
+    /**
+     * Сохраняет или обновляет информацию о попытке входа.
+     *
+     * @param attempt объект попытки входа для сохранения
+     * @return сохраненный объект с заполненными полями
+     */
+    LoginAttempt save(LoginAttempt attempt);
 }

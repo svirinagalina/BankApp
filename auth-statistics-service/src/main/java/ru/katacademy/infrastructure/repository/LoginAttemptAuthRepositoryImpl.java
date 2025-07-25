@@ -59,16 +59,16 @@ public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepositor
      * <p><b>Особенности:</b></p>
      * <ul>
      *   <li>Границы диапазона включительные</li>
-     *   <li>Преобразует вызов в {@link JpaLoginAttemptAuthRepository#findByTimestampBetween}</li>
+     *   <li>Преобразует вызов в {@link JpaLoginAttemptAuthRepository#findByUserIdAndTimestamp}</li>
      * </ul>
-     *
+     * @param userId идентификатор пользователя (не может быть {@code null})
      * @param start начальная дата
      * @param end   конечная дата
      * @return список domain-объектов
      */
     @Override
-    public List<LoginAttempt> findByTimestamp(LocalDateTime start, LocalDateTime end) {
-        return jpaRepository.findByTimestampBetween(start, end).stream()
+    public List<LoginAttempt> findByUserIdAndTimestamp(Long userId, LocalDateTime start, LocalDateTime end) {
+        return jpaRepository.findByUserIdAndTimestamp(userId, start, end).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
@@ -76,14 +76,34 @@ public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepositor
     /**
      * Находит попытки входа по статусу успешности с преобразованием в domain-модель.
      *
+     * @param userId идентификатор пользователя (не может быть {@code null})
      * @param success искомый статус:
      *                {@code true} - успешные,
      *                {@code false} - неудачные
      * @return список domain-объектов
      */
     @Override
-    public List<LoginAttempt> findBySuccess(boolean success) {
-        return jpaRepository.findBySuccess(success).stream()
+    public List<LoginAttempt> findByUserIdAndSuccess(Long userId, Boolean success) {
+        return jpaRepository.findByUserIdAndSuccess(userId, success).stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    /**
+     * Находит все попытки входа в указанном временном диапазоне и результату.
+     *
+     * @param userId идентификатор пользователя (не может быть {@code null})
+     * @param start начальная дата диапазона
+     * @param end   конечная дата диапазона
+     * @param success результат попытки:
+     *                {@code true} - успешные,
+     *                {@code false} - неудачные
+     * @return список попыток входа или пустой список, если ничего не найдено
+     */
+    @Override
+    public List<LoginAttempt> findByUserIdAndTimestampAndSuccess(
+            Long userId, LocalDateTime start, LocalDateTime end, Boolean success) {
+        return jpaRepository.findByUserIdAndTimestampAndSuccess(userId, start, end, success).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
@@ -106,27 +126,5 @@ public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepositor
         JpaLoginAttempt jpaEntity = mapper.toJpa(attempt);
         JpaLoginAttempt saved = jpaRepository.save(jpaEntity);
         return mapper.toDomain(saved);
-    }
-
-    @Override
-    public List<LoginAttempt> findByUserIdAndTimestampBetween(Long userId, LocalDateTime start, LocalDateTime end) {
-        return jpaRepository.findByUserIdAndTimestampBetween(userId, start, end).stream()
-                .map(mapper::toDomain)
-                .toList();
-    }
-
-    @Override
-    public List<LoginAttempt> findByUserIdAndSuccess(Long userId, Boolean success) {
-        return jpaRepository.findByUserIdAndSuccess(userId, success).stream()
-                .map(mapper::toDomain)
-                .toList();
-    }
-
-    @Override
-    public List<LoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(
-            Long userId, LocalDateTime start, LocalDateTime end, Boolean success) {
-        return jpaRepository.findByUserIdAndTimestampBetweenAndSuccess(userId, start, end, success).stream()
-                .map(mapper::toDomain)
-                .toList();
     }
 }

@@ -76,7 +76,7 @@ class AuthStatisticsControllerTest {
         dto.setTimestamp(end.minusHours(1));
         dto.setSuccess(true);
 
-        when(repository.findByUserIdAndTimestampBetween(userId, start, end))
+        when(repository.findByUserIdAndTimestamp(userId, start, end))
                 .thenReturn(List.of(attempt));
         when(mapper.toDto(attempt)).thenReturn(dto);
 
@@ -151,7 +151,7 @@ class AuthStatisticsControllerTest {
         dto.setTimestamp(attempt.getTimestamp());
         dto.setSuccess(success);
 
-        when(repository.findByUserIdAndTimestampBetweenAndSuccess(userId, start, end, success))
+        when(repository.findByUserIdAndTimestampAndSuccess(userId, start, end, success))
                 .thenReturn(List.of(attempt));
         when(mapper.toDto(attempt)).thenReturn(dto);
 

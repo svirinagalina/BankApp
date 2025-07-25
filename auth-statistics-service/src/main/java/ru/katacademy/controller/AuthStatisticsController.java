@@ -89,10 +89,10 @@ public class AuthStatisticsController {
      */
     private List<LoginAttempt> getLoginAttempts(Long userId, LocalDateTime start, LocalDateTime end, Boolean success) {
         if (start != null && end != null && success != null) {
-            return loginAttemptAuthRepository.findByUserIdAndTimestampBetweenAndSuccess(userId,start,end,success);
+            return loginAttemptAuthRepository.findByUserIdAndTimestampAndSuccess(userId,start,end,success);
         }
         if (start != null && end != null) {
-            return loginAttemptAuthRepository.findByUserIdAndTimestampBetween(userId,start,end);
+            return loginAttemptAuthRepository.findByUserIdAndTimestamp(userId,start,end);
         }
         if (success != null) {
             return loginAttemptAuthRepository.findByUserIdAndSuccess(userId,success);
