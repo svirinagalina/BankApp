@@ -1,4 +1,4 @@
-package ru.katacademy.application.dto;
+package ru.katacademy.auth.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

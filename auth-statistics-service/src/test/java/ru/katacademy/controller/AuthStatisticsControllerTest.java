@@ -7,10 +7,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.katacademy.application.dto.LoginAttemptDto;
-import ru.katacademy.domain.entity.LoginAttempt;
-import ru.katacademy.domain.repository.LoginAttemptAuthRepository;
-import ru.katacademy.infrastructure.mapper.LoginAttemptMapper;
+import ru.katacademy.auth.application.dto.LoginAttemptDto;
+import ru.katacademy.auth.controller.AuthStatisticsController;
+import ru.katacademy.auth.domain.entity.LoginAttempt;
+import ru.katacademy.auth.domain.repository.LoginAttemptAuthRepository;
+import ru.katacademy.auth.infrastructure.mapper.LoginAttemptMapper;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -76,7 +77,7 @@ class AuthStatisticsControllerTest {
         dto.setTimestamp(end.minusHours(1));
         dto.setSuccess(true);
 
-        when(repository.findByUserIdAndTimestamp(userId, start, end))
+        when(repository.findByUserIdAndTimestampBetween(userId, start, end))
                 .thenReturn(List.of(attempt));
         when(mapper.toDto(attempt)).thenReturn(dto);
 
@@ -151,7 +152,7 @@ class AuthStatisticsControllerTest {
         dto.setTimestamp(attempt.getTimestamp());
         dto.setSuccess(success);
 
-        when(repository.findByUserIdAndTimestampAndSuccess(userId, start, end, success))
+        when(repository.findByUserIdAndTimestampBetweenAndSuccess(userId, start, end, success))
                 .thenReturn(List.of(attempt));
         when(mapper.toDto(attempt)).thenReturn(dto);
 

@@ -1,8 +1,8 @@
-package ru.katacademy.domain.repository;
+package ru.katacademy.auth.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
-import ru.katacademy.infrastructure.repository.LoginAttemptAuthRepositoryImpl;
+import ru.katacademy.auth.infrastructure.entity.JpaLoginAttempt;
+import ru.katacademy.auth.infrastructure.repository.LoginAttemptAuthRepositoryImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,7 +38,7 @@ public interface JpaLoginAttemptAuthRepository extends JpaRepository<JpaLoginAtt
      * @param end   конечная дата диапазона
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<JpaLoginAttempt> findByUserIdAndTimestamp(Long userId, LocalDateTime start, LocalDateTime end);
+    List<JpaLoginAttempt> findByUserIdAndTimestampBetween(Long userId, LocalDateTime start, LocalDateTime end);
 
     /**
      * Находит все попытки входа по указанному результату.
@@ -62,5 +62,5 @@ public interface JpaLoginAttemptAuthRepository extends JpaRepository<JpaLoginAtt
      *                {@code false} - неудачные
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<JpaLoginAttempt> findByUserIdAndTimestampAndSuccess(Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
+    List<JpaLoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
 }

@@ -1,11 +1,11 @@
-package ru.katacademy.infrastructure.entity;
+package ru.katacademy.auth.infrastructure.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.katacademy.domain.entity.LoginAttempt;
-import ru.katacademy.infrastructure.mapper.LoginAttemptMapper;
+import ru.katacademy.auth.domain.entity.LoginAttempt;
+import ru.katacademy.auth.infrastructure.mapper.LoginAttemptMapper;
 
 import java.time.LocalDateTime;
 

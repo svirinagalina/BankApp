@@ -1,12 +1,12 @@
-package ru.katacademy.controller;
+package ru.katacademy.auth.controller;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.katacademy.application.dto.LoginAttemptDto;
-import ru.katacademy.domain.entity.LoginAttempt;
-import ru.katacademy.infrastructure.mapper.LoginAttemptMapper;
-import ru.katacademy.domain.repository.LoginAttemptAuthRepository;
+import ru.katacademy.auth.application.dto.LoginAttemptDto;
+import ru.katacademy.auth.domain.entity.LoginAttempt;
+import ru.katacademy.auth.infrastructure.mapper.LoginAttemptMapper;
+import ru.katacademy.auth.domain.repository.LoginAttemptAuthRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -89,10 +89,10 @@ public class AuthStatisticsController {
      */
     private List<LoginAttempt> getLoginAttempts(Long userId, LocalDateTime start, LocalDateTime end, Boolean success) {
         if (start != null && end != null && success != null) {
-            return loginAttemptAuthRepository.findByUserIdAndTimestampAndSuccess(userId,start,end,success);
+            return loginAttemptAuthRepository.findByUserIdAndTimestampBetweenAndSuccess(userId,start,end,success);
         }
         if (start != null && end != null) {
-            return loginAttemptAuthRepository.findByUserIdAndTimestamp(userId,start,end);
+            return loginAttemptAuthRepository.findByUserIdAndTimestampBetween(userId,start,end);
         }
         if (success != null) {
             return loginAttemptAuthRepository.findByUserIdAndSuccess(userId,success);

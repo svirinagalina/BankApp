@@ -1,11 +1,11 @@
-package ru.katacademy.kafka.consumer;
+package ru.katacademy.auth.kafka.consumer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.accountservice.domain.events.LoginAttemptedEvent;
-import ru.katacademy.domain.entity.LoginAttempt;
-import ru.katacademy.domain.repository.LoginAttemptAuthRepository;
+import ru.katacademy.auth.domain.entity.LoginAttempt;
+import ru.katacademy.auth.domain.repository.LoginAttemptAuthRepository;
 
 /**
  * Сервис-потребитель Kafka для обработки событий о попытках входа в систему.

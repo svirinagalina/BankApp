@@ -1,9 +1,9 @@
-package ru.katacademy.infrastructure.mapper;
+package ru.katacademy.auth.infrastructure.mapper;
 
 import org.springframework.stereotype.Component;
-import ru.katacademy.application.dto.LoginAttemptDto;
-import ru.katacademy.domain.entity.LoginAttempt;
-import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
+import ru.katacademy.auth.application.dto.LoginAttemptDto;
+import ru.katacademy.auth.domain.entity.LoginAttempt;
+import ru.katacademy.auth.infrastructure.entity.JpaLoginAttempt;
 
 /**
  * Маппер для преобразования между сущностью {@link LoginAttempt} и DTO {@link LoginAttemptDto}.

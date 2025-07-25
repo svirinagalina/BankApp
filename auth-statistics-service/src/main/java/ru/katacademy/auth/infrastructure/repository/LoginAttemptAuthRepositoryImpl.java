@@ -1,14 +1,14 @@
-package ru.katacademy.infrastructure.repository;
+package ru.katacademy.auth.infrastructure.repository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.katacademy.domain.entity.LoginAttempt;
-import ru.katacademy.domain.repository.JpaLoginAttemptAuthRepository;
-import ru.katacademy.domain.repository.LoginAttemptAuthRepository;
-import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
-import ru.katacademy.infrastructure.mapper.LoginAttemptMapper;
+import ru.katacademy.auth.domain.entity.LoginAttempt;
+import ru.katacademy.auth.domain.repository.JpaLoginAttemptAuthRepository;
+import ru.katacademy.auth.domain.repository.LoginAttemptAuthRepository;
+import ru.katacademy.auth.infrastructure.entity.JpaLoginAttempt;
+import ru.katacademy.auth.infrastructure.mapper.LoginAttemptMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,7 +59,7 @@ public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepositor
      * <p><b>Особенности:</b></p>
      * <ul>
      *   <li>Границы диапазона включительные</li>
-     *   <li>Преобразует вызов в {@link JpaLoginAttemptAuthRepository#findByUserIdAndTimestamp}</li>
+     *   <li>Преобразует вызов в {@link JpaLoginAttemptAuthRepository#findByUserIdAndTimestampBetween}</li>
      * </ul>
      * @param userId идентификатор пользователя (не может быть {@code null})
      * @param start начальная дата
@@ -67,8 +67,8 @@ public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepositor
      * @return список domain-объектов
      */
     @Override
-    public List<LoginAttempt> findByUserIdAndTimestamp(Long userId, LocalDateTime start, LocalDateTime end) {
-        return jpaRepository.findByUserIdAndTimestamp(userId, start, end).stream()
+    public List<LoginAttempt> findByUserIdAndTimestampBetween(Long userId, LocalDateTime start, LocalDateTime end) {
+        return jpaRepository.findByUserIdAndTimestampBetween(userId, start, end).stream()
                 .map(mapper::toDomain)
                 .toList();
     }
@@ -101,9 +101,9 @@ public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepositor
      * @return список попыток входа или пустой список, если ничего не найдено
      */
     @Override
-    public List<LoginAttempt> findByUserIdAndTimestampAndSuccess(
+    public List<LoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(
             Long userId, LocalDateTime start, LocalDateTime end, Boolean success) {
-        return jpaRepository.findByUserIdAndTimestampAndSuccess(userId, start, end, success).stream()
+        return jpaRepository.findByUserIdAndTimestampBetweenAndSuccess(userId, start, end, success).stream()
                 .map(mapper::toDomain)
                 .toList();
     }

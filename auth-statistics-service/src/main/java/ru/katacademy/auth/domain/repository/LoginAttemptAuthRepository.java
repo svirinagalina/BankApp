@@ -1,6 +1,6 @@
-package ru.katacademy.domain.repository;
+package ru.katacademy.auth.domain.repository;
 
-import ru.katacademy.domain.entity.LoginAttempt;
+import ru.katacademy.auth.domain.entity.LoginAttempt;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +31,7 @@ public interface LoginAttemptAuthRepository {
      * @param end    конечная дата диапазона
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<LoginAttempt> findByUserIdAndTimestamp(Long userId, LocalDateTime start, LocalDateTime end);
+    List<LoginAttempt> findByUserIdAndTimestampBetween(Long userId, LocalDateTime start, LocalDateTime end);
 
     /**
      * Находит все попытки входа по идентификатору пользователя и результату.
@@ -55,7 +55,7 @@ public interface LoginAttemptAuthRepository {
      *                {@code false} - неудачные
      * @return список попыток входа или пустой список, если ничего не найдено
      */
-    List<LoginAttempt> findByUserIdAndTimestampAndSuccess(Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
+    List<LoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
 
     /**
      * Сохраняет или обновляет информацию о попытке входа.

@@ -1,4 +1,4 @@
-package ru.katacademy.domain.entity;
+package ru.katacademy.auth.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

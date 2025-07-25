@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: auth-statistics-service
+  liquibase:
+    enabled : false
 
   # Kafka
   kafka:
