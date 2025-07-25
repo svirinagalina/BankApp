@@ -30,6 +30,13 @@ public class AuditEntry {
         this.timestamp = Instant.now();
     }
 
+    public AuditEntry(String eventType, String message, String userId, Instant timestamp) {
+        this.eventType = eventType;
+        this.message   = message;
+        this.userId    = userId;
+        this.timestamp = timestamp;
+    }
+
     public String getEventType() {
         return eventType;
     }

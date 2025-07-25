@@ -6,7 +6,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.accountservice.domain.entity.LoginAttemptEntry;
 import ru.katacademy.bank_app.accountservice.domain.events.LoginAttemptedEvent;
-import ru.katacademy.bank_app.accountservice.domain.repository.LoginAttemptRepository;
+import ru.katacademy.bank_app.accountservice.application.port.out.LoginAttemptRepository;
 import ru.katacademy.bank_app.accountservice.domain.service.LoginAttemptService;
 import ru.katacademy.bank_shared.aspect.RetryableOperation;
 

@@ -3,7 +3,9 @@ package ru.katacademy.bank_app.accountservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -36,18 +38,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Тест registerUser_shouldReturn409WhenEmailAlreadyExists имитирует ситуацию, когда UserService.register() выбрасывает EmailAlreadyTakenException.
  * Проверяет, что контроллер вернет HTTP 409 Conflict и сообщение в JSON-ответе.
  */
-@WebMvcTest(controllers = UserController.class,
-        excludeAutoConfiguration = org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class)
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
 @Import(GlobalExceptionHandler.class)
+@SuppressWarnings("removal")
 public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @SuppressWarnings("removal")
     @MockBean
     private UserService userService;
-
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

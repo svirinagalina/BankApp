@@ -1,4 +1,4 @@
-package ru.katacademy.infrastructure.entity;
+package ru.katacademy.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class JpaLoginAttempt {
+public class LoginAttemptEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import ru.katacademy.notification.infrastructure.sender.NotificationSenderImpl;
 import ru.katacademy.notification.infrastructure.persistence.entity.NotificationLog;
-import ru.katacademy.notification.infrastructure.persistence.repository.NotificationLogRepository;
+import ru.katacademy.notification.infrastructure.persistence.repository.NotificationLogJpaRepository;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ class NotificationSenderImplTest {
 
     @Test
     void send_shouldLogMessageAndSaveToRepository() {
-        NotificationLogRepository mockRepo = mock(NotificationLogRepository.class);
+        NotificationLogJpaRepository mockRepo = mock(NotificationLogJpaRepository.class);
         NotificationSenderImpl sender = new NotificationSenderImpl(mockRepo);
 
         String message = "Test message";

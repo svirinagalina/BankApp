@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import ru.katacademy.bank_app.accountservice.domain.entity.LoginAttemptEntry;
 import ru.katacademy.bank_app.accountservice.domain.events.LoginAttemptedEvent;
-import ru.katacademy.bank_app.accountservice.domain.repository.LoginAttemptRepository;
+import ru.katacademy.bank_app.accountservice.application.port.out.LoginAttemptRepository;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
