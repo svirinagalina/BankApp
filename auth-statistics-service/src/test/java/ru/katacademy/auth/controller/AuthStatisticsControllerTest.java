@@ -1,4 +1,4 @@
-package ru.katacademy.controller;
+package ru.katacademy.auth.controller;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

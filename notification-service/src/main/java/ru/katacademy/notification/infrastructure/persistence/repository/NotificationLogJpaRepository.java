@@ -6,6 +6,6 @@ import ru.katacademy.notification.infrastructure.persistence.entity.Notification
 /**
  * Репозиторий для сохранения логов уведомлений.
  */
-public interface NotificationLogRepository extends JpaRepository<NotificationLog, Long> {
+public interface NotificationLogJpaRepository extends JpaRepository<NotificationLog, Long> {
 }
 

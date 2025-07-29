@@ -57,6 +57,10 @@ public interface LoginAttemptAuthRepository {
      */
     List<LoginAttempt> findByUserIdAndTimestampBetweenAndSuccess(Long userId, LocalDateTime start, LocalDateTime end, Boolean success);
 
+    List<LoginAttempt> findByTimestamp(LocalDateTime start, LocalDateTime end);
+
+    List<LoginAttempt> findBySuccess(boolean success);
+
     /**
      * Сохраняет или обновляет информацию о попытке входа.
      *

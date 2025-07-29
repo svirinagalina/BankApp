@@ -1,6 +1,7 @@
 package ru.katacademy.bank_app.accountservice.domain.entity;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,32 +19,24 @@ import java.time.LocalDateTime;
  * Автор: Колпаков А.С..
  * Дата: 2025-05-05
  */
-@NoArgsConstructor
-@Setter
 @Getter
-@Entity
-@Table(name = "login_attempts")
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class LoginAttemptEntry {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
     private Long userId;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String ip;
 
-    @Column(name = "user_agent", length = 512)
     private String userAgent;
 
-    @Column(nullable = false)
     private LocalDateTime timestamp;
 
-    @Column(nullable = false)
     private boolean success;
 
     public LoginAttemptEntry(Long userId, String email, String ip, String userAgent, LocalDateTime timestamp, boolean success) {

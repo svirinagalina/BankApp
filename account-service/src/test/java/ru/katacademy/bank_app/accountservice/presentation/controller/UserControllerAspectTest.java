@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -34,9 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Этот класс выполняет тестирование контроллера UserController с использованием мок-сервиса для UserService.
  * Он тестирует сценарии с валидными и невалидными данными, проверяя, что контроллер правильно обрабатывает запросы.
  */
+@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(UserController.class)
-@Import({ValidationAspect.class, UserControllerAspectTest.MockConfig.class, GlobalExceptionHandler.class})
+@Import(GlobalExceptionHandler.class)
 class UserControllerAspectTest {
 
     @Autowired

@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 import ru.katacademy.bank_app.audit.persistence.entity.AuditEntryEntity;
 
+import java.time.Instant;
+
 /**
  * Компонент для преобразования объектов {@link AuditEntry} и строковых сообщений Kafka
  * в сущности базы данных и обратно.
@@ -14,13 +16,22 @@ import ru.katacademy.bank_app.audit.persistence.entity.AuditEntryEntity;
 @Component
 public class AuditEntryMapper {
 
+    public static AuditEntry toDomain(AuditEntryEntity e) {
+        return new AuditEntry(
+                e.getEventType(),
+                e.getMessage(),
+                e.getUserId(),
+                Instant.parse(e.getTimestamp())
+        );
+    }
+
     /**
      * Преобразует объект {@link AuditEntry} в {@link AuditEntryEntity} для сохранения в БД.
      *
      * @param auditEntry объект аудита
      * @return сущность, представляющая собой запись аудита для хранения
      */
-    public AuditEntryEntity toEntity(AuditEntry auditEntry) {
+    public static AuditEntryEntity toEntity(AuditEntry auditEntry) {
         final AuditEntryEntity entity = new AuditEntryEntity();
         entity.setEventType(auditEntry.getEventType());
         entity.setMessage(auditEntry.getMessage());
