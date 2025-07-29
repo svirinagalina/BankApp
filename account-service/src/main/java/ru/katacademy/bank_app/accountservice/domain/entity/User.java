@@ -1,7 +1,9 @@
 package ru.katacademy.bank_app.accountservice.domain.entity;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_shared.valueobject.Email;
@@ -11,28 +13,21 @@ import java.util.Objects;
 /**
  * Представляет пользователя системы.
  */
-@Setter
 @Getter
+@Setter
+@EqualsAndHashCode
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private final UserRole role;
 
-    @Column(name = "full_name", nullable = false)
     private final String fullName;
 
-    @Embedded
     private final Email email;
 
-    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
     private final LocalDateTime createdAt;
 
     public User(UserRole role,

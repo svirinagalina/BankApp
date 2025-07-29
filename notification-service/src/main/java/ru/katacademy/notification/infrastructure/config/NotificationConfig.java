@@ -8,7 +8,7 @@ import ru.katacademy.notification.application.service.NotificationServiceImpl;
 import ru.katacademy.notification.application.template.PasswordChangedTemplate;
 import ru.katacademy.notification.application.template.TransferNotificationTemplate;
 import ru.katacademy.notification.application.template.WelcomeTemplate;
-import ru.katacademy.notification.infrastructure.persistence.repository.NotificationLogRepository;
+import ru.katacademy.notification.infrastructure.persistence.repository.NotificationLogJpaRepository;
 import ru.katacademy.notification.infrastructure.sender.NotificationSenderImpl;
 
 @Configuration
@@ -25,7 +25,7 @@ public class NotificationConfig {
     }
 
     @Bean
-    public NotificationSender notificationSender(NotificationLogRepository notificationLogRepository) {
+    public NotificationSender notificationSender(NotificationLogJpaRepository notificationLogRepository) {
         return new NotificationSenderImpl(notificationLogRepository);
     }
 }

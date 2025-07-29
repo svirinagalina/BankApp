@@ -1,10 +1,5 @@
 package ru.katacademy.bank_app.settingsservice.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,8 +15,6 @@ import java.time.LocalDateTime;
  * </p>
  * @author Sheffy
  */
-@Entity
-@Table(name = "user_settings")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -31,7 +24,6 @@ public class UserSettings {
     /**
      * Уникальный идентификатор пользователя
      */
-    @Id
     private long userId;
 
     /**
@@ -63,7 +55,6 @@ public class UserSettings {
      * JPA callback-метод, вызываемый перед созданием новой записи.
      * Устанавливает даты создания и обновления.
      */
-    @PrePersist
     public void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
@@ -73,7 +64,6 @@ public class UserSettings {
      * JPA callback-метод, вызываемый перед обновлением записи.
      * Обновляет дату изменения.
      */
-    @PreUpdate
     public void onUpdate() {
         updatedAt = LocalDateTime.now();
     }

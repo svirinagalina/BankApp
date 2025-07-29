@@ -14,7 +14,7 @@ import ru.katacademy.bank_app.accountservice.application.service.UserServiceImpl
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
-import ru.katacademy.bank_app.accountservice.domain.repository.UserRepository;
+import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
 import ru.katacademy.bank_app.accountservice.infrastructure.messaging.PasswordChangeEventPublisher;
 import ru.katacademy.bank_shared.exception.DomainException;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.katacademy.notification.application.sender.NotificationSender;
 import ru.katacademy.notification.infrastructure.persistence.entity.NotificationLog;
-import ru.katacademy.notification.infrastructure.persistence.repository.NotificationLogRepository;
+import ru.katacademy.notification.infrastructure.persistence.repository.NotificationLogJpaRepository;
 
 import java.time.LocalDateTime;
 
@@ -15,9 +15,9 @@ public class NotificationSenderImpl implements NotificationSender {
 
     private static final Logger log = LoggerFactory.getLogger(NotificationSenderImpl.class);
 
-    private final NotificationLogRepository notificationLogRepository;
+    private final NotificationLogJpaRepository notificationLogRepository;
 
-    public NotificationSenderImpl(NotificationLogRepository notificationLogRepository) {
+    public NotificationSenderImpl(NotificationLogJpaRepository notificationLogRepository) {
         this.notificationLogRepository = notificationLogRepository;
     }
 

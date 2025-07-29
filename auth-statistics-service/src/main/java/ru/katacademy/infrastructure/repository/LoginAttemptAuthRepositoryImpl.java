@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.katacademy.domain.entity.LoginAttempt;
 import ru.katacademy.domain.repository.JpaLoginAttemptAuthRepository;
 import ru.katacademy.domain.repository.LoginAttemptAuthRepository;
-import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
+import ru.katacademy.infrastructure.persistence.entity.LoginAttemptEntity;
 import ru.katacademy.infrastructure.mapper.LoginAttemptMapper;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import java.util.List;
  * Реализация {@link LoginAttemptAuthRepository} для работы с базой данных.
  * <p>
  * Обеспечивает преобразование между domain-моделью ({@link LoginAttempt})
- * и JPA-сущностью ({@link JpaLoginAttempt}) с использованием {@link LoginAttemptMapper}.
+ * и JPA-сущностью ({@link LoginAttemptEntity}) с использованием {@link LoginAttemptMapper}.
  * Все операции чтения делегируются {@link JpaLoginAttemptAuthRepository}.
  * </p>
  *
@@ -33,15 +33,16 @@ import java.util.List;
 @Repository("authStatisticsRepo")
 @RequiredArgsConstructor
 public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepository {
-    private final JpaLoginAttemptAuthRepository jpaRepository;
+    private final LoginAttemptJpaRepository jpaRepository;
     private final LoginAttemptMapper mapper;
+
 
     /**
      * Находит попытки входа по ID пользователя с преобразованием в domain-модель.
      * <p><b>Поток выполнения:</b></p>
      * <ol>
      *   <li>Выполняет запрос через {@link JpaLoginAttemptAuthRepository#findByUserId(Long)}</li>
-     *   <li>Преобразует каждый результат через {@link LoginAttemptMapper#toDomain(JpaLoginAttempt)}</li>
+     *   <li>Преобразует каждый результат через {@link LoginAttemptMapper#toDomain(LoginAttemptEntity)}</li>
      * </ol>
      *
      * @param userId идентификатор пользователя
@@ -92,7 +93,7 @@ public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepositor
      * Сохраняет попытку входа с гарантией транзакционности.
      * <p><b>Выполнение:</b></p>
      * <ol>
-     *   <li>Преобразует domain-объект в JPA-сущность через {@link LoginAttemptMapper#toJpa}</li>
+     *   <li>Преобразует domain-объект в JPA-сущность через {@link LoginAttemptMapper#toEntity}</li>
      *   <li>Сохраняет через {@link JpaRepository#save}</li>
      *   <li>Преобразует результат обратно в domain-модель</li>
      * </ol>
@@ -103,8 +104,8 @@ public class LoginAttemptAuthRepositoryImpl implements LoginAttemptAuthRepositor
     @Override
     @Transactional
     public LoginAttempt save(LoginAttempt attempt) {
-        JpaLoginAttempt jpaEntity = mapper.toJpa(attempt);
-        JpaLoginAttempt saved = jpaRepository.save(jpaEntity);
+        LoginAttemptEntity entity = mapper.toEntity(attempt);
+        LoginAttemptEntity saved = jpaRepository.save(entity);
         return mapper.toDomain(saved);
     }
 

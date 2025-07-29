@@ -3,7 +3,8 @@ package ru.katacademy.infrastructure.mapper;
 import org.springframework.stereotype.Component;
 import ru.katacademy.application.dto.LoginAttemptDto;
 import ru.katacademy.domain.entity.LoginAttempt;
-import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
+import ru.katacademy.infrastructure.persistence.entity.LoginAttemptEntity;
+import ru.katacademy.infrastructure.persistence.mapper.LoginAttemptEntityMapper;
 
 /**
  * Маппер для преобразования между сущностью {@link LoginAttempt} и DTO {@link LoginAttemptDto}.
@@ -11,7 +12,7 @@ import ru.katacademy.infrastructure.entity.JpaLoginAttempt;
  * Обеспечивает конвертацию между:
  * <ul>
  *   <li>Domain-сущностью ({@link LoginAttempt})</li>
- *   <li>JPA-сущностью ({@link JpaLoginAttempt})</li>
+ *   <li>JPA-сущностью ({@link LoginAttemptEntity})</li>
  *   <li>DTO ({@link LoginAttemptDto})</li>
  * </ul>
  * <p><b>Направления преобразований:</b></p>
@@ -48,20 +49,13 @@ public class LoginAttemptMapper {
     }
 
     /**
-     * Преобразует domain-сущность в JPA-сущность для сохранения в БД.
+     * Преобразует domain-сущность в Entity для сохранения в БД.
      *
      * @param domain domain-сущность попытки входа
-     * @return соответствующая JPA-сущность
+     * @return соответствующая Entity
      */
-    public JpaLoginAttempt toJpa(LoginAttempt domain) {
-        JpaLoginAttempt jpa = new JpaLoginAttempt();
-        jpa.setId(domain.getId());
-        jpa.setUserId(domain.getUserId());
-        jpa.setTimestamp(domain.getTimestamp());
-        jpa.setSuccess(domain.isSuccess());
-        jpa.setIp(domain.getIp());
-        jpa.setUserAgent(domain.getUserAgent());
-        return jpa;
+    public LoginAttemptEntity  toEntity(LoginAttempt domain) {
+        return LoginAttemptEntityMapper.toEntity(domain);
     }
 
     /**
@@ -70,7 +64,7 @@ public class LoginAttemptMapper {
      * @param jpa JPA-сущность из БД
      * @return соответствующая domain-сущность
      */
-    public LoginAttempt toDomain(JpaLoginAttempt jpa) {
+    public LoginAttempt toDomain(LoginAttemptEntity jpa) {
         return new LoginAttempt(
                 jpa.getId(),
                 jpa.getUserId(),
