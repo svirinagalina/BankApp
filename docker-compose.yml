@@ -225,12 +225,12 @@ services:
     container_name: auth-statistics-service
     depends_on:
       - kafka
-      - postgres
+      - user-service_postgres
     ports:
       - "8086:8080"
     restart: always
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mainDB
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user-service_postgres:5432/mainDB
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
