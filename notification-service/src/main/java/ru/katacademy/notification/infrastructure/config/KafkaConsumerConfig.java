@@ -1,5 +1,6 @@
 package ru.katacademy.notification.infrastructure.config;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -27,7 +28,7 @@ public class KafkaConsumerConfig {
         deserializer.setUseTypeHeaders(false);
 
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "notification-service");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
@@ -50,10 +51,13 @@ public class KafkaConsumerConfig {
 
     @Bean
     public DeadLetterPublishingRecoverer deadLetterPublishingRecoverer(KafkaTemplate<String, String> kafkaTemplate) {
-        // все сообщения отправлять в .error топик
         return new DeadLetterPublishingRecoverer(
                 kafkaTemplate,
                 (record, ex) -> new TopicPartition(record.topic() + ".error", record.partition())
         );
+    }
+    @PostConstruct
+    public void printKafkaProps() {
+        System.out.println(">>> KafkaConsumerConfig активирован вручную (BOOTSTRAP kafka:9092)");
     }
 }
