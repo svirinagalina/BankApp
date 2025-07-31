@@ -44,7 +44,7 @@ public class KafkaHealthIndicatorTest {
     @Test
     void shouldReturnDownWhenKafkaUnavailable() {
         final Map<String, Object> dummyConfig = Map.of(
-                AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092"
+                AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092"
         );
 
         final KafkaHealthIndicator indicator = new TestKafkaHealthIndicator(dummyConfig);
