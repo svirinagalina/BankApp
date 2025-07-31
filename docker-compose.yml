@@ -273,10 +273,9 @@ services:
       - "8088:8080"
     restart: always
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://kyc-service_postgres:5432/kyc-verifications
+      SPRING_DATASOURCE_URL: jdbc:postgresql://kyc-service_postgres:5432/kyc_verifications
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-
 
   api-gateway:
     build:
