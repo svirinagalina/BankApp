@@ -7,7 +7,7 @@ spring:
 
   # PostgreSQL Database Settings
   datasource:
-    url: jdbc:postgresql://localhost:5435/kyc_verifications
+    url: jdbc:postgresql://kyc-service_postgres:5432/kyc_verifications
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
@@ -15,3 +15,4 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+
