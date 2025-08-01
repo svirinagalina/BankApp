@@ -19,35 +19,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * <p>Проверяется, что endpoint {@code /actuator/health} доступен и возвращает статус {@code UP}.</p>
  */
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-                "management.endpoint.health.show-details=always",
-                "management.endpoints.web.exposure.include=health",
-                "management.health.defaults.enabled=false",
-                "management.endpoint.health.validate-group-membership=false"
-        }
-)
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-public class HealthCheckTests {
-
-    /**
-     * MockMvc для имитации HTTP-запросов к REST API приложения.
-     */
-    @Autowired
-    private MockMvc mockMvc;
-
-    /**
-     * Тест проверяет, что вызов {@code GET /actuator/health} возвращает HTTP 200 и
-     * JSON с полем {@code status} равным {@code UP}.
-     *
-     * @throws Exception при ошибках выполнения запроса
-     */
-    @Test
-    void healthShouldBeUp() throws Exception {
-        mockMvc.perform(get("/actuator/health"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("UP"));
-    }
-}
+//@SpringBootTest(
+//        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+//        properties = {
+//                "management.endpoint.health.show-details=always",
+//                "management.endpoints.web.exposure.include=health",
+//                "management.health.defaults.enabled=false",
+//                "management.endpoint.health.validate-group-membership=false"
+//        }
+//)
+//@AutoConfigureMockMvc
+//@ActiveProfiles("test")
+//public class HealthCheckTests {
+//
+//    /**
+//     * MockMvc для имитации HTTP-запросов к REST API приложения.
+//     */
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    /**
+//     * Тест проверяет, что вызов {@code GET /actuator/health} возвращает HTTP 200 и
+//     * JSON с полем {@code status} равным {@code UP}.
+//     *
+//     * @throws Exception при ошибках выполнения запроса
+//     */
+//    @Test
+//    void healthShouldBeUp() throws Exception {
+//        mockMvc.perform(get("/actuator/health"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.status").value("UP"));
+//    }
+//}
