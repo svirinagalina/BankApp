@@ -2,10 +2,15 @@ workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
       when: always
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
     - when: never
 
 stages:
   - build
+  - lint
+  - test
+  - deploy
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx1024m"
@@ -22,3 +27,54 @@ build:
     when: always
     paths:
       - build/reports/checkstyle
+    tags:
+      - studen
+
+lint:
+  stage: lint
+  image: gradle:8.5-jdk21
+  script:
+    - ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest --no-daemon
+  artifacts:
+    when: always
+    paths:
+      - build/reports/checkstyle
+      - build/reports/spotbugs
+    reports:
+      codequality: build/reports/spotbugs/main.xml
+  tags:
+    - studen
+  dependencies:
+    - build
+
+test:
+  stage: test
+  image: gradle:8.5-jdk21
+  script:
+    - ./gradlew test --no-daemon
+  artifacts:
+    when: always
+    paths:
+      - build/test-results/test
+      - build/reports/tests/test
+    reports:
+      junit: build/test-results/test/TEST-*.xml
+  tags:
+    - studen
+  dependencies:
+    - build
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .gradle/
+    - build/
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploy step"
+  only:
+    - main
+  tags:
+    - studen
