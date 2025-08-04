@@ -27,8 +27,6 @@ build:
     when: always
     paths:
       - build/reports/checkstyle
-    tags:
-      - studen
 
 lint:
   stage: lint
@@ -42,8 +40,7 @@ lint:
       - build/reports/spotbugs
     reports:
       codequality: build/reports/spotbugs/main.xml
-  tags:
-    - studen
+
   dependencies:
     - build
 
@@ -59,8 +56,7 @@ test:
       - build/reports/tests/test
     reports:
       junit: build/test-results/test/TEST-*.xml
-  tags:
-    - studen
+
   dependencies:
     - build
 
@@ -76,5 +72,3 @@ deploy:
     - echo "Deploy step"
   only:
     - main
-  tags:
-    - studen
