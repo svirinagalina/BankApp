@@ -7,14 +7,14 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-//@SpringBootTest
-//public class KafkaSmokeTest {
-//
-//    @Autowired
-//    KafkaTemplate<String, Object> kafkaTemplate;
-//
-//    @Test
-//    void contextLoads_andKafkaTemplateWorks() {
-//        assertThat(kafkaTemplate).isNotNull();
-//    }
-//}
+@SpringBootTest
+public class KafkaSmokeTest {
+
+    @Autowired
+    KafkaTemplate<String, Object> kafkaTemplate;
+
+    @Test
+    void contextLoads_andKafkaTemplateWorks() {
+        assertThat(kafkaTemplate).isNotNull();
+    }
+}
