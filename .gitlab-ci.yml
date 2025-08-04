@@ -7,7 +7,6 @@ workflow:
     - when: never
 
 stages:
-  - build
   - lint
   - test
   - deploy
@@ -31,9 +30,6 @@ lint:
     reports:
       codequality: build/reports/spotbugs/main.xml
 
-  dependencies:
-    - build
-
 test:
   stage: test
   image: gradle:8.5-jdk21
@@ -46,9 +42,6 @@ test:
       - build/reports/tests/test
     reports:
       junit: build/test-results/test/TEST-*.xml
-
-  dependencies:
-    - build
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
