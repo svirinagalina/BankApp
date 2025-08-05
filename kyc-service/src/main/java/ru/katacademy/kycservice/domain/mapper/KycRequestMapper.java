@@ -6,10 +6,10 @@ import ru.katacademy.kycservice.domain.entity.KycRequest;
 
 /**
  * Компонент для преобразования сущности KycRequest в DTO-объект KycRequestDTO.
- *
+ * <p>
  * Методы:
  * - toDTO(KycRequest kycRequest): преобразует доменную сущность KycRequest в DTO, содержащий id и статус заявки
- *
+ * <p>
  * Автор: Кирюшин А.А.
  * Дата: 2025-08-05
  */

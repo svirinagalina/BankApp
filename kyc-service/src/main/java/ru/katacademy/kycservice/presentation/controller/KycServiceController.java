@@ -13,16 +13,16 @@ import ru.katacademy.kycservice.domain.service.KycRequestService;
 
 /**
  * REST-контроллер для обработки запросов на верификацию KYC.
- *
+ * <p>
  * Поля:
  * - kycRequestService: сервис для работы с заявками KYC
  * - kycRequestMapper: маппер для преобразования между сущностями и DTO
- *
+ * <p>
  * Методы:
  * - verify(Long userId, String documentType, MultipartFile file):
  *     принимает параметры заявки, создаёт заявку на верификацию
  *     возвращает DTO с результатом: id заявки и статус
- *
+ * <p>
  * Автор: Кирюшин А.А.
  * Дата: 2025-08-05
  */

@@ -7,15 +7,15 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Конфигурационный класс для настройки клиента MinIO.
- *
+ * <p>
  * Поля:
  * - endpoint: URL-адрес сервера Minio
  * - accessKey: ключ доступа к Minio
  * - secretKey: секретный ключ доступа к Minio
- *
+ * <p>
  * Методы:
  * - minioClient(): создает и настраивает бин MinioClient для работы с Minio сервером
- *
+ * <p>
  * Автор: Кирюшин А.А.
  * Дата: 2025-08-05
  */

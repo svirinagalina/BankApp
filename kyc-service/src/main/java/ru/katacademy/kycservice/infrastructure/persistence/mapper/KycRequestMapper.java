@@ -6,11 +6,11 @@ import ru.katacademy.kycservice.infrastructure.persistence.entity.KycRequestEnti
 
 /**
  * Класс для преобразования между доменной моделью KycRequest и сущностью базы данных KycRequestEntity.
- *
+ * <p>
  * Методы:
  * - toEntity(KycRequest): преобразует объект доменной модели в объект сущности для хранения в базе данных
  * - toDomain(KycRequestEntity): преобразует объект сущности из базы данных в объект доменной модели
- *
+ * <p>
  * Автор: Кирюшин А.А.
  * Дата: 2025-08-05
  */
