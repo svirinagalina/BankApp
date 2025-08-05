@@ -1,11 +1,11 @@
-package ru.katacademy.kycservice.application.repository;
+package ru.katacademy.kycservice.application.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.domain.service.KycRequestService;
-import ru.katacademy.kycservice.domain.service.MinioService;
+import ru.katacademy.kycservice.application.port.out.MinioStorage;
 
 import java.time.LocalDateTime;
 
@@ -27,13 +27,13 @@ import java.time.LocalDateTime;
 @Service
 public class KycRequestServiceImpl implements KycRequestService {
     private final KycRequestRepository kycRequestRepository;
-    private final MinioService minioService;
+    private final MinioStorage minioStorage;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-    public KycRequestServiceImpl(KycRequestRepository kycRequestRepository, MinioService minioService) {
+    public KycRequestServiceImpl(KycRequestRepository kycRequestRepository, MinioStorage minioStorage) {
         this.kycRequestRepository = kycRequestRepository;
-        this.minioService = minioService;
+        this.minioStorage = minioStorage;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class KycRequestServiceImpl implements KycRequestService {
         if (file.isEmpty() || file.getSize() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException("Invalid file size or empty file");
         }
-        String fileKey = minioService.uploadFile(file);
+        String fileKey = minioStorage.uploadFile(file);
         KycRequest kycRequest = new KycRequest(userId, documentType, fileKey, LocalDateTime.now());
         return kycRequestRepository.save(kycRequest);
     }

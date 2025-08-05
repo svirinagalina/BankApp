@@ -1,4 +1,4 @@
-package ru.katacademy.kycservice.application.repository;
+package ru.katacademy.kycservice.infrastructure.storage;
 
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
@@ -8,7 +8,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.katacademy.kycservice.domain.service.MinioService;
+import ru.katacademy.kycservice.application.port.out.MinioStorage;
 
 import java.util.UUID;
 
@@ -28,7 +28,7 @@ import java.util.UUID;
  * Дата: 2025-08-05
  */
 @Service
-public class MinioServiceImpl implements MinioService {
+public class MinioStorageImpl implements MinioStorage {
 
     @Value("${minio.bucket}")
     private String bucketName;
@@ -38,7 +38,7 @@ public class MinioServiceImpl implements MinioService {
 
     private final MinioClient minioClient;
 
-    public MinioServiceImpl(MinioClient minioClient) {
+    public MinioStorageImpl(MinioClient minioClient) {
         this.minioClient = minioClient;
     }
 
