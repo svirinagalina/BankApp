@@ -12,6 +12,21 @@ import ru.katacademy.kycservice.domain.service.MinioService;
 
 import java.util.UUID;
 
+/**
+ * Сервис для взаимодействия с хранилищем MinIO (загрузка файлов и инициализация bucket).
+ *
+ * Поля:
+ * - bucketName: название bucket'а в MinIO, куда загружаются файлы
+ * - autoCreateBucket: флаг, указывающий, нужно ли автоматически создавать bucket при инициализации
+ * - minioClient: клиент MinIO для выполнения операций с объектами и bucket'ами
+ *
+ * Методы:
+ * - init(): инициализирует bucket при старте приложения, если он не существует и включена автонастройка
+ * - uploadFile(MultipartFile file): загружает файл в MinIO, возвращает сгенерированный уникальный ключ (fileKey)
+ *
+ * Автор: Кирющин А.А.
+ * Дата: 2025-08-05
+ */
 @Service
 public class MinioServiceImpl implements MinioService {
 

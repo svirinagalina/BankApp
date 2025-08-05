@@ -11,6 +11,21 @@ import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.domain.mapper.KycRequestMapper;
 import ru.katacademy.kycservice.domain.service.KycRequestService;
 
+/**
+ * REST-контроллер для обработки запросов на верификацию KYC.
+ *
+ * Поля:
+ * - kycRequestService: сервис для работы с заявками KYC
+ * - kycRequestMapper: маппер для преобразования между сущностями и DTO
+ *
+ * Методы:
+ * - verify(Long userId, String documentType, MultipartFile file):
+ *     принимает параметры заявки, создаёт заявку на верификацию
+ *     возвращает DTO с результатом: id заявки и статус
+ *
+ * Автор: Кирюшин А.А.
+ * Дата: 2025-08-05
+ */
 @RestController
 @RequestMapping("/kyc")
 public class KycServiceController {

@@ -6,6 +6,20 @@ import ru.katacademy.kycservice.domain.enumtype.KycStatus;
 
 import java.time.LocalDateTime;
 
+/**
+ * Класс представляет domain модель KycRequest
+ *
+ * Поля:
+ * - id: уникальный идентификатор заявки
+ * - userId: идентификатор пользователя, который подал заявку
+ * - documentType: тип документа, предоставленного пользователем
+ * - fileKey: ключ или ссылка на файл с документом
+ * - status: текущий статус заявки (например, PENDING - ожидает обработки)
+ * - submittedAt: дата и время подачи заявки
+ *
+ * Автор: Кирюшин А.А.
+ * Дата: 2025-08-05
+ */
 @Getter
 @Setter
 @NoArgsConstructor
