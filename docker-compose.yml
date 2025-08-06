@@ -78,6 +78,20 @@ services:
     volumes:
       - kafka_data:/bitnami/kafka
 
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"  # API порт
+      - "9001:9001"  # Консоль управления
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+
+
 
   bankapp:
     build:
@@ -269,6 +283,7 @@ services:
     container_name: kyc-service
     depends_on:
       - kyc-service_postgres
+      - minio
     ports:
       - "8088:8080"
     restart: always
@@ -276,6 +291,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://kyc-service_postgres:5432/kyc_verifications
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      OTEL_SERVICE_NAME: kyc-service
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
 
   api-gateway:
     build:
@@ -291,5 +310,6 @@ volumes:
   postgres_data:
   kafka_data:
   user-db-data:
+  minio_data:
 
 
