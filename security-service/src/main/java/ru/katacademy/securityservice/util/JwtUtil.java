@@ -2,6 +2,8 @@ package ru.katacademy.securityservice.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
@@ -35,6 +37,8 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
+    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
+
     /**
      * Секретный ключ для HMAC-подписи.
      * Задаётся через application.yml как jwt.secret.
@@ -61,7 +65,7 @@ public class JwtUtil {
     private Key getSigningKey() {
         if (signingKey == null) {
             this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-            System.out.println(">>> Signing key initialized with secret: " + secret);
+            log.info("JWT signing key initialized");
         }
         return signingKey;
     }
