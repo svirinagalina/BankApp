@@ -25,7 +25,7 @@ public class UserFactory {
      */
     public static User create(RegisterUserCommand cmd) {
 
-        String passwordHash = BCrypt.hashpw(cmd.password(), BCrypt.gensalt());
+        final String passwordHash = BCrypt.hashpw(cmd.password(), BCrypt.gensalt());
 
         return new User(
                 UserRole.USER, // Роль по умолчанию
