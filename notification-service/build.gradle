@@ -21,6 +21,17 @@ java {
     }
 }
 
+tasks.withType(Test).configureEach {
+    testLogging {
+        events "FAILED", "SKIPPED", "STANDARD_ERROR"
+        exceptionFormat "FULL"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+        showStandardStreams true
+    }
+}
+
 tasks.spotbugsMain {
     reports {
         html {
