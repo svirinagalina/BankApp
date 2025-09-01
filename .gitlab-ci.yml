@@ -12,46 +12,58 @@ stages:
   - deploy
 
 variables:
+  # чтобы gradle кешировался в рабочей директории и попадал в cache
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx1024m"
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+    - .gradle/daemon
+    - .gradle/native
+    - .gradle/notifications
+    - build/
 
 before_script:
   - chmod +x gradlew
+  # каталоги отчётов — чтобы artifacts не падали, если gradle сломался раньше
+  - mkdir -p build/reports/checkstyle build/reports/spotbugs build/test-results/test build/reports/tests/test
 
 lint:
   stage: lint
   image: gradle:8.5-jdk21
   script:
-    - ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest --no-daemon
+    # форсим скачивание дистрибутива (если нужно) и даём пару ретраев на случай сетевых таймаутов
+    - ./gradlew -v || ./gradlew -v || ./gradlew -v
+    - ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest --no-daemon --stacktrace
   artifacts:
     when: always
     paths:
-      - build/reports/checkstyle
-      - build/reports/spotbugs
-    reports:
-      codequality: build/reports/spotbugs/main.xml
+      - build/reports/checkstyle/
+      - build/reports/spotbugs/
+    # ВАЖНО: SpotBugs XML ≠ GitLab Code Quality. Если нужен Code Quality,
+    # генерируй отчет в формате CodeClimate и укажи его здесь.
+    # reports:
+    #   codequality: build/reports/codequality/codeclimate.json
 
 test:
   stage: test
   image: gradle:8.5-jdk21
   script:
-    - ./gradlew test --no-daemon
+    - ./gradlew test --no-daemon --stacktrace
   artifacts:
     when: always
     paths:
-      - build/test-results/test
-      - build/reports/tests/test
+      - build/test-results/test/
+      - build/reports/tests/test/
     reports:
       junit: build/test-results/test/TEST-*.xml
-
-cache:
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - .gradle/
-    - build/
 
 deploy:
   stage: deploy
   script:
     - echo "Deploy step"
-  only:
-    - main
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
