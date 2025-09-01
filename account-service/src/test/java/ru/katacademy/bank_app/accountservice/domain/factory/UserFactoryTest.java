@@ -1,6 +1,7 @@
 package ru.katacademy.bank_app.accountservice.domain.factory;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
@@ -29,7 +30,7 @@ public class UserFactoryTest {
         // then
         assertThat(user.getFullName()).isEqualTo(fullName);
         assertThat(user.getEmail()).isEqualTo(new Email(rawEmail));
-        assertThat(user.getPasswordHash()).isEqualTo(password); // Хеширование пока отсутствует на этапе создания
+        assertThat(BCrypt.checkpw(password, user.getPasswordHash())).isTrue(); // Хеширование пока отсутствует на этапе создания
         assertThat(user.getRole()).isEqualTo(UserRole.USER);
         assertThat(user.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
         assertThat(user.getId()).isNull();

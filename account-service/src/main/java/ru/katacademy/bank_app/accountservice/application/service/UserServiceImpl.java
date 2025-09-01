@@ -75,6 +75,14 @@ public class UserServiceImpl implements UserService {
         if (existingUser.isPresent()) {
             throw new EmailAlreadyTakenException(cmd.email());
         }
+
+        if (!isValidPassword(cmd.password())) {
+            throw new InvalidPasswordException(
+                    "Пароль должен состоять не менее чем из 8 символов, " +
+                            "а также содержать латинские буквы и числа от 0 до 9"
+            );
+        }
+
         final User newUser = UserFactory.create(cmd);
         final User savedUser = userRepository.save(newUser);
 

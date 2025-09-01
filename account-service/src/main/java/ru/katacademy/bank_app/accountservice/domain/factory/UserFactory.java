@@ -1,5 +1,6 @@
 package ru.katacademy.bank_app.accountservice.domain.factory;
 
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import ru.katacademy.bank_shared.valueobject.Email;
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
@@ -23,11 +24,14 @@ public class UserFactory {
      * @return новый пользователь
      */
     public static User create(RegisterUserCommand cmd) {
+
+        final String passwordHash = BCrypt.hashpw(cmd.password(), BCrypt.gensalt());
+
         return new User(
                 UserRole.USER, // Роль по умолчанию
                 cmd.fullName(),
                 new Email(cmd.email()),
-                cmd.password(),
+                passwordHash,
                 LocalDateTime.now());
     }
 }
