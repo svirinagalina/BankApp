@@ -1,6 +1,5 @@
 package ru.katacademy.kycservice.infrastructure.persistence.mapper;
 
-
 import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.infrastructure.persistence.entity.KycRequestEntity;
 
@@ -15,25 +14,23 @@ import ru.katacademy.kycservice.infrastructure.persistence.entity.KycRequestEnti
  * Дата: 2025-08-05
  */
 public class KycRequestMapper {
+    private KycRequestMapper() {}
     public static KycRequestEntity toEntity(KycRequest kycRequest) {
-        return new KycRequestEntity(
-                kycRequest.getId(),
-                kycRequest.getUserId(),
-                kycRequest.getDocumentType(),
-                kycRequest.getFileKey(),
-                kycRequest.getStatus(),
-                kycRequest.getSubmittedAt()
-        );
+        KycRequestEntity kycRequestEntity = new KycRequestEntity();
+        kycRequestEntity.setId(kycRequest.getId());
+        kycRequestEntity.setUserId(kycRequest.getUserId());
+        kycRequestEntity.setStatus(kycRequest.getStatus());
+        return kycRequestEntity;
     }
 
     public static KycRequest toDomain(KycRequestEntity kycRequestEntity) {
-        return new KycRequest(
-                kycRequestEntity.getId(),
-                kycRequestEntity.getUserId(),
-                kycRequestEntity.getDocumentType(),
-                kycRequestEntity.getFileKey(),
-                kycRequestEntity.getStatus(),
-                kycRequestEntity.getSubmittedAt()
-        );
+        KycRequest kycRequest = new KycRequest();
+        kycRequest.setId(kycRequestEntity.getId());
+        kycRequest.setUserId(kycRequestEntity.getUserId());
+        kycRequest.setStatus(kycRequestEntity.getStatus());
+        kycRequest.setCreatedAt(kycRequestEntity.getCreatedAt());
+        kycRequest.setUpdatedAt(kycRequestEntity.getUpdatedAt());
+
+        return kycRequest;
     }
 }

@@ -5,4 +5,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface MinioStorage {
     String uploadFile(MultipartFile file);
+    default void deleteFile(String fileKey){}
 }
