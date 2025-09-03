@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 import ru.katacademy.kycservice.domain.enumtype.KycStatus;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 /**
  * Entity сущность для хранения данных заявки KYC в базе данных.
@@ -37,7 +38,7 @@ public class KycRequestEntity {
     @UuidGenerator
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(name = "id", updatable = false, nullable = false)
-    private java.util.UUID id;
+    private UUID id;
 
     @Column(name = "user_id", unique = true, nullable = false)
     private Long userId;

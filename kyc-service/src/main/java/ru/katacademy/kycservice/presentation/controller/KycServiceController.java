@@ -23,9 +23,6 @@ import ru.katacademy.kycservice.domain.service.KycRequestService;
  * - kycRequestMapper: маппер для преобразования между сущностями и DTO
  * <p>
  * Методы:
- * - verify(Long userId, String documentType, MultipartFile file):
- *     принимает параметры заявки, создаёт заявку на верификацию
- *     возвращает DTO с результатом: id заявки и статус
  * - start: инициация KYC по userId, создаёт заявку со статусом PENDING
  * - get: получение текущего статуса заявки и времени последнего обновления
  * - upload: загрузка документа и привязка к заявке
@@ -53,21 +50,21 @@ public class KycServiceController {
     }
 
     @PostMapping("/start")
-    public ResponseEntity<KycRequestDTO> start(@RequestParam Long userId) {
+    public ResponseEntity<KycRequestDTO> createKycRequest(@RequestParam Long userId) {
         KycRequest req = kycRequestService.start(userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(kycRequestMapper.toDTO(req));
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<KycRequestDTO> get(@PathVariable Long userId) {
+    public ResponseEntity<KycRequestDTO> getKycStatus(@PathVariable Long userId) {
         KycRequest req = kycRequestService.getByUserId(userId);
         return ResponseEntity.ok(kycRequestMapper.toDTO(req));
     }
 
     @PostMapping(path = "/{userId}/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> upload(@PathVariable Long userId,
-                                       @RequestParam String type,
-                                       @RequestParam MultipartFile file) {
+    public ResponseEntity<Void> uploadKycDocument(@PathVariable Long userId,
+                                                  @RequestParam String type,
+                                                  @RequestParam MultipartFile file) {
         kycRequestService.uploadDocument(userId, type, file);
         return ResponseEntity.accepted().build();
     }

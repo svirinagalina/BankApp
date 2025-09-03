@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Автор: Белявский Г.А.
  * Дата: 01.09.2025
  */
-
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class InvalidDocumentException extends RuntimeException {
     public InvalidDocumentException(String msg) { super(msg); }

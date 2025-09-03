@@ -24,6 +24,5 @@ public class KycRequestMapper {
                 kycRequest.getId(),
                 kycRequest.getStatus(),
                 lastUpdated);
-
     }
 }
