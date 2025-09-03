@@ -5,6 +5,7 @@ import lombok.*;
 import ru.katacademy.kycservice.domain.enumtype.KycStatus;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 /**
  * Класс представляет domain модель KycRequest
@@ -24,7 +25,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class KycRequest {
-    private java.util.UUID id;
+    private UUID id;
 
     private Long userId;
 

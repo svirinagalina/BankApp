@@ -4,6 +4,7 @@ package ru.katacademy.kycservice.application.dto;
 import ru.katacademy.kycservice.domain.enumtype.KycStatus;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 /**
  * DTO-объект для передачи информации о статусе заявки KYC.
@@ -21,7 +22,7 @@ import java.time.OffsetDateTime;
  * Дата: 2025-08-05
  */
 public record KycRequestDTO(
-        java.util.UUID id,
+        UUID id,
         KycStatus status,
         OffsetDateTime updatedAt
 ) {

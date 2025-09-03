@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Автор: Белявский Г.А.
  * Дата: 01.09.2025
  */
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class KycNotFoundException extends RuntimeException {
     public KycNotFoundException(Long userId) {

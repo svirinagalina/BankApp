@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Автор: Белявский Г.А.
  * Дата: 01.09.2025
  */
-
 @ResponseStatus(HttpStatus.CONFLICT)
 public class KycAlreadyExistsException extends RuntimeException {
     public KycAlreadyExistsException(Long userId) {

@@ -18,6 +18,7 @@ import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 /**
  * Entity-сущность для хранения загруженных документов, привязанных к KYC-заявке
@@ -28,7 +29,6 @@ import java.time.OffsetDateTime;
  * - fileKey: ключ/путь объекта в хранилище MinIO (S3-совместимый);
  * - uploadedAt: дата и время загрузки (UTC, ISO-8601), выставляется автоматически при вставке.
  */
-
 @Entity
 @Table(name = "kyc_document")
 @Getter
@@ -41,7 +41,7 @@ public class KycDocumentEntity {
     @Id
     @UuidGenerator
     @JdbcTypeCode(SqlTypes.UUID)
-    private java.util.UUID id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "kyc_request_id", nullable = false)

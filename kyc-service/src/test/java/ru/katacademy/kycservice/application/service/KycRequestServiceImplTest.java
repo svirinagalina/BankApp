@@ -31,7 +31,6 @@ import static ru.katacademy.kycservice.domain.enumtype.KycStatus.PENDING;
  * - uploadDocumentTrowsExceptionWhenBigFile: попытка загрузки большого файла -> InvalidDocumentException
  * - uploadDocumentThrowsExceptionWhenMimeFile: попытка загрузки неподдерживаемого MIME -> InvalidDocumentException
  */
-
 @ExtendWith(MockitoExtension.class)
 class KycRequestServiceImplTest {
     @Mock
