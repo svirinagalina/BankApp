@@ -3,16 +3,15 @@ package ru.katacademy.kycservice.application.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.katacademy.kycservice.application.port.out.KycDocumentRepository;
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
+import ru.katacademy.kycservice.domain.entity.KycDocument;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.domain.service.KycRequestService;
 import ru.katacademy.kycservice.application.port.out.MinioStorage;
 import ru.katacademy.kycservice.exception.InvalidDocumentException;
 import ru.katacademy.kycservice.exception.KycAlreadyExistsException;
 import ru.katacademy.kycservice.exception.KycNotFoundException;
-import ru.katacademy.kycservice.infrastructure.persistence.entity.KycDocumentEntity;
-import ru.katacademy.kycservice.infrastructure.repository.KycDocumentJpaRepository;
-import ru.katacademy.kycservice.infrastructure.repository.KycRequestJpaRepository;
 
 import java.util.Set;
 
@@ -21,8 +20,7 @@ import java.util.Set;
  * <p>
  * Поля:
  * - kycRequestRepository: репозиторий для сохранения заявок KYC
- * - kycRequestJpaRepository: JPA-репозиторий сущности заявки (нужен для связи документа по FK);
- * - kycDocumentJpaRepository: JPA-репозиторий документов KYC;
+ * - kycDocumentRepository: репозиторий документов KYC
  * - minioService: сервис для загрузки файлов в хранилище MinIO
  * - MAX_FILE_SIZE: максимальный допустимый размер файла (5 МБ)
  * - ALLOWED: допустимые MIME-типы (image/jpeg, image/png, application/pdf)
@@ -40,20 +38,17 @@ import java.util.Set;
 @Service
 public class KycRequestServiceImpl implements KycRequestService {
     private final KycRequestRepository kycRequestRepository;
-    private final KycRequestJpaRepository kycRequestJpaRepository;
-    private final KycDocumentJpaRepository kycDocumentJpaRepository;
+    private final KycDocumentRepository kycDocumentRepository;
     private final MinioStorage minioStorage;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     private static final Set<String> ALLOWED = Set.of("image/jpeg","image/png","application/pdf");
 
     public KycRequestServiceImpl(KycRequestRepository repo,
-                                 KycRequestJpaRepository jpaReq,
-                                 KycDocumentJpaRepository docRepo,
+                                 KycDocumentRepository kycDocumentRepository,
                                  MinioStorage minioStorage) {
         this.kycRequestRepository = repo;
-        this.kycRequestJpaRepository = jpaReq;
-        this.kycDocumentJpaRepository = docRepo;
+        this.kycDocumentRepository = kycDocumentRepository;
         this.minioStorage = minioStorage;
     }
 
@@ -92,18 +87,15 @@ public class KycRequestServiceImpl implements KycRequestService {
         var request = kycRequestRepository.findByUserId(userId)
                 .orElseThrow(() -> new KycNotFoundException(userId));
 
-        var requestEntity = kycRequestJpaRepository.findById(request.getId())
-                .orElseThrow(() -> new KycNotFoundException(userId));
-
         String fileKey = null;
         try {
             fileKey = minioStorage.uploadFile(file);
 
-            var doc = new KycDocumentEntity();
-            doc.setKycRequest(requestEntity);
+            var doc = new KycDocument();
+            doc.setKycRequestId(request.getId());
             doc.setType(type);
             doc.setFileKey(fileKey);
-            kycDocumentJpaRepository.save(doc);
+            kycDocumentRepository.save(doc);
 
         } catch (RuntimeException ex) {
             if (fileKey != null) {

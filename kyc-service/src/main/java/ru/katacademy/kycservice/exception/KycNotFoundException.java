@@ -3,6 +3,8 @@ package ru.katacademy.kycservice.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.UUID;
+
 /**
  * Исключение, сигнализирующее об отсутствии KYC-заявки для указанного пользователя
  * - заявка не найдена
@@ -15,5 +17,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class KycNotFoundException extends RuntimeException {
     public KycNotFoundException(Long userId) {
         super("KYC request not found for userId=" + userId);
+    }
+    public KycNotFoundException(UUID requestId) {
+        super("KYC request not found for id=" + requestId);
     }
 }
