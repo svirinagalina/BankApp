@@ -10,9 +10,12 @@ import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
+import ru.katacademy.bank_app.accountservice.domain.enumtype.KycStatus;
 import ru.katacademy.bank_app.accountservice.domain.factory.UserFactory;
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
+import ru.katacademy.bank_app.accountservice.exception.KycException;
+import ru.katacademy.bank_app.accountservice.infrastructure.client.KycClient;
 import ru.katacademy.bank_app.accountservice.infrastructure.messaging.PasswordChangeEventPublisher;
 import ru.katacademy.bank_app.audit.annotation.Auditable;
 import ru.katacademy.bank_shared.exception.DomainException;
@@ -44,16 +47,18 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordChangeEventPublisher passwordChangeEventPublisher;
+    private final KycClient kycClient;
 
     @Autowired
     public UserServiceImpl(
             UserRepository userRepository,
             UserMapper userMapper,
-            PasswordChangeEventPublisher passwordChangeEventPublisher
+            PasswordChangeEventPublisher passwordChangeEventPublisher, KycClient kycClient
     ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordChangeEventPublisher = passwordChangeEventPublisher;
+        this.kycClient = kycClient;
     }
 
     /**
@@ -71,10 +76,22 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto register(RegisterUserCommand cmd) throws DomainException {
+
         final Optional<User> existingUser = userRepository.findByEmail(new Email(cmd.email()));
         if (existingUser.isPresent()) {
             throw new EmailAlreadyTakenException(cmd.email());
         }
+
+        final User newUser = UserFactory.create(cmd);
+        final User savedUser = userRepository.save(newUser);
+
+        final var kyc = kycClient.getKyc(savedUser.getId());
+
+        if (kyc == null || kyc.status() != KycStatus.APPROVED) {
+            throw new KycException("KYC проверка не пройдена");
+        }
+
+
 
         if (!isValidPassword(cmd.password())) {
             throw new InvalidPasswordException(
@@ -83,8 +100,7 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        final User newUser = UserFactory.create(cmd);
-        final User savedUser = userRepository.save(newUser);
+
 
         return userMapper.toDto(savedUser);
     }

@@ -7,14 +7,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
+import ru.katacademy.bank_app.accountservice.application.dto.KycRequestDTO;
 import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
+import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
 import ru.katacademy.bank_app.accountservice.application.service.UserServiceImpl;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
+import ru.katacademy.bank_app.accountservice.domain.enumtype.KycStatus;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
-import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
+import ru.katacademy.bank_app.accountservice.infrastructure.client.KycClient;
 import ru.katacademy.bank_app.accountservice.infrastructure.messaging.PasswordChangeEventPublisher;
 import ru.katacademy.bank_shared.exception.DomainException;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
@@ -45,6 +48,9 @@ class UserServiceImplTest {
     @Mock
     private PasswordChangeEventPublisher eventPublisher;
 
+    @Mock
+    private KycClient kycClient;
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -66,9 +72,13 @@ class UserServiceImplTest {
 
         final UserDto expectedDto = new UserDto(1L, fullName, email, UserRole.USER);
 
+        final KycRequestDTO kycRequestDTO = new KycRequestDTO(1L, KycStatus.APPROVED);
+
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(userMapper.toDto(savedUser)).thenReturn(expectedDto);
+        when(kycClient.getKyc(anyLong())).thenReturn(kycRequestDTO);
+
 
         final UserDto result = userService.register(cmd);
 
