@@ -8,7 +8,8 @@ import ru.katacademy.bank_app.accountservice.application.dto.KycRequestDTO;
 
 @FeignClient(
         name = "kyc-service",
-        url = "${kyc-service.url}"
+        url = "${kyc-service.url}",
+        fallback = KycClientFallback.class
 )
 public interface KycClient {
 

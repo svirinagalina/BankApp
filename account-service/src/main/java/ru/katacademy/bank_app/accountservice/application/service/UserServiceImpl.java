@@ -88,10 +88,8 @@ public class UserServiceImpl implements UserService {
         final var kyc = kycClient.getKyc(savedUser.getId());
 
         if (kyc == null || kyc.status() != KycStatus.APPROVED) {
-            throw new KycException("KYC проверка не пройдена");
+            throw new KycException("User is not KYC-verified");
         }
-
-
 
         if (!isValidPassword(cmd.password())) {
             throw new InvalidPasswordException(
@@ -99,9 +97,6 @@ public class UserServiceImpl implements UserService {
                             "а также содержать латинские буквы и числа от 0 до 9"
             );
         }
-
-
-
         return userMapper.toDto(savedUser);
     }
 

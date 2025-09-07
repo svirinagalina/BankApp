@@ -17,6 +17,7 @@ import ru.katacademy.bank_app.accountservice.domain.entity.User;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.KycStatus;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
+import ru.katacademy.bank_app.accountservice.exception.KycServiceUnavailableException;
 import ru.katacademy.bank_app.accountservice.infrastructure.client.KycClient;
 import ru.katacademy.bank_app.accountservice.infrastructure.messaging.PasswordChangeEventPublisher;
 import ru.katacademy.bank_shared.exception.DomainException;
@@ -30,6 +31,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -165,7 +167,7 @@ class UserServiceImplTest {
         final String newPassword = "newValid123";
         final String oldHash = BCrypt.hashpw(oldPassword, BCrypt.gensalt());
 
-        final  User user = new User(userId, UserRole.USER, fullName,
+        final User user = new User(userId, UserRole.USER, fullName,
                 new Email(email), oldHash, LocalDateTime.now());
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -229,5 +231,71 @@ class UserServiceImplTest {
         assertThatThrownBy(() -> userService.changePassword(cmd))
                 .isInstanceOf(InvalidPasswordException.class)
                 .hasMessageContaining("Пароль должен состоять не менее чем из 8 символов");
+    }
+
+    @Test
+    void register_success_whenKycApproved() throws DomainException {
+
+        final var command = new RegisterUserCommand("Test Testov", "approved@test.com", "Password123");
+
+        // Мокаем поиск пользователя по email
+        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+
+        // Мокаем сохранение пользователя, присваивая ID
+        final User savedUser = new User(
+                1L,
+                UserRole.USER,
+                command.fullName(),
+                new Email(command.email()),
+                "hashedPassword",
+                LocalDateTime.now()
+        );
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+
+        // Мокаем KYC
+        when(kycClient.getKyc(1L)).thenReturn(new KycRequestDTO(1L, KycStatus.APPROVED));
+
+        // Мокаем маппинг User -> UserDto
+        final UserDto userDtoMock = new UserDto(
+                1L,
+                command.fullName(),
+                command.email(),
+                UserRole.USER
+        );
+        when(userMapper.toDto(savedUser)).thenReturn(userDtoMock);
+
+        // Вызов сервиса
+        final var userDto = userService.register(command);
+
+        // Проверки
+        assertNotNull(userDto);
+        assertEquals(1L, userDto.id());
+        assertEquals("approved@test.com", userDto.email());
+        assertEquals(UserRole.USER, userDto.role());
+    }
+
+    @Test
+    void register_fails_whenKycRejected() {
+        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+        when(userRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(kycClient.getKyc(null)).thenReturn(new KycRequestDTO(1L, KycStatus.REJECTED));
+
+        final var command = new RegisterUserCommand("Test Testov", "rejected@test.com", "Password123");
+
+        final DomainException ex = assertThrows(DomainException.class, () -> userService.register(command));
+        assert ex.getMessage().equals("User is not KYC-verified");
+    }
+
+    @Test
+    void register_fails_whenKycServiceUnavailable() {
+        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+        when(userRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+        when(kycClient.getKyc(null)).thenThrow(new KycServiceUnavailableException("Verification service temporarily unavailable"));
+
+        final var command = new RegisterUserCommand("Test Testov", "fail@test.com", "Password123");
+
+        final KycServiceUnavailableException ex = assertThrows(KycServiceUnavailableException.class,
+                () -> userService.register(command));
+        assert ex.getMessage().equals("Verification service temporarily unavailable");
     }
 }
