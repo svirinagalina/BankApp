@@ -15,7 +15,7 @@ import java.io.PrintWriter;
  * - UserNotFoundException обработчик исключений, реализует HandlerExceptionResolver
  * без использования @RestControllerAdvice и WebMvcConfigurer. Автоматическая регистрация
  * благодаря анотации @Component
- * Возвращает статус 404 при UserNotFoundException. Ответ JSON.
+ * возвращает статус 404 при UserNotFoundException. Ответ JSON.
  * Если не UserNotFoundException, то управление другим резольверам.
  *
  * Автор:Быстров М

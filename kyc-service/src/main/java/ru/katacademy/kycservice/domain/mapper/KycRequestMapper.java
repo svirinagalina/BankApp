@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 import ru.katacademy.kycservice.application.dto.KycRequestDTO;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
 
+import java.time.OffsetDateTime;
+
 /**
  * Компонент для преобразования сущности KycRequest в DTO-объект KycRequestDTO.
  * <p>
@@ -16,8 +18,11 @@ import ru.katacademy.kycservice.domain.entity.KycRequest;
 @Component
 public class KycRequestMapper {
     public KycRequestDTO toDTO(KycRequest kycRequest) {
+        OffsetDateTime lastUpdated =
+                kycRequest.getUpdatedAt() != null ? kycRequest.getUpdatedAt() : kycRequest.getCreatedAt();
         return new KycRequestDTO(
                 kycRequest.getId(),
-                kycRequest.getStatus());
+                kycRequest.getStatus(),
+                lastUpdated);
     }
 }

@@ -6,6 +6,8 @@ import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.infrastructure.persistence.entity.KycRequestEntity;
 import ru.katacademy.kycservice.infrastructure.persistence.mapper.KycRequestMapper;
 
+import java.util.Optional;
+
 /**
  * Реализация интерфейса репозитория для управления заявками KYC с использованием JPA.
  * <p>
@@ -14,6 +16,7 @@ import ru.katacademy.kycservice.infrastructure.persistence.mapper.KycRequestMapp
  * <p>
  * Методы:
  * - save(KycRequest): сохраняет заявку KYC в базе данных и возвращает сохранённый объект с обновлёнными данными
+ * - findByUserId(Long): ищет заявку по-уникальному userId, возвращает Optional
  * <p>
  * Автор: Кирюшин А.А.
  * Дата: 2025-08-05
@@ -30,7 +33,13 @@ public class KycRequestRepositoryImpl implements KycRequestRepository {
     @Override
     public KycRequest save(KycRequest request) {
         final KycRequestEntity entity = KycRequestMapper.toEntity(request);
-        final KycRequestEntity savedEntity = jpaRepository.save(entity);
+        final KycRequestEntity savedEntity = jpaRepository.saveAndFlush(entity);
         return KycRequestMapper.toDomain(savedEntity);
+    }
+
+    @Override
+    public Optional<KycRequest> findByUserId(Long userId) {
+        return jpaRepository.findByUserId(userId)
+                .map(KycRequestMapper::toDomain);
     }
 }

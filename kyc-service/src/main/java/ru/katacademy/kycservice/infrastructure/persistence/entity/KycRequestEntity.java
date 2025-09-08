@@ -3,26 +3,31 @@ package ru.katacademy.kycservice.infrastructure.persistence.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
 import ru.katacademy.kycservice.domain.enumtype.KycStatus;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 /**
- * Entity cущность для хранения данных заявки KYC в базе данных.
+ * Entity сущность для хранения данных заявки KYC в базе данных.
  * <p>
  * Поля:
  * - id: уникальный идентификатор записи, генерируется базой данных
  * - userId: идентификатор пользователя, которому принадлежит заявка
- * - documentType: тип загруженного документа
- * - fileKey: ключ или ссылка на файл с документом
  * - status: текущий статус заявки (используется перечисление KycStatus)
- * - submittedAt: дата и время создания записи, автоматически проставляется при сохранении
+ * - createdAt: дата и время создания записи (UTC, ISO-8601), автоматически проставляется при сохранении
+ * - updatedAt: дата и время последнего обновления записи (UTC, ISO-8601), автоматически обновляется при каждом изменении сущности; на вставке
+ *   также устанавливается за счёт DEFAULT now() в БД.
  * <p>
  * Автор: Кирюшин А.А.
  * Дата: 2025-08-05
  */
 @Entity
-@Table(name = "kyc_verifications")
+@Table(name = "kyc_request")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,25 +35,25 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 public class KycRequestEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    @JdbcTypeCode(SqlTypes.UUID)
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", unique = true, nullable = false)
     private Long userId;
-
-    @Column(name = "documentType")
-    private String documentType;
-
-    @Column(name = "fileKey")
-    private String fileKey;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private KycStatus status = KycStatus.PENDING;
 
-    @Column(name = "submittedAt")
+    @Column(name = "created_at", columnDefinition = "timestamp with time zone default now()")
     @CreationTimestamp
-    private LocalDateTime submittedAt;
+    private OffsetDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", columnDefinition = "timestamp with time zone default now()")
+    private OffsetDateTime updatedAt;
 }
 
 
