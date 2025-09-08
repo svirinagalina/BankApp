@@ -43,7 +43,7 @@ guard_monolith:
       set -euo pipefail
       echo "🔎 Guard: checking forbidden monolith sources and imports"
 
-    # каталоги, которые не должны содержать .java
+      # каталоги, которые не должны содержать .java
       dirs="src/main/java/ru/katacademy/bank_app/account
             src/main/java/ru/katacademy/bank_app/notification
             src/main/java/ru/katacademy/bank_app/shared
@@ -62,15 +62,20 @@ guard_monolith:
         fi
       done
 
-    # запрет импортов из старых пакетов
+      # запрет импортов из старых пакетов
       if git grep -nE "import\s+ru\.katacademy\.bank_app\.(account|notification|shared|transaction)\." -- \
            . ":(exclude)docs/**" ":(exclude)**/build/**" ":(exclude)**/out/**" ":(exclude)**/target/**" ; then
         echo "❌ Forbidden imports detected above."
         fail=1
       fi
 
-      test "$fail" -eq 0 && echo "✅ Guard passed."
+      if [ "$fail" -ne 0 ]; then
+        exit 1
+      fi
+
+      echo "✅ Guard passed."
   allow_failure: false
+
 
 lint:
   stage: lint
