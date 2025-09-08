@@ -82,20 +82,19 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyTakenException(cmd.email());
         }
 
-        final User newUser = UserFactory.create(cmd);
-        final User savedUser = userRepository.save(newUser);
-
-        final var kyc = kycClient.getKyc(savedUser.getId());
-
-        if (kyc == null || kyc.status() != KycStatus.APPROVED) {
-            throw new KycException("User is not KYC-verified");
-        }
-
         if (!isValidPassword(cmd.password())) {
             throw new InvalidPasswordException(
                     "Пароль должен состоять не менее чем из 8 символов, " +
                             "а также содержать латинские буквы и числа от 0 до 9"
             );
+        }
+
+        final User newUser = UserFactory.create(cmd);
+        final User savedUser = userRepository.save(newUser);
+
+        final var kyc = kycClient.getKyc(savedUser.getId());
+        if (kyc == null || kyc.status() != KycStatus.APPROVED) {
+            throw new KycException("User is not KYC-verified");
         }
         return userMapper.toDto(savedUser);
     }

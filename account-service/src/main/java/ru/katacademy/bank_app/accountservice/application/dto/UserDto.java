@@ -17,7 +17,6 @@ import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
  * Автор: Бачагов В.О.
  * Дата: 2025-04-15
  */
-
 public record UserDto(
         Long id,
         String fullName,
