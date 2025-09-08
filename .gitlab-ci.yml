@@ -7,6 +7,7 @@ workflow:
     - when: never
 
 stages:
+  - guard
   - lint
   - test
   - deploy
@@ -30,6 +31,46 @@ before_script:
   - chmod +x gradlew
   # каталоги отчётов — чтобы artifacts не падали, если gradle сломался раньше
   - mkdir -p build/reports/checkstyle build/reports/spotbugs build/test-results/test build/reports/tests/test
+
+# проверяем, что новые файлы .java не появятся в старых монолитных путях, не вернутся импорты
+guard_monolith:
+  stage: guard
+  image: alpine:3.19
+  before_script:
+    - apk add --no-cache git grep findutils
+  script:
+    - |
+      set -euo pipefail
+      echo "🔎 Guard: checking forbidden monolith sources and imports"
+
+    # каталоги, которые не должны содержать .java
+      dirs="src/main/java/ru/katacademy/bank_app/account
+            src/main/java/ru/katacademy/bank_app/notification
+            src/main/java/ru/katacademy/bank_app/shared
+            src/main/java/ru/katacademy/bank_app/transaction
+            bank-app/src/main/java/ru/katacademy/bank_app/account
+            bank-app/src/main/java/ru/katacademy/bank_app/notification
+            bank-app/src/main/java/ru/katacademy/bank_app/shared
+            bank-app/src/main/java/ru/katacademy/bank_app/transaction"
+
+      fail=0
+      for d in $dirs; do
+        if [ -d "$d" ] && find "$d" -type f -name '*.java' | grep -q . ; then
+          echo "❌ Forbidden Java sources found in: $d"
+          find "$d" -type f -name '*.java' | head -n 10 || true
+          fail=1
+        fi
+      done
+
+    # запрет импортов из старых пакетов
+      if git grep -nE "import\s+ru\.katacademy\.bank_app\.(account|notification|shared|transaction)\." -- \
+           . ":(exclude)docs/**" ":(exclude)**/build/**" ":(exclude)**/out/**" ":(exclude)**/target/**" ; then
+        echo "❌ Forbidden imports detected above."
+        fail=1
+      fi
+
+      test "$fail" -eq 0 && echo "✅ Guard passed."
+  allow_failure: false
 
 lint:
   stage: lint

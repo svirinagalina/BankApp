@@ -3,9 +3,9 @@
 
 Name                         Monolith Path                                                                                       New Path
 Account                      src/main/java/ru/katacademy/bank_app/account/domain/entity/Account.java                             fraud-detection/src/main/java/ru/katacademy/bank_app/frauddetection/account/domain/entity/Account.java
-AccountDto                   src/main/java/ru/katacademy/bank_app/account/application/dto/AccountDto.java                        внутренний, исп только внутри монолита
-AccountEntity                src/main/java/ru/katacademy/bank_app/account/infrastructure/persistence/entity/AccountEntity.java   внутренний
-AccountMapper                src/main/java/ru/katacademy/bank_app/account/application/mapper/AccountMapper.java                  внутренний
+AccountDto                   src/main/java/ru/katacademy/bank_app/account/application/dto/AccountDto.java                           
+AccountEntity                src/main/java/ru/katacademy/bank_app/account/infrastructure/persistence/entity/AccountEntity.java   
+AccountMapper                src/main/java/ru/katacademy/bank_app/account/application/mapper/AccountMapper.java                  
 AccountStatus                src/main/java/ru/katacademy/bank_app/account/domain/enumtype/AccountStatus.java                     fraud-detection/src/main/java/ru/katacademy/bank_app/frauddetection/account/domain/enumtype/AccountStatus.java
 AccountRepository            src/main/java/ru/katacademy/bank_app/account/domain/repository/AccountRepository.java
 AccountRepositoryImpl        src/main/java/ru/katacademy/bank_app/account/infrastructure/repository/AccountRepositoryImpl.java
