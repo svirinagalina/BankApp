@@ -4,15 +4,17 @@ workflow:
       when: always
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: always
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG'
+      when: always
     - when: never
 
 stages:
   - lint
   - test
   - deploy
+  - release
 
 variables:
-  # чтобы gradle кешировался в рабочей директории и попадал в cache
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx1024m"
 
@@ -28,14 +30,12 @@ cache:
 
 before_script:
   - chmod +x gradlew
-  # каталоги отчётов — чтобы artifacts не падали, если gradle сломался раньше
   - mkdir -p build/reports/checkstyle build/reports/spotbugs build/test-results/test build/reports/tests/test
 
 lint:
   stage: lint
   image: gradle:8.5-jdk21
   script:
-    # форсим скачивание дистрибутива (если нужно) и даём пару ретраев на случай сетевых таймаутов
     - ./gradlew -v || ./gradlew -v || ./gradlew -v
     - ./gradlew clean build --no-daemon --stacktrace
   artifacts:
@@ -43,10 +43,6 @@ lint:
     paths:
       - build/reports/checkstyle/
       - build/reports/spotbugs/
-    # ВАЖНО: SpotBugs XML ≠ GitLab Code Quality. Если нужен Code Quality,
-    # генерируй отчет в формате CodeClimate и укажи его здесь.
-    # reports:
-    #   codequality: build/reports/codequality/codeclimate.json
 
 test:
   stage: test
@@ -67,3 +63,33 @@ deploy:
     - echo "Deploy step"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
+
+version_bump:
+  stage: deploy
+  image: alpine:3.19
+  needs: ["test"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  before_script:
+    - apk add --no-cache bash git sed grep coreutils
+  script:
+    - bash ci/version-bump.sh
+  variables:
+    BUMP: "auto"
+  only:
+    - main
+
+release_job:
+  stage: release
+  image: alpine:3.19
+  rules:
+    - if: '$CI_COMMIT_TAG'
+  script:
+    - echo "Creating GitLab Release for $CI_COMMIT_TAG"
+  release:
+    tag_name: $CI_COMMIT_TAG
+    name: "Release $CI_COMMIT_TAG"
+    description: |
+      Commit: $CI_COMMIT_SHORT_SHA
+      Branch: $CI_COMMIT_REF_NAME
+      Pipeline: $CI_PIPELINE_URL
