@@ -27,6 +27,7 @@ repositories {
 		implementation 'org.springframework.boot:spring-boot-starter-validation'
 		implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
 		implementation 'org.postgresql:postgresql:42.7.2'
+		implementation(project(":bank-shared"))
 
 		// Lombok
 		compileOnly 'org.projectlombok:lombok'

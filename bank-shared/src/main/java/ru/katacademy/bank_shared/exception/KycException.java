@@ -1,8 +1,7 @@
-package ru.katacademy.bank_app.accountservice.exception;
+package ru.katacademy.bank_shared.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.katacademy.bank_shared.exception.DomainException;
 
 @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
 public class KycException extends DomainException {

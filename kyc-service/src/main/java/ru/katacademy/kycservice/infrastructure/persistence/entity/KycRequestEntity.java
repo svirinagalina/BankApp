@@ -7,7 +7,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
-import ru.katacademy.kycservice.domain.enumtype.KycStatus;
+import ru.katacademy.bank_shared.enums.KycStatus;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

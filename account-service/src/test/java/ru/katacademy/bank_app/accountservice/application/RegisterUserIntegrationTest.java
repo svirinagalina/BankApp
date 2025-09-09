@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.katacademy.bank_app.accountservice.application.dto.KycRequestDTO;
-import ru.katacademy.bank_app.accountservice.domain.enumtype.KycStatus;
+import ru.katacademy.bank_shared.enums.KycStatus;
 import ru.katacademy.bank_app.accountservice.infrastructure.client.KycClient;
+import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
+@Import(GlobalExceptionHandler.class)
 class RegisterUserIntegrationTest {
 
     @Autowired

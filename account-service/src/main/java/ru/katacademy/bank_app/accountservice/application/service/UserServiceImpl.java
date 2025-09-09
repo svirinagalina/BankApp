@@ -10,18 +10,13 @@ import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
-import ru.katacademy.bank_app.accountservice.domain.enumtype.KycStatus;
 import ru.katacademy.bank_app.accountservice.domain.factory.UserFactory;
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
-import ru.katacademy.bank_app.accountservice.exception.KycException;
 import ru.katacademy.bank_app.accountservice.infrastructure.client.KycClient;
 import ru.katacademy.bank_app.accountservice.infrastructure.messaging.PasswordChangeEventPublisher;
 import ru.katacademy.bank_app.audit.annotation.Auditable;
-import ru.katacademy.bank_shared.exception.DomainException;
-import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
-import ru.katacademy.bank_shared.exception.InvalidPasswordException;
-import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_shared.exception.*;
 import ru.katacademy.bank_shared.valueobject.Email;
 
 import java.util.Optional;
@@ -82,6 +77,8 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyTakenException(cmd.email());
         }
 
+
+
         if (!isValidPassword(cmd.password())) {
             throw new InvalidPasswordException(
                     "Пароль должен состоять не менее чем из 8 символов, " +
@@ -93,7 +90,7 @@ public class UserServiceImpl implements UserService {
         final User savedUser = userRepository.save(newUser);
 
         final var kyc = kycClient.getKyc(savedUser.getId());
-        if (kyc == null || kyc.status() != KycStatus.APPROVED) {
+        if (kyc == null || !kyc.status().isApproved()) {
             throw new KycException("User is not KYC-verified");
         }
         return userMapper.toDto(savedUser);
