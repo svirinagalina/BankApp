@@ -37,7 +37,7 @@ lint:
   script:
     # форсим скачивание дистрибутива (если нужно) и даём пару ретраев на случай сетевых таймаутов
     - ./gradlew -v || ./gradlew -v || ./gradlew -v
-    - ./gradlew checkstyleMain checkstyleTest spotbugsMain spotbugsTest --no-daemon --stacktrace
+    - ./gradlew clean build --no-daemon --stacktrace
   artifacts:
     when: always
     paths:
