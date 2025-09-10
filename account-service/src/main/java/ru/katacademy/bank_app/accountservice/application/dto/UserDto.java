@@ -1,7 +1,5 @@
 package ru.katacademy.bank_app.accountservice.application.dto;
 
-import lombok.Getter;
-import lombok.Setter;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 
 /**
