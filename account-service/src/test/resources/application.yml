@@ -9,6 +9,14 @@ spring:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
     show-sql: true
+  cloud:
+    config:
+      enabled: false
+feign:
+  client:
+    config:
+      default:
+        url: http://localhost
 management:
   endpoints:
     web:
@@ -26,3 +34,6 @@ logging:
   level:
     ROOT: INFO
     org.springframework: INFO
+kyc-service:
+  url: http://kyc-service:8080
+

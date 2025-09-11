@@ -127,4 +127,23 @@ public class GlobalExceptionHandler {
         response.put("path", request.getRequestURI());
         return new ResponseEntity<>(response, status);
     }
+
+    /**
+     * Обрабатывает исключение KycException - ошибки валидации KYC
+     * Возвращает HTTP 422 Unprocessable Entity
+     */
+    @ExceptionHandler(KycException.class)
+    public ResponseEntity<Map<String, Object>> handleKycException(KycException e, HttpServletRequest request) {
+        return buildResponse(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, request);
+    }
+
+    /**
+     * Обрабатывает исключение KycServiceUnavailableException - сервис KYC недоступен
+     * Возвращает HTTP 503 Service Unavailable
+     */
+    @ExceptionHandler(KycServiceUnavailableException.class)
+    public ResponseEntity<Map<String, Object>> handleKycServiceUnavailable(
+            KycServiceUnavailableException e, HttpServletRequest request) {
+        return buildResponse(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE, request);
+    }
 }

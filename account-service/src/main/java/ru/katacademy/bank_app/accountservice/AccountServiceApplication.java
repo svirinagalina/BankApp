@@ -3,6 +3,7 @@ package ru.katacademy.bank_app.accountservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
         "ru.katacademy.bank_app.accountservice.infrastructure.repository")
 @EntityScan(basePackages =
         "ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity")
+@EnableFeignClients(basePackages = "ru.katacademy.bank_app.accountservice.infrastructure.client")
 public class AccountServiceApplication {
 
     public static void main(String[] args) {

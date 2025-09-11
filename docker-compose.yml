@@ -113,6 +113,8 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OTEL_TRACES_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: otlp
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -189,6 +191,8 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OTEL_TRACES_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: otlp
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -269,6 +273,8 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OTEL_TRACES_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: otlp
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s

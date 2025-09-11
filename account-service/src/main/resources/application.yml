@@ -42,3 +42,6 @@ management:
           include: db, kafka
         liveness:
           include: ping
+
+kyc-service:
+  url: ${KYC_SERVICE_URL:http://kyc-service:8080}

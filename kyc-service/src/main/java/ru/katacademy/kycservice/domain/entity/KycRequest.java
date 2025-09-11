@@ -2,7 +2,7 @@ package ru.katacademy.kycservice.domain.entity;
 
 
 import lombok.*;
-import ru.katacademy.kycservice.domain.enumtype.KycStatus;
+import ru.katacademy.bank_shared.enums.KycStatus;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

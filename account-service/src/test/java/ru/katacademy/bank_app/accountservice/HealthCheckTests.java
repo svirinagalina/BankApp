@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         properties = {
                 "management.endpoint.health.show-details=always",
                 "management.endpoints.web.exposure.include=health",
-                "management.health.defaults.enabled=false",
+                "management.health.defaults.enabled=true",
                 "management.endpoint.health.validate-group-membership=false"
         }
 )

@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static ru.katacademy.kycservice.domain.enumtype.KycStatus.PENDING;
+import static ru.katacademy.bank_shared.enums.KycStatus.PENDING;
 
 /**
  * Тестовый класс для {@link KycRequestServiceImpl}

@@ -1,7 +1,7 @@
 package ru.katacademy.kycservice.application.dto;
 
 
-import ru.katacademy.kycservice.domain.enumtype.KycStatus;
+import ru.katacademy.bank_shared.enums.KycStatus;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
