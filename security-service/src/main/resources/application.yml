@@ -13,9 +13,13 @@ jwt:
 springdoc:
   api-docs:
     enabled: true
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+    urls:
+      - name: kyc-service
+        url: http://localhost:8088/v3/api-docs
 management:
   endpoints:
     web:

@@ -1,5 +1,11 @@
 package ru.katacademy.kycservice.presentation.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,22 +55,41 @@ public class KycServiceController {
         this.kycRequestMapper = kycRequestMapper;
     }
 
+    @Operation(summary = "Инициация KYC процесса", description = "Создает новую заявку KYC для указанного пользователя.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Заявка успешно создана",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = KycRequestDTO.class))),
+            @ApiResponse(responseCode = "409", description = "Заявка уже существует", content = @Content)
+    })
     @PostMapping("/start")
     public ResponseEntity<KycRequestDTO> createKycRequest(@RequestParam Long userId) {
         KycRequest req = kycRequestService.start(userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(kycRequestMapper.toDTO(req));
     }
 
+    @Operation(summary = "Получение статуса KYC", description = "Возвращает текущий статус заявки KYC для пользователя.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Статус KYC найден",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = KycRequestDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Заявка KYC не найдена", content = @Content)
+    })
     @GetMapping("/{userId}")
     public ResponseEntity<KycRequestDTO> getKycStatus(@PathVariable Long userId) {
         KycRequest req = kycRequestService.getByUserId(userId);
         return ResponseEntity.ok(kycRequestMapper.toDTO(req));
     }
 
+    @Operation(summary = "Загрузка документа для KYC", description = "Позволяет загрузить документ для указанной заявки KYC.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "Документ успешно загружен", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Некорректный документ", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Заявка KYC не найдена", content = @Content)
+    })
     @PostMapping(path = "/{userId}/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadKycDocument(@PathVariable Long userId,
-                                                  @RequestParam String type,
-                                                  @RequestParam MultipartFile file) {
+    public ResponseEntity<Void> uploadKycDocument(
+            @Parameter(description = "ID пользователя для загрузки документа", example = "123") @PathVariable Long userId,
+            @Parameter(description = "Тип документа (passport, utility_bill и т.д.)", example = "passport") @RequestParam String type,
+            @Parameter(description = "Файл документа для загрузки") @RequestParam MultipartFile file) {
         kycRequestService.uploadDocument(userId, type, file);
         return ResponseEntity.accepted().build();
     }

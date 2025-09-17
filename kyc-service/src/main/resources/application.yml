@@ -24,3 +24,9 @@ minio:
   secret-key: minioadmin
   bucket: kyc-documents
   auto-create-bucket: true
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
