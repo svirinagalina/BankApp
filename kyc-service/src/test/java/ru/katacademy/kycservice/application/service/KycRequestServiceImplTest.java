@@ -7,11 +7,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import ru.katacademy.kycservice.application.port.out.KycDocumentRepository;
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
+import ru.katacademy.kycservice.domain.entity.KycDocument;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.exception.InvalidDocumentException;
 import ru.katacademy.kycservice.exception.KycAlreadyExistsException;
 import ru.katacademy.kycservice.exception.KycNotFoundException;
+import ru.katacademy.kycservice.infrastructure.storage.MockMinioStorage;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -33,8 +36,13 @@ import static ru.katacademy.bank_shared.enums.KycStatus.PENDING;
  */
 @ExtendWith(MockitoExtension.class)
 class KycRequestServiceImplTest {
+
     @Mock
     KycRequestRepository kycRequestRepository;
+    @Mock
+    KycDocumentRepository kycDocumentRepository;
+    @Mock
+    MockMinioStorage minioStorage;
     @InjectMocks
     KycRequestServiceImpl kycRequestService;
 
@@ -44,7 +52,6 @@ class KycRequestServiceImplTest {
     MultipartFile emptyFile = new MockMultipartFile("file", "empty.pdf", "application/pdf", new byte[0]);
     MultipartFile bigFile = new MockMultipartFile("file", "big.pdf", "application/pdf", new byte[BIG_FILE_SIZE]);
     MultipartFile mimeFile = new MockMultipartFile("file", "mime.pdf", "text/plain", new byte[500]);
-
 
     @Test
     void startThrowsExceptionWhenExist() {
@@ -112,5 +119,25 @@ class KycRequestServiceImplTest {
         assertThrows(InvalidDocumentException.class, () -> {
             kycRequestService.uploadDocument(USER_ID,"passport",mimeFile);
         });
+    }
+
+    @Test
+    void uploadDocumentCallMinioStorage() {
+        MultipartFile file = new MockMultipartFile(
+                "file",
+                "test.pdf",
+                "application/pdf",
+                "dummy content".getBytes()
+        );
+
+        KycRequest kycRequest = new KycRequest(id, USER_ID, PENDING, null, null);
+        when(kycRequestRepository.findByUserId(USER_ID)).thenReturn(Optional.of(kycRequest));
+
+        // Загружаем документ
+        kycRequestService.uploadDocument(USER_ID, "passport", file);
+
+        // Проверяем, что метод uploadFile вызвался ровно 1 раз с этим файлом
+        verify(minioStorage, times(1)).uploadFile(file);
+        verify(kycDocumentRepository, times(1)).save(any());
     }
 }
