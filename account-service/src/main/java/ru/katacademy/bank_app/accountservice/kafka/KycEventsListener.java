@@ -15,7 +15,7 @@ import ru.katacademy.bank_shared.event.kyc.KycStatusChangedEvent;
 public class KycEventsListener {
     private static final Logger log = LoggerFactory.getLogger(KycEventsListener.class);
 
-    @KafkaListener(topics = "${kyc.topics.events}", groupId = "account-service")
+    @KafkaListener(topics = "${kyc.topics.events:kyc-events}", groupId = "account-service")
     public void onKycEvent(KycStatusChangedEvent e) {
         log.info("KYC event (account): userId={}, status={}, ts={}, source={}",
                 e.userId(), e.status(), e.timestamp(), e.source());

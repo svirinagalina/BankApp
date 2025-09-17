@@ -24,7 +24,7 @@ public class KycEventsListener {
      *
      * @param event событие смены KYC-статуса
      */
-    @KafkaListener(topics = "${kyc.topics.events}", groupId = "notification-service")
+    @KafkaListener(topics = "${kyc.topics.events:kyc-events}", groupId = "notification-service")
     public void onKycEvent(KycStatusChangedEvent event) {
         log.info("KYC event received: userId={}, status={}, ts={}, source={}",
                 event.userId(), event.status(), event.timestamp(), event.source());
