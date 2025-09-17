@@ -1,3 +1,7 @@
+kyc:
+  topics:
+    events: kyc-events
+
 server:
   port: 8080
 
@@ -15,6 +19,23 @@ spring:
     show-sql: true
   kafka:
       bootstrap-servers: kafka:9092
+      consumer:
+        group-id: account-service
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+        enable-auto-commit: false
+        auto-offset-reset: latest
+        properties:
+          spring:
+            json:
+              trusted:
+                packages: ru.katacademy.*
+              use:
+                type:
+                  headers: false
+              value:
+                default:
+                  type: ru.katacademy.bank_shared.event.kyc.KycStatusChangedEvent
 
 ## JPA / Hibernate
 #  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
