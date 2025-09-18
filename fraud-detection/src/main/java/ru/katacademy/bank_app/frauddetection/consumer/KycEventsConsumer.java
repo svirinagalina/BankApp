@@ -19,7 +19,12 @@ public class KycEventsConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(KycEventsConsumer.class);
 
-    @KafkaListener(topics = "${kyc.topics.events:kyc-events}", groupId = "fraud-detection")
+    @KafkaListener(topics = "${kyc.topics.events:kyc-events}", groupId = "fraud-detection-v2",
+    properties = {
+            "key.deserializer=org.apache.kafka.common.serialization.StringDeserializer",
+            "value.deserializer=org.springframework.kafka.support.serializer.JsonDeserializer",
+            "spring.json.trusted.packages=ru.katacademy.*"
+    })
     public void onKycEvent(KycStatusChangedEvent e) {
         log.info("KYC event (fraud): userId={}, status={}, ts={}, source={}",
                 e.userId(), e.status(), e.timestamp(), e.source());
