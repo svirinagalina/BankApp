@@ -2,11 +2,15 @@ package ru.katacademy.kycservice.application.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import ru.katacademy.bank_shared.event.kyc.KycStatusChangedEvent;
+import ru.katacademy.kycservice.application.port.out.KycEventAuditRepository;
+import ru.katacademy.kycservice.application.port.out.KycEventPublisher;
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.exception.InvalidDocumentException;
@@ -19,6 +23,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static ru.katacademy.bank_shared.enums.KycStatus.APPROVED;
 import static ru.katacademy.bank_shared.enums.KycStatus.PENDING;
 
 /**
@@ -35,6 +40,10 @@ import static ru.katacademy.bank_shared.enums.KycStatus.PENDING;
 class KycRequestServiceImplTest {
     @Mock
     KycRequestRepository kycRequestRepository;
+    @Mock
+    KycEventPublisher kycEventPublisher;
+    @Mock
+    KycEventAuditRepository kycEventAuditRepository;
     @InjectMocks
     KycRequestServiceImpl kycRequestService;
 
@@ -112,5 +121,28 @@ class KycRequestServiceImplTest {
         assertThrows(InvalidDocumentException.class, () -> {
             kycRequestService.uploadDocument(USER_ID,"passport",mimeFile);
         });
+    }
+
+    @Test
+    void changeStatusByUserIdUpdatesStatusAndPublishesEvent() {
+        KycRequest existing = new KycRequest(id, USER_ID, PENDING, null, null);
+        when(kycRequestRepository.findByUserId(USER_ID)).thenReturn(Optional.of(existing));
+
+        KycRequest saved = new KycRequest(id, USER_ID, APPROVED, null, null);
+        when(kycRequestRepository.save(any(KycRequest.class))).thenReturn(saved);
+
+        KycRequest result = kycRequestService.changeStatusByUserId(USER_ID, APPROVED, "ignored");
+
+        assertEquals(APPROVED, result.getStatus());
+        assertEquals(USER_ID, result.getUserId());
+
+        verify(kycRequestRepository).save(any(KycRequest.class));
+        verify(kycEventAuditRepository).save(id, APPROVED);
+
+        ArgumentCaptor<KycStatusChangedEvent> captor = ArgumentCaptor.forClass(KycStatusChangedEvent.class);
+        verify(kycEventPublisher).publish(captor.capture());
+        KycStatusChangedEvent evt = captor.getValue();
+        assertEquals(String.valueOf(USER_ID), evt.userId());
+        assertEquals(APPROVED, evt.status());
     }
 }
