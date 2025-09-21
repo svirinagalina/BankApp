@@ -19,6 +19,7 @@ repositories {
 	maven { url = 'https://repo.spring.io/snapshot' }
 }
 
+<<<<<<< HEAD
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -28,6 +29,17 @@ dependencies {
 	implementation 'org.postgresql:postgresql:42.7.2'
 	implementation(project(":bank-shared"))
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+=======
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter'
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
+		implementation 'org.springframework.kafka:spring-kafka'
+		implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
+		implementation 'org.postgresql:postgresql:42.7.2'
+		implementation(project(":bank-shared"))
+>>>>>>> origin/main
 
 		// Lombok
 	compileOnly 'org.projectlombok:lombok'

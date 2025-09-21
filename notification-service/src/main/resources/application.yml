@@ -1,3 +1,7 @@
+kyc:
+  topics:
+    events: kyc-events
+
 spring:
   kafka:
     bootstrap-servers: kafka:9092
@@ -5,6 +9,8 @@ spring:
       group-id: notification-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      enable-auto-commit: false
+      auto-offset-reset: latest
       properties:
         spring:
           json:
@@ -13,7 +19,9 @@ spring:
             use:
               type:
                 headers: false
-
+            value:
+              default:
+                type: ru.katacademy.bank_shared.event.kyc.KycStatusChangedEvent
   datasource:
     url: jdbc:postgresql://postgres:5432/notifications_db
     username: root

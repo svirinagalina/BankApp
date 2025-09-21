@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public enum KycStatus {
     APPROVED("Одобрено"),
     REJECTED("Отклонено"),
-    PENDING("На рассмотрении");
+    PENDING("На рассмотрении"),
+    PENDING_RETRY("");
 
     private final String description;
 
@@ -40,4 +41,6 @@ public enum KycStatus {
     public boolean isPending() {
         return this == PENDING;
     }
+
+    public boolean isPendingRetry() {return this == PENDING_RETRY;}
 }

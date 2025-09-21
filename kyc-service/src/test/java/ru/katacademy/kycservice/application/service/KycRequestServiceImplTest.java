@@ -2,14 +2,21 @@ package ru.katacademy.kycservice.application.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+<<<<<<< HEAD
 import ru.katacademy.bank_shared.enums.KycStatus;
 import ru.katacademy.kycservice.application.port.out.KycDocumentRepository;
+=======
+import ru.katacademy.bank_shared.event.kyc.KycStatusChangedEvent;
+import ru.katacademy.kycservice.application.port.out.KycEventAuditRepository;
+import ru.katacademy.kycservice.application.port.out.KycEventPublisher;
+>>>>>>> origin/main
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.exception.InvalidDocumentException;
@@ -23,6 +30,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static ru.katacademy.bank_shared.enums.KycStatus.APPROVED;
 import static ru.katacademy.bank_shared.enums.KycStatus.PENDING;
 
 /**
@@ -41,11 +49,17 @@ class KycRequestServiceImplTest {
     @Mock
     KycRequestRepository kycRequestRepository;
     @Mock
+<<<<<<< HEAD
     KycDocumentRepository kycDocumentRepository;
     @Mock
     MockMinioStorage minioStorage;
     @Mock
     KafkaTemplate<String, String> kafkaTemplate;
+=======
+    KycEventPublisher kycEventPublisher;
+    @Mock
+    KycEventAuditRepository kycEventAuditRepository;
+>>>>>>> origin/main
     @InjectMocks
     KycRequestServiceImpl kycRequestService;
 
@@ -125,6 +139,7 @@ class KycRequestServiceImplTest {
     }
 
     @Test
+<<<<<<< HEAD
     void uploadDocumentCallMinioStorage() {
         MultipartFile file = new MockMultipartFile(
                 "file",
@@ -154,5 +169,27 @@ class KycRequestServiceImplTest {
         kycRequestService.changeStatus(USER_ID, KycStatus.APPROVED);
 
         verify(kafkaTemplate).send("kyc-events",USER_ID.toString(), "STATUS_APPROVED");
+=======
+    void changeStatusByUserIdUpdatesStatusAndPublishesEvent() {
+        KycRequest existing = new KycRequest(id, USER_ID, PENDING, null, null);
+        when(kycRequestRepository.findByUserId(USER_ID)).thenReturn(Optional.of(existing));
+
+        KycRequest saved = new KycRequest(id, USER_ID, APPROVED, null, null);
+        when(kycRequestRepository.save(any(KycRequest.class))).thenReturn(saved);
+
+        KycRequest result = kycRequestService.changeStatusByUserId(USER_ID, APPROVED, "ignored");
+
+        assertEquals(APPROVED, result.getStatus());
+        assertEquals(USER_ID, result.getUserId());
+
+        verify(kycRequestRepository).save(any(KycRequest.class));
+        verify(kycEventAuditRepository).save(id, APPROVED);
+
+        ArgumentCaptor<KycStatusChangedEvent> captor = ArgumentCaptor.forClass(KycStatusChangedEvent.class);
+        verify(kycEventPublisher).publish(captor.capture());
+        KycStatusChangedEvent evt = captor.getValue();
+        assertEquals(String.valueOf(USER_ID), evt.userId());
+        assertEquals(APPROVED, evt.status());
+>>>>>>> origin/main
     }
 }
