@@ -43,6 +43,89 @@
 - Security (SOWA-lite) (:8085)
 - API Gateway ()
 
+
+## 🏦 KYC Service
+
+Сервис KYC (Know Your Customer) отвечает за верификацию клиентов банка и проверку документов.
+
+### 📚 Описание
+
+KYC Service позволяет:
+- Инициировать KYC-заявку для пользователя
+- Загружать документы (паспорт, utility bill и др.)
+- Проверять статус заявки
+- Уведомлять другие микросервисы через Kafka
+
+### 🔧 Технологии
+
+- Java 21, Spring Boot
+- Spring Data JPA, PostgreSQL
+- Spring Kafka (producer/consumer)
+- MinIO (хранилище документов)
+- Docker
+- Clean Architecture
+
+### 🏗 Архитектура
+
+- Presentation — REST-контроллеры (KycServiceController)
+- Application — сервисы (KycRequestService), DTO, мапперы
+- Domain — сущности KycRequest, KycDocument
+- Infrastructure — репозитории, MinIO, Kafka
+
+Диаграмма компонентов:
+User -> REST Controller -> Service -> Repository / MinIO
+-> Kafka Producer -> Kafka Topic (kyc-events)
+
+
+### 🧭 API
+
+| Метод | URL                       | Описание                        | Ответ          |
+|-------|---------------------------|--------------------------------|----------------|
+| POST  | /kyc/start                | Создание заявки KYC для userId  | KycRequestDTO  |
+| GET   | /kyc/{userId}             | Получение статуса KYC           | KycRequestDTO  |
+| POST  | /kyc/{userId}/documents   | Загрузка документа              | 202 Accepted   |
+
+Swagger: [http://localhost:808X/swagger-ui.html](http://localhost:808X/swagger-ui.html)
+
+### 📈 Бизнес-процесс KYC
+
+1. Создание заявки: POST /kyc/start?userId=123 → статус PENDING
+2. Загрузка документа: POST /kyc/{userId}/documents → документ в MinIO, событие в Kafka
+3. Проверка документов: статус меняется на APPROVED или REJECTED
+4. Получение статуса: GET /kyc/{userId} → KycRequestDTO
+
+### 🔄 Статусы KYC
+
+| Статус     | Описание                             | Возможные переходы          |
+|------------|-------------------------------------|-----------------------------|
+| PENDING    | Заявка создана, документы не загружены | → APPROVED, → REJECTED   |
+| APPROVED   | KYC успешно пройден                   | —                           |
+| REJECTED   | KYC отклонён                         | → PENDING (повторная попытка) |
+
+### 🚀 Локальный запуск KYC Service
+
+1. Настроить .env или application-test.yml с БД, Kafka и MinIO
+2. Собрать сервис:
+   ```bash
+   ./gradlew clean build
+
+
+Запуск через Gradle:
+
+./gradlew bootRun
+
+
+Или через Docker:
+
+docker-compose build
+docker-compose up
+
+
+Доступ к Swagger:
+http://localhost:808X/swagger-ui.html
+
+
+
 ## Статический анализ кода
 Проект использует SpotBugs для статического анализа кода.
 ### Запуск анализатора
