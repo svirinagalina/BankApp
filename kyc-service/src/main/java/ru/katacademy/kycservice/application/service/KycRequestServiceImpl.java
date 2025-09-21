@@ -1,8 +1,10 @@
 package ru.katacademy.kycservice.application.service;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.katacademy.bank_shared.enums.KycStatus;
 import ru.katacademy.kycservice.application.port.out.KycDocumentRepository;
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
 import ru.katacademy.kycservice.domain.entity.KycDocument;
@@ -40,16 +42,18 @@ public class KycRequestServiceImpl implements KycRequestService {
     private final KycRequestRepository kycRequestRepository;
     private final KycDocumentRepository kycDocumentRepository;
     private final MinioStorage minioStorage;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     private static final Set<String> ALLOWED = Set.of("image/jpeg","image/png","application/pdf");
 
     public KycRequestServiceImpl(KycRequestRepository repo,
                                  KycDocumentRepository kycDocumentRepository,
-                                 MinioStorage minioStorage) {
+                                 MinioStorage minioStorage, KafkaTemplate<String, String> kafkaTemplate) {
         this.kycRequestRepository = repo;
         this.kycDocumentRepository = kycDocumentRepository;
         this.minioStorage = minioStorage;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Transactional
@@ -60,7 +64,19 @@ public class KycRequestServiceImpl implements KycRequestService {
         }
         KycRequest req = new KycRequest();
         req.setUserId(userId);
+        req.setStatus(KycStatus.PENDING);
+        kafkaTemplate.send("kyc-request", req.toString(), "KYC_STARTED");
         return kycRequestRepository.save(req);
+    }
+
+    @Transactional
+    public void changeStatus(Long userId, KycStatus newStatus) {
+        var request = kycRequestRepository.findByUserId(userId)
+                .orElseThrow(() -> new KycNotFoundException(userId));
+        request.setStatus(newStatus);
+        kycRequestRepository.save(request);
+
+        kafkaTemplate.send("kyc-events", userId.toString(), "STATUS_" + newStatus.name());
     }
 
     @Transactional(readOnly = true)

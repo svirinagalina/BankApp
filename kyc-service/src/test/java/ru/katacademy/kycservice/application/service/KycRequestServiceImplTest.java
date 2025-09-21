@@ -5,11 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+import ru.katacademy.bank_shared.enums.KycStatus;
 import ru.katacademy.kycservice.application.port.out.KycDocumentRepository;
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
-import ru.katacademy.kycservice.domain.entity.KycDocument;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.exception.InvalidDocumentException;
 import ru.katacademy.kycservice.exception.KycAlreadyExistsException;
@@ -43,6 +44,8 @@ class KycRequestServiceImplTest {
     KycDocumentRepository kycDocumentRepository;
     @Mock
     MockMinioStorage minioStorage;
+    @Mock
+    KafkaTemplate<String, String> kafkaTemplate;
     @InjectMocks
     KycRequestServiceImpl kycRequestService;
 
@@ -139,5 +142,17 @@ class KycRequestServiceImplTest {
         // Проверяем, что метод uploadFile вызвался ровно 1 раз с этим файлом
         verify(minioStorage, times(1)).uploadFile(file);
         verify(kycDocumentRepository, times(1)).save(any());
+    }
+
+    @Test
+    void changeServicePublishesKafkaEvent() {
+
+        KycRequest kycRequest = new KycRequest(id,USER_ID,PENDING,null,null);
+        when(kycRequestRepository.findByUserId(USER_ID)).thenReturn(Optional.of(kycRequest));
+        when(kycRequestRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+
+        kycRequestService.changeStatus(USER_ID, KycStatus.APPROVED);
+
+        verify(kafkaTemplate).send("kyc-events",USER_ID.toString(), "STATUS_APPROVED");
     }
 }
