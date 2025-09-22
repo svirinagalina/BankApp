@@ -10,7 +10,12 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
+      dialect: org.hibernate.dialect.H2Dialect
 
 minio:
   enabled: false
+
+kyc:
+  topics:
+    events: test-kyc-events-topic
