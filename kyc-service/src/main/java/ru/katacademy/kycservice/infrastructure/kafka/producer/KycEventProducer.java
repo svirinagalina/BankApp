@@ -4,12 +4,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SimpleProducer {
+public class KycEventProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final String topic =  "kyc-events";
 
-    public SimpleProducer(KafkaTemplate<String, String> kafkaTemplate) {
+    public KycEventProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

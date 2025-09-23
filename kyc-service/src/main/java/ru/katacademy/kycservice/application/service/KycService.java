@@ -6,16 +6,16 @@ import ru.katacademy.kycservice.application.port.out.KycDocumentRepository;
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
 import ru.katacademy.kycservice.domain.entity.KycDocument;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
-import ru.katacademy.kycservice.infrastructure.kafka.producer.SimpleProducer;
+import ru.katacademy.kycservice.infrastructure.kafka.producer.KycEventProducer;
 
 @Service
 public class KycService {
 
-    private final SimpleProducer producer;
+    private final KycEventProducer producer;
     private final KycDocumentRepository kycDocumentRepository;
     private final KycRequestRepository kycRequestRepository;
 
-    public KycService(SimpleProducer producer,
+    public KycService(KycEventProducer producer,
                       KycDocumentRepository kycDocumentRepository,
                       KycRequestRepository kycRequestRepository) {
         this.producer = producer;
