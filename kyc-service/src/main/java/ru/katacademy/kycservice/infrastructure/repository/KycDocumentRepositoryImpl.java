@@ -6,6 +6,10 @@ import ru.katacademy.kycservice.domain.entity.KycDocument;
 import ru.katacademy.kycservice.exception.KycNotFoundException;
 import ru.katacademy.kycservice.infrastructure.persistence.mapper.KycDocumentMapper;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Реализация интерфейса репозитория для управления документами KYC с использованием JPA
  * <p>
@@ -25,6 +29,7 @@ public class KycDocumentRepositoryImpl implements KycDocumentRepository {
     private final KycDocumentJpaRepository jpaRepository;
     private final KycRequestJpaRepository requestJpaRepository;
     private final KycDocumentMapper mapper;
+    private final Map<String, KycDocument> store = new ConcurrentHashMap<>();
 
     public KycDocumentRepositoryImpl(KycDocumentJpaRepository jpaRepository, KycRequestJpaRepository requestJpaRepository, KycDocumentMapper mapper) {
         this.jpaRepository = jpaRepository;
@@ -39,5 +44,10 @@ public class KycDocumentRepositoryImpl implements KycDocumentRepository {
 
         var entity = mapper.toEntity(doc, requestEntity);
         jpaRepository.saveAndFlush(entity);
+    }
+
+    @Override
+    public Optional<KycDocument> findById(String documentId) {
+        return Optional.ofNullable(store.get(documentId));
     }
 }

@@ -7,6 +7,7 @@ import ru.katacademy.kycservice.infrastructure.persistence.entity.KycRequestEnti
 import ru.katacademy.kycservice.infrastructure.persistence.mapper.KycRequestMapper;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Реализация интерфейса репозитория для управления заявками KYC с использованием JPA.
@@ -40,6 +41,12 @@ public class KycRequestRepositoryImpl implements KycRequestRepository {
     @Override
     public Optional<KycRequest> findByUserId(Long userId) {
         return jpaRepository.findByUserId(userId)
+                .map(KycRequestMapper::toDomain);
+    }
+
+    @Override
+    public Optional<KycRequest> findById(UUID id) {
+        return jpaRepository.findById(id)
                 .map(KycRequestMapper::toDomain);
     }
 }

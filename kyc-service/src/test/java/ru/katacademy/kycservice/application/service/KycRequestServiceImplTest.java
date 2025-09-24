@@ -2,20 +2,20 @@ package ru.katacademy.kycservice.application.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import ru.katacademy.bank_shared.event.kyc.KycStatusChangedEvent;
-import ru.katacademy.kycservice.application.port.out.KycEventAuditRepository;
-import ru.katacademy.kycservice.application.port.out.KycEventPublisher;
+import ru.katacademy.bank_shared.enums.KycStatus;
+import ru.katacademy.kycservice.application.port.out.KycDocumentRepository;
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
 import ru.katacademy.kycservice.exception.InvalidDocumentException;
 import ru.katacademy.kycservice.exception.KycAlreadyExistsException;
 import ru.katacademy.kycservice.exception.KycNotFoundException;
+import ru.katacademy.kycservice.infrastructure.storage.MockMinioStorage;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -23,7 +23,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static ru.katacademy.bank_shared.enums.KycStatus.APPROVED;
 import static ru.katacademy.bank_shared.enums.KycStatus.PENDING;
 
 /**
@@ -38,12 +37,15 @@ import static ru.katacademy.bank_shared.enums.KycStatus.PENDING;
  */
 @ExtendWith(MockitoExtension.class)
 class KycRequestServiceImplTest {
+
     @Mock
     KycRequestRepository kycRequestRepository;
     @Mock
-    KycEventPublisher kycEventPublisher;
+    KycDocumentRepository kycDocumentRepository;
     @Mock
-    KycEventAuditRepository kycEventAuditRepository;
+    MockMinioStorage minioStorage;
+    @Mock
+    KafkaTemplate<String, String> kafkaTemplate;
     @InjectMocks
     KycRequestServiceImpl kycRequestService;
 
@@ -53,7 +55,6 @@ class KycRequestServiceImplTest {
     MultipartFile emptyFile = new MockMultipartFile("file", "empty.pdf", "application/pdf", new byte[0]);
     MultipartFile bigFile = new MockMultipartFile("file", "big.pdf", "application/pdf", new byte[BIG_FILE_SIZE]);
     MultipartFile mimeFile = new MockMultipartFile("file", "mime.pdf", "text/plain", new byte[500]);
-
 
     @Test
     void startThrowsExceptionWhenExist() {
@@ -124,25 +125,34 @@ class KycRequestServiceImplTest {
     }
 
     @Test
-    void changeStatusByUserIdUpdatesStatusAndPublishesEvent() {
-        KycRequest existing = new KycRequest(id, USER_ID, PENDING, null, null);
-        when(kycRequestRepository.findByUserId(USER_ID)).thenReturn(Optional.of(existing));
+    void uploadDocumentCallMinioStorage() {
+        MultipartFile file = new MockMultipartFile(
+                "file",
+                "test.pdf",
+                "application/pdf",
+                "dummy content".getBytes()
+        );
 
-        KycRequest saved = new KycRequest(id, USER_ID, APPROVED, null, null);
-        when(kycRequestRepository.save(any(KycRequest.class))).thenReturn(saved);
+        KycRequest kycRequest = new KycRequest(id, USER_ID, PENDING, null, null);
+        when(kycRequestRepository.findByUserId(USER_ID)).thenReturn(Optional.of(kycRequest));
 
-        KycRequest result = kycRequestService.changeStatusByUserId(USER_ID, APPROVED, "ignored");
+        // Загружаем документ
+        kycRequestService.uploadDocument(USER_ID, "passport", file);
 
-        assertEquals(APPROVED, result.getStatus());
-        assertEquals(USER_ID, result.getUserId());
+        // Проверяем, что метод uploadFile вызвался ровно 1 раз с этим файлом
+        verify(minioStorage, times(1)).uploadFile(file);
+        verify(kycDocumentRepository, times(1)).save(any());
+    }
 
-        verify(kycRequestRepository).save(any(KycRequest.class));
-        verify(kycEventAuditRepository).save(id, APPROVED);
+    @Test
+    void changeServicePublishesKafkaEvent() {
 
-        ArgumentCaptor<KycStatusChangedEvent> captor = ArgumentCaptor.forClass(KycStatusChangedEvent.class);
-        verify(kycEventPublisher).publish(captor.capture());
-        KycStatusChangedEvent evt = captor.getValue();
-        assertEquals(String.valueOf(USER_ID), evt.userId());
-        assertEquals(APPROVED, evt.status());
+        KycRequest kycRequest = new KycRequest(id,USER_ID,PENDING,null,null);
+        when(kycRequestRepository.findByUserId(USER_ID)).thenReturn(Optional.of(kycRequest));
+        when(kycRequestRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
+
+        kycRequestService.changeStatus(USER_ID, KycStatus.APPROVED);
+
+        verify(kafkaTemplate).send("kyc-events",USER_ID.toString(), "STATUS_APPROVED");
     }
 }

@@ -14,6 +14,7 @@ import ru.katacademy.securityservice.util.JwtUtil;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * Фильтр JWT-авторизации, выполняющийся один раз для каждого запроса.
@@ -33,6 +34,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     private final JwtUtil jwtUtil;
 
+    private static final Set<String> WHITELIST = Set.of(
+            "/swagger-ui",
+            "/swagger-ui.html",
+            "/v3/api-docs",
+            "/swagger-resources",
+            "/webjars",
+            "/configuration/ui",
+            "/configuration/security",
+            "/api/users/register",
+            "/api/security/verify",
+            "/api/accounts/test"
+    );
+
     /**
      * Основной метод фильтрации: извлекает токен, проверяет и устанавливает аутентификацию.
      *
@@ -48,21 +62,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain chain)
             throws ServletException, IOException {
 
-        final String header = request.getHeader("Authorization");
-        if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
-            final String token = header.substring(7);
-            try {
-                final String username = jwtUtil.getSubject(token);
-                final UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                username,
-                                null,
-                                Collections.emptyList()
-                        );
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            } catch (JwtException ex) {
-            }
+        final String path = request.getRequestURI();
+
+        if (WHITELIST.stream().anyMatch(path::startsWith)) {
+            chain.doFilter(request, response);
+            return;
         }
-        chain.doFilter(request, response);
+
+            final String header = request.getHeader("Authorization");
+            if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
+                final String token = header.substring(7);
+                try {
+                    final String username = jwtUtil.getSubject(token);
+                    final UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    username,
+                                    null,
+                                    Collections.emptyList()
+                            );
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                } catch (JwtException ex) {
+                }
+            }
+            chain.doFilter(request, response);
+        }
     }
-}

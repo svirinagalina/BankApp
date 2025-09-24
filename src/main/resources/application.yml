@@ -21,14 +21,19 @@ spring:
         format_sql: true
 
 springdoc:
+  api-docs:
+    groups:
+      enabled: false
   swagger-ui:
     urls:
       - name: account-service
         url: http://localhost:8084/v3/api-docs
-      - name: settings-service
-        url: http://localhost:8082/v3/api-docs
+      - name: kyc-service
+        url: http://localhost:8088/v3/api-docs
       - name: security-service
         url: http://localhost:8085/v3/api-docs
+      - name: settings-service
+        url: http://localhost:8082/v3/api-docs
 
 retry:
   max-attempts: 5

@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface KycRequestJpaRepository extends JpaRepository<KycRequestEntity, UUID> {
     Optional<KycRequestEntity> findByUserId(Long userId);
+
+    UUID id(UUID id);
 }
