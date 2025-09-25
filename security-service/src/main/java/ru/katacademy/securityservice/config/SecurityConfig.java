@@ -85,7 +85,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(POST, "/api/users/register").permitAll()
                         .requestMatchers(POST, "/api/security/verify").permitAll()
-                        .requestMatchers(GET, "/api/accounts/test").permitAll()
+                        .requestMatchers(GET, "/api/security/test").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

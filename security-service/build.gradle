@@ -127,3 +127,13 @@ dependencies {
 
 }
 
+
+bootJar {
+    enabled = true
+    archiveFileName = "security-service-${version}.jar"
+}
+
+jar {
+    enabled = true
+    archiveClassifier = 'plain'
+}
