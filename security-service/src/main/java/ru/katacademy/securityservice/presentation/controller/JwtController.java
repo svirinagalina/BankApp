@@ -1,5 +1,6 @@
 package ru.katacademy.securityservice.presentation.controller;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import java.util.Map;
  * Автор: Быстров М.
  * Дата: 10.06.2025
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/security")
 public class JwtController {
@@ -60,7 +62,8 @@ public class JwtController {
             final Map<String, Object> claims = jwtUtil.getClaimsCopy(token);
             return ResponseEntity.ok(claims);
         } catch (JwtException e) {
-            return ResponseEntity.status(401).body("Invalid token" + e.getMessage());
+            log.warn("Token verification failed: {}", e.getMessage());
+            return ResponseEntity.status(401).body("Invalid token");
         }
     }
 }

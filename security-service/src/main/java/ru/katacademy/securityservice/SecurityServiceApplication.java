@@ -3,7 +3,7 @@ package ru.katacademy.securityservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "ru.katacademy.securityservice")
 public class SecurityServiceApplication {
 
 	public static void main(String[] args) {
