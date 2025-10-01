@@ -8,6 +8,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.katacademy.securityservice.util.JwtUtil;
+
+import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
@@ -53,7 +56,10 @@ class JwtControllerTest {
      */
     @Test
     void verifyToken_shouldReturnClaims_whenValidToken() throws Exception {
-        final String token = jwtUtil.generateToken("test-user");
+        final String token = jwtUtil.generateToken(
+                "test-user",
+                1L,
+                List.of("ROLE_USER"));
         System.out.println(">>> GENERATED TOKEN: " + token);
 
         final var result = mockMvc.perform(post("/api/security/verify")

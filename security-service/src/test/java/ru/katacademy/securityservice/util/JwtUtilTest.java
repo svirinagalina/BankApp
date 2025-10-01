@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +38,11 @@ class JwtUtilTest {
      */
     @Test
     void generateToken_ShouldReturnValidToken() {
-        final String token = jwtUtil.generateToken(testUser);
+        final String token = jwtUtil.generateToken(
+                "testUser",
+                123L,
+                List.of("ROLE_USER")
+        );
 
         assertNotNull(token);
         assertEquals(3, token.split("\\.").length);
@@ -49,7 +54,10 @@ class JwtUtilTest {
      */
     @Test
     void getSubject_ShouldReturnCorrectUsername() {
-        final String token = jwtUtil.generateToken(testUser);
+        final String token = jwtUtil.generateToken(
+                "testUser",
+                123L,
+                List.of("ROLE_USER"));
         final String subject = jwtUtil.getSubject(token);
 
         assertEquals(testUser, subject);
@@ -65,7 +73,10 @@ class JwtUtilTest {
      */
     @Test
     void getClaimsCopy_ShouldContainRequiredFields() {
-        final String token = jwtUtil.generateToken(testUser);
+        final String token = jwtUtil.generateToken(
+                "testUser",
+                123L,
+                List.of("ROLE_USER"));
         final Map<String, Object> claims = jwtUtil.getClaimsCopy(token);
 
         assertNotNull(claims);
