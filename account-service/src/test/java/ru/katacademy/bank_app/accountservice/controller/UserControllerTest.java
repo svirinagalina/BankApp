@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
@@ -19,7 +18,6 @@ import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -113,7 +111,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.role").value("USER"));
     }
 
-
     /**
      * GET /api/users/{id} — пользователь не найден → 404 Not Found
      */
@@ -164,30 +161,4 @@ public class UserControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    @Test
-    @WithMockUser(username = "1", authorities = {"ROLE_USER"})
-    void debug_getById_shouldReturn404WhenUserNotFound() throws Exception {
-        final Long userId = 1L;
-        given(userService.getById(userId)).willThrow(new UserNotFoundException(String.valueOf(userId)));
-
-        final MvcResult result = mockMvc.perform(get("/api/users/{id}", userId))
-                .andReturn();
-
-        System.out.println("=== DEBUG getById_shouldReturn404WhenUserNotFound ===");
-        System.out.println("Expected: 404");
-        System.out.println("Actual Status: " + result.getResponse().getStatus());
-        System.out.println("Response Body: " + result.getResponse().getContentAsString());
-
-        // Проверим, было ли вызвано исключение
-        if (result.getResolvedException() != null) {
-            System.out.println("Resolved Exception: " + result.getResolvedException().getClass().getName());
-            System.out.println("Exception Message: " + result.getResolvedException().getMessage());
-            result.getResolvedException().printStackTrace();
-        }
-        System.out.println("=== END DEBUG ===");
-
-        // Временно закомментируйте проверку статуса чтобы увидеть реальный статус
-        // mockMvc.perform(get("/api/users/{id}", userId))
-        //         .andExpect(status().isNotFound());
-    }
 }

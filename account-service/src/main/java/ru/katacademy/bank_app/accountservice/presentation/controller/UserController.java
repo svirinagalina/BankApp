@@ -17,7 +17,6 @@ import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.InvalidEmailException;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
-import ru.katacademy.bank_shared.security.CustomUserDetails;
 
 /**
  * Контроллер для управления пользователями через REST API.
@@ -48,7 +47,7 @@ public class UserController {
      * @param cmd команда с данными для регистрации
      * @return DTO зарегистрированного пользователя
      * @throws EmailAlreadyTakenException если email уже зарегистрирован
-     * @throws InvalidEmailException если Email не валидный
+     * @throws InvalidEmailException      если Email не валидный
      */
     @Operation(summary = "Регистрация пользователя", description = "Создаёт нового пользователя с переданными данными.")
     @ApiResponses(value = {
@@ -98,7 +97,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            // Если есть права доступа, пытаемся получить пользователя
+            // Если есть права доступа, получаем пользователя
             final UserDto userDto = userService.getById(id);
             return ResponseEntity.ok(userDto);
 
