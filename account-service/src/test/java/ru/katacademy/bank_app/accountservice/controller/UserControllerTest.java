@@ -160,5 +160,4 @@ public class UserControllerTest {
         mockMvc.perform(get("/api/users/{id}", 1L))
                 .andExpect(status().isUnauthorized());
     }
-
 }

@@ -123,6 +123,7 @@ public class JwtUtil {
                 .build()
                 .parseClaimsJws(token);
     }
+
     public Long getUserId(String token) {
         return parseToken(token).getBody().get("userId", Long.class);
     }
@@ -133,13 +134,5 @@ public class JwtUtil {
             return ((Collection<?>) roles).stream().map(Object::toString).collect(Collectors.toList());
         }
         return List.of();
-    }
-    public boolean isTokenValid(String token) {
-        try {
-            parseToken(token);
-            return true;
-        } catch (JwtException e) {
-            return false;
-        }
     }
 }
