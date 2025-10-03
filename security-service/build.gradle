@@ -107,6 +107,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	implementation(project(":bank-shared"))
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -119,6 +120,7 @@ dependencies {
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation'com.h2database:h2'
 
 	// Testcontainers для Kafka
 	testImplementation 'org.testcontainers:junit-jupiter'

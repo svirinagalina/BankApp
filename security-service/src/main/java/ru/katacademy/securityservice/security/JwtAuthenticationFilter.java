@@ -8,13 +8,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.katacademy.bank_shared.security.CustomUserDetails;
 import ru.katacademy.securityservice.util.JwtUtil;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -75,14 +77,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
                 final String token = header.substring(7);
                 try {
-                    final String username = jwtUtil.getSubject(token);
+                    final Long userId = jwtUtil.getUserId(token);
+                    final String subject = jwtUtil.getSubject(token);
+                    final List<String> roles = jwtUtil.getRoles(token);
+
+                    final var authorities = roles.stream()
+                                    .map(SimpleGrantedAuthority::new)
+                                            .toList();
+
+                    final CustomUserDetails customUserDetails = new CustomUserDetails(
+                            userId,
+                            subject,
+                            authorities
+                    );
+
                     final UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(
-                                    username,
-                                    null,
-                                    Collections.emptyList()
-                            );
+                            new UsernamePasswordAuthenticationToken(customUserDetails,
+                                    null, authorities);
+
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+
                 } catch (JwtException ex) {
                     log.warn("JWT parsing/validation failed: {}", ex.getMessage());
                     SecurityContextHolder.clearContext();

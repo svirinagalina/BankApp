@@ -8,9 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * JwtUtil —  генерация и валидация JWT-токенов.
@@ -70,15 +69,18 @@ public class JwtUtil {
         return signingKey;
     }
 
+
     /**
      * Генерирует новый JWT-токен для заданного пользователя (subject).
      *
      * @param subject логин или ID пользователя
      * @return строка токена (compact JWT)
      */
-    public String generateToken(String subject) {
+    public String generateToken(String subject, Long userId, Collection<String> roles) {
         return Jwts.builder()
                 .setSubject(subject)
+                .claim("userId", userId)
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey())
@@ -120,5 +122,17 @@ public class JwtUtil {
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token);
+    }
+
+    public Long getUserId(String token) {
+        return parseToken(token).getBody().get("userId", Long.class);
+    }
+    public List<String> getRoles(String token) {
+        final Claims claims = parseToken(token).getBody();
+        final Object roles = claims.get("roles");
+        if (roles instanceof Collection<?>) {
+            return ((Collection<?>) roles).stream().map(Object::toString).collect(Collectors.toList());
+        }
+        return List.of();
     }
 }

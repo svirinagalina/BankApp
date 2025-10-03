@@ -9,14 +9,14 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
-import ru.katacademy.bank_shared.exception.UserNotFoundException;
 import ru.katacademy.bank_shared.exception.InvalidEmailException;
+import ru.katacademy.bank_shared.exception.UserNotFoundException;
 
 /**
  * Контроллер для управления пользователями через REST API.
@@ -47,7 +47,7 @@ public class UserController {
      * @param cmd команда с данными для регистрации
      * @return DTO зарегистрированного пользователя
      * @throws EmailAlreadyTakenException если email уже зарегистрирован
-     * @throws InvalidEmailException если Email не валидный
+     * @throws InvalidEmailException      если Email не валидный
      */
     @Operation(summary = "Регистрация пользователя", description = "Создаёт нового пользователя с переданными данными.")
     @ApiResponses(value = {
@@ -79,8 +79,32 @@ public class UserController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getById(@PathVariable Long id) {
-        final UserDto userDto = userService.getById(id);
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    public ResponseEntity<UserDto> getById(@PathVariable Long id,
+                                           Authentication authentication) {
+
+        try {
+            // Получаем имя пользователя из аутентификации
+            final String username = authentication.getName();
+            final Long currentUserId = Long.valueOf(username);
+
+            // Проверяем права доступа
+            final boolean isOwner = currentUserId.equals(id);
+            final boolean isAdmin = authentication.getAuthorities()
+                    .stream()
+                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+
+            if (!isOwner && !isAdmin) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            // Если есть права доступа, получаем пользователя
+            final UserDto userDto = userService.getById(id);
+            return ResponseEntity.ok(userDto);
+
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

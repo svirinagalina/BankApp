@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
-import ru.katacademy.bank_app.accountservice.infrastructure.aop.ValidationAspect;
 import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
 
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Тестовый класс для {@link UserController}.
@@ -48,6 +47,9 @@ class UserControllerAspectTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private UserService userService;
+
     /**
      * Вспомогательный конфигурационный класс, который создает мок для {@link UserService}.
      */
@@ -59,6 +61,7 @@ class UserControllerAspectTest {
          * @return Мок-объект {@link UserService}.
          */
         @Bean
+        @Primary
         public UserService userService() {
             return Mockito.mock(UserService.class);
         }
@@ -86,7 +89,8 @@ class UserControllerAspectTest {
         mockMvc.perform(post("/api/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validCommand)))
-                .andExpect(status().isCreated());
+                .andExpect(result -> assertThat(result.getResponse().getStatus())
+                        .isEqualTo(HttpStatus.CREATED.value()));
     }
 
     /**
