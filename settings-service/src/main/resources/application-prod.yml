@@ -24,8 +24,8 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 cors:
   allowed-origins:
-    - http://localhost:3000
-    - http://localhost:8080
+    - https://frontend.example.com
+    - https://admin.example.com
 springdoc:
   api-docs:
     enabled: true

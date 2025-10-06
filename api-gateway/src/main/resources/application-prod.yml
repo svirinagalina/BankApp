@@ -26,5 +26,5 @@ logging:
 
 cors:
   allowed-origins:
-    - http://localhost:3000
-    - http://localhost:8080
+    - https://frontend.example.com
+    - https://admin.example.com

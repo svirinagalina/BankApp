@@ -2,6 +2,7 @@ package ru.katacademy.apigateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -21,6 +22,12 @@ import java.util.List;
 @Configuration
 public class CorsGlobalConfiguration {
 
+    private final Environment env;
+
+    public CorsGlobalConfiguration(Environment env) {
+        this.env = env;
+    }
+
     /**
      * Создаёт конфигурацию CORS, применяемую ко всем маршрутам (/**).
      *
@@ -28,26 +35,32 @@ public class CorsGlobalConfiguration {
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
+        final CorsConfiguration config = new CorsConfiguration();
 
-        // Допустимые источники (origin). "*" — разрешает все.
-        config.setAllowedOrigins(List.of("*"));
-
-        // Допустимые HTTP-методы.
+        // Ограничиваем методы
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // Любые заголовки (Authorization, Content-Type,...).
-        config.setAllowedHeaders(List.of("*"));
+        // Ограничиваем заголовки
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
 
-        // Передача учётных данных (cookies, заголовки авторизации).
         config.setAllowCredentials(true);
-
-        // Время (в секундах), в течение которого браузер
-        // может кэшировать результат
         config.setMaxAge(3600L);
 
+        // Настраиваем allowedOrigins в зависимости от окружения
+        final String[] activeProfiles = env.getActiveProfiles();
+        if (activeProfiles.length > 0 && activeProfiles[0].equals("prod")) {
+            // В продакшене: список доверенных фронтендов
+            config.setAllowedOrigins(List.of(
+                    "https://frontend1.example.com",
+                    "https://frontend2.example.com"
+            ));
+        } else {
+            // В dev: localhost
+            config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080"));
+        }
+
         // Применяет конфигурацию ко всем путям.
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }

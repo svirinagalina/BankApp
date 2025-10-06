@@ -6,8 +6,8 @@ spring:
     name: security-service
 cors:
   allowed-origins:
-    - http://localhost:3000
-    - http://localhost:8080
+    - https://frontend.example.com
+    - https://admin.example.com
 
 jwt:
   secret: "testsecretkeyfortestpurposesonly1234567890"

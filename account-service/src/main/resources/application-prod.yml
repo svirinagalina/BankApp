@@ -4,10 +4,6 @@ server:
 spring:
   application:
     name: account-service
-cors:
-  allowed-origins:
-    - http://localhost:3000
-    - http://localhost:8080
   datasource:
     url: jdbc:postgresql://localhost:5433/mainDB
     username: root
