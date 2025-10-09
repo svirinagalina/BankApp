@@ -66,7 +66,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain chain)
             throws ServletException, IOException {
 
+        log.info("JWT filter called for {}", request.getRequestURI());
+
         final String path = request.getRequestURI();
+        final String method = request.getMethod();
+
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         if (WHITELIST.stream().anyMatch(path::startsWith)) {
             chain.doFilter(request, response);
