@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: account-service
+  profiles:
+    active: dev
   datasource:
     url: jdbc:postgresql://localhost:5433/mainDB
     username: root

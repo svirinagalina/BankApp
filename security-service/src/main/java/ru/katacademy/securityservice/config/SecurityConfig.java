@@ -1,8 +1,10 @@
 package ru.katacademy.securityservice.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import ru.katacademy.securityservice.security.JwtAuthenticationFilter;
 import ru.katacademy.securityservice.util.JwtUtil;
 
@@ -52,6 +53,10 @@ import static org.springframework.http.HttpMethod.POST;
 public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final Environment env;
+
+    @Value("${cors.allowed-origins:http://localhost:3000}")
+    private List<String> allowedOrigins;
 
     /**
      * Фильтр, извлекающий и валидирующий JWT‑токен из заголовка Authorization.
@@ -114,26 +119,26 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:8080",
-                "http://localhost:8081"
-        ));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setMaxAge(3600L);
+        final String[] origins = env.getProperty("cors.allowed-origins", String[].class, new String[]{"http://localhost:3000"});
+        configuration.setAllowedOrigins(List.of(origins));
 
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/securityDB
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
+
+cors:
+  allowed-origins:
+    - https://app.bank.example.com
+    - https://dashboard.bank.example.com

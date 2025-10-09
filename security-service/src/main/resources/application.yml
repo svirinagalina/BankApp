@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: security-service
+  profiles:
+    active: dev
 
   autoconfigure:
     exclude:
