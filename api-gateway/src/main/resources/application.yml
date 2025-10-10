@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: api-gateway
+  profiles:
+    active: dev
 
   cloud:
     gateway:
@@ -23,3 +25,8 @@ spring:
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
+
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - http://localhost:8080

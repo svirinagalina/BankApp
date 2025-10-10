@@ -66,44 +66,52 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain chain)
             throws ServletException, IOException {
 
+        log.info("JWT filter called for {}", request.getRequestURI());
+
         final String path = request.getRequestURI();
+        final String method = request.getMethod();
+
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         if (WHITELIST.stream().anyMatch(path::startsWith)) {
             chain.doFilter(request, response);
             return;
         }
 
-            final String header = request.getHeader("Authorization");
-            if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
-                final String token = header.substring(7);
-                try {
-                    final Long userId = jwtUtil.getUserId(token);
-                    final String subject = jwtUtil.getSubject(token);
-                    final List<String> roles = jwtUtil.getRoles(token);
+        final String header = request.getHeader("Authorization");
+        if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
+            final String token = header.substring(7);
+            try {
+                final Long userId = jwtUtil.getUserId(token);
+                final String subject = jwtUtil.getSubject(token);
+                final List<String> roles = jwtUtil.getRoles(token);
 
-                    final var authorities = roles.stream()
-                                    .map(SimpleGrantedAuthority::new)
-                                            .toList();
+                final var authorities = roles.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
 
-                    final CustomUserDetails customUserDetails = new CustomUserDetails(
-                            userId,
-                            subject,
-                            authorities
-                    );
+                final CustomUserDetails customUserDetails = new CustomUserDetails(
+                        userId,
+                        subject,
+                        authorities
+                );
 
-                    final UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(customUserDetails,
-                                    null, authorities);
+                final UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(customUserDetails,
+                                null, authorities);
 
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                } catch (JwtException ex) {
-                    log.warn("JWT parsing/validation failed: {}", ex.getMessage());
-                    SecurityContextHolder.clearContext();
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired JWT token");
-                    return;
-                }
+            } catch (JwtException ex) {
+                log.warn("JWT parsing/validation failed: {}", ex.getMessage());
+                SecurityContextHolder.clearContext();
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired JWT token");
+                return;
             }
-            chain.doFilter(request, response);
         }
+        chain.doFilter(request, response);
     }
+}

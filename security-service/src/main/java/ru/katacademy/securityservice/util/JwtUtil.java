@@ -1,11 +1,15 @@
 package ru.katacademy.securityservice.util;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.*;
@@ -13,23 +17,23 @@ import java.util.stream.Collectors;
 
 /**
  * JwtUtil —  генерация и валидация JWT-токенов.
- *
- *  - Создаёт подписанные JWT-токены на основе заданного subject(например имя пользователя);
- *  - Проверяет валидность (подпись, срок действия);
- *  - Извлекает из токена данные (claims);
- *  - Использует алгоритм HMAC-SHA256 и секрет, заданный в application.yml.
- *
+ * <p>
+ * - Создаёт подписанные JWT-токены на основе заданного subject(например имя пользователя);
+ * - Проверяет валидность (подпись, срок действия);
+ * - Извлекает из токена данные (claims);
+ * - Использует алгоритм HMAC-SHA256 и секрет, заданный в application.yml.
+ * <p>
  * Источник секрета:
- *  - @Value("${jwt.secret}") — задаётся в конфигурации
- *
+ * - @Value("${jwt.secret}") — задаётся в конфигурации
+ * <p>
  * Источник времени жизни:
- *  - @Value("${jwt.expiration-ms}") — по умолчанию 3600000 мс (1 час)
- *
+ * - @Value("${jwt.expiration-ms}") — по умолчанию 3600000 мс (1 час)
+ * <p>
  * Пример секции конфигурации:
- *  jwt:
- *    secret: "testsecretkeyfortestpurposesonly1234567890"
- *    expiration-ms: 3600000
- *
+ * jwt:
+ * secret: "testsecretkeyfortestpurposesonly1234567890"
+ * expiration-ms: 3600000
+ * <p>
  * Автор: Быстров М.
  * Дата: 10.06.2025
  */
@@ -127,6 +131,7 @@ public class JwtUtil {
     public Long getUserId(String token) {
         return parseToken(token).getBody().get("userId", Long.class);
     }
+
     public List<String> getRoles(String token) {
         final Claims claims = parseToken(token).getBody();
         final Object roles = claims.get("roles");

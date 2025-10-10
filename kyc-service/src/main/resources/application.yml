@@ -7,6 +7,10 @@ spring:
   jackson:
     time-zone: UTC
   # PostgreSQL Database Settings
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:8080
   datasource:
     url: jdbc:postgresql://kyc-service_postgres:5432/kyc_verifications
     username: root
