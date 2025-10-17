@@ -14,7 +14,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./create_dbs.sh:/docker-entrypoint-initdb.d/create_dbs.sh
 
   user-service_postgres:
     image: postgres:15
@@ -47,9 +47,11 @@ services:
     image: bitnami/kafka:3.6
     container_name: kafka
     ports:
-      - "9092:9092" # для контейнеров
-      - "9094:9094" # для доступа с хоста (IDE)
+      - "9092:9092"
+      - "9094:9094"
     environment:
+      - KAFKA_CFG_LOG_LEVEL=error
+      - KAFKA_LOG4J_LOGGERS=org.apache.kafka=ERROR,kafka=ERROR,org.apache.zookeeper=ERROR
       - KAFKA_ENABLE_KRAFT=yes
       - KAFKA_CFG_NODE_ID=1
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
@@ -139,73 +141,6 @@ services:
       retries: 3
       start_period: 20s
 
-  settings-service:
-    build:
-      context: ./settings-service
-      dockerfile: Dockerfile
-    container_name: settings-service
-    depends_on:
-      - kafka
-      - postgres
-    ports:
-      - "8082:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userDB
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_PROFILES_ACTIVE: docker
-      OTEL_SDK_DISABLED: "true"
-      LOGGING_LEVEL_ROOT: INFO
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
-      SPRING_MAIN_BANNER_MODE: "off"
-    restart: always
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-
-  account-service:
-    build:
-      context: ./account-service
-      dockerfile: Dockerfile
-    container_name: account-service
-    depends_on:
-      - kafka
-      - postgres
-    ports:
-      - "8084:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://user-service_postgres:5432/mainDB
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SPRING_CLOUD_CONFIG_ENABLED: "false"
-      SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
-      OTEL_SDK_DISABLED: "true"
-      LOGGING_LEVEL_ROOT: INFO
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
-      SPRING_MAIN_BANNER_MODE: "off"
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-
   notification-service:
     build:
       context: ./notification-service
@@ -222,6 +157,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_PROFILES_ACTIVE: docker
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
       OTEL_SDK_DISABLED: "true"
       LOGGING_LEVEL_ROOT: INFO
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
@@ -237,117 +173,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
-
-  security-service:
-    build:
-      context: ./security-service
-    container_name: security-service
-    ports:
-      - "8085:8080"
-    restart: always
-    environment:
-      OTEL_SDK_DISABLED: "true"
-      LOGGING_LEVEL_ROOT: INFO
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
-      LOGGING_LEVEL_R_K_S_SECURITY: WARN   # приглушим пакет с JwtAuthenticationFilter
-      SPRING_MAIN_BANNER_MODE: "off"
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-
-  auth-statistics-service:
-    build:
-      context: ./auth-statistics-service
-      dockerfile: Dockerfile
-    container_name: auth-statistics-service
-    depends_on:
-      - kafka
-      - user-service_postgres
-    ports:
-      - "8086:8080"
-    restart: always
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://user-service_postgres:5432/mainDB
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SPRING_KAFKA_CONSUMER_GROUP_ID: auth-statistics-group
-      SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET: earliest
-      SPRING_CLOUD_CONFIG_ENABLED: "false"
-      SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
-      OTEL_SDK_DISABLED: "true"
-      LOGGING_LEVEL_ROOT: INFO
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
-      SPRING_MAIN_BANNER_MODE: "off"
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-
-  kyc-service:
-    build:
-      context: ./kyc-service
-      dockerfile: Dockerfile
-    container_name: kyc-service
-    depends_on:
-      - kyc-service_postgres
-      - minio
-    ports:
-      - "8088:8080"
-    restart: always
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://kyc-service_postgres:5432/kyc_verifications
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-
-      KYC_TOPICS_EVENTS: kyc-events
-
-      OTEL_SDK_DISABLED: "true"
-      LOGGING_LEVEL_ROOT: INFO
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
-      SPRING_MAIN_BANNER_MODE: "off"
-
-  api-gateway:
-    build:
-      context: ./api-gateway
-    ports:
-      - "8765:8765"
-    depends_on:
-      - account-service
-      - security-service
-      - settings-service
-    environment:
-      OTEL_SDK_DISABLED: "true"
-      LOGGING_LEVEL_ROOT: INFO
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
-      SPRING_MAIN_BANNER_MODE: "off"
 
 volumes:
   postgres_data:
