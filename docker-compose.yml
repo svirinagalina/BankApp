@@ -1,19 +1,6 @@
 #version: '3.8'
 
 services:
-  otel-collector:
-    image: otel/opentelemetry-collector:latest
-    container_name: otel-collector
-    ports:
-      - "4318:4318"
-      - "4317:4317"
-    expose:
-      - "4318"
-      - "4317"
-    volumes:
-      - ./otel-config.yaml:/etc/otel-config.yaml
-    command: ["--config=/etc/otel-config.yaml"]
-
   postgres:
     image: postgres:15
     container_name: bankapp-postgres
@@ -55,9 +42,6 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_HOST_AUTH_METHOD: trust
-#    volumes:
-#      - user-db-data:/var/lib/postgresql/data
-#      - ./main.sql:/docker-entrypoint-initdb.d/main.sql
 
   kafka:
     image: bitnami/kafka:3.6
@@ -82,16 +66,14 @@ services:
     image: minio/minio
     container_name: minio
     ports:
-      - "9000:9000"  # API порт
-      - "9001:9001"  # Консоль управления
+      - "9000:9000"
+      - "9001:9001"
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
-
-
 
   bankapp:
     build:
@@ -101,7 +83,6 @@ services:
     depends_on:
       - postgres
       - kafka
-      - otel-collector
     ports:
       - "8080:8080"
     environment:
@@ -109,19 +90,15 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      OTEL_SERVICE_NAME: bankapp
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
-      OTEL_TRACES_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: otlp
       SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
+      OTEL_SDK_DISABLED: "true"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 20s
-
 
   fraud-detection:
     build:
@@ -138,13 +115,13 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      OTEL_SDK_DISABLED: "true"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 20s
-
 
   settings-service:
     build:
@@ -163,6 +140,7 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_PROFILES_ACTIVE: docker
+      OTEL_SDK_DISABLED: "true"
     restart: always
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
@@ -170,7 +148,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
-
 
   account-service:
     build:
@@ -187,19 +164,15 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      OTEL_SERVICE_NAME: user-service
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
-      OTEL_TRACES_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: otlp
       SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
+      OTEL_SDK_DISABLED: "true"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 20s
-
 
   notification-service:
     build:
@@ -217,10 +190,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_PROFILES_ACTIVE: docker
-      OTEL_SERVICE_NAME: notification-service
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
-      OTEL_TRACES_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: otlp
+      OTEL_SDK_DISABLED: "true"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -233,17 +203,11 @@ services:
       context: ./security-service
       dockerfile: Dockerfile
     container_name: security-service
-    depends_on:
-        - otel-collector
     ports:
-        - "8085:8080"
+      - "8085:8080"
     restart: always
     environment:
-        OTEL_SERVICE_NAME: security-service
-        OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
-        OTEL_TRACES_EXPORTER: otlp
-        OTEL_METRICS_EXPORTER: otlp
-        OTEL_LOGS_EXPORTER: otlp
+      OTEL_SDK_DISABLED: "true"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -269,12 +233,9 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_KAFKA_CONSUMER_GROUP_ID: auth-statistics-group
       SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET: earliest
-      OTEL_SERVICE_NAME: auth-statistics-service
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
-      OTEL_TRACES_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: otlp
       SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
+      OTEL_SDK_DISABLED: "true"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -297,10 +258,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://kyc-service_postgres:5432/kyc_verifications
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-      OTEL_SERVICE_NAME: kyc-service
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
-      OTEL_TRACES_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: otlp
+      OTEL_SDK_DISABLED: "true"
 
   api-gateway:
     build:
@@ -317,5 +275,3 @@ volumes:
   kafka_data:
   user-db-data:
   minio_data:
-
-
