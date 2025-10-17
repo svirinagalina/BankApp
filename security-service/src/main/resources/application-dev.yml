@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/securityDB
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - http://localhost:8080
+    - http://localhost:8081

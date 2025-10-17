@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: account-service
+  profiles:
+    active: dev
   datasource:
     url: jdbc:postgresql://localhost:5433/mainDB
     username: root
@@ -14,13 +16,12 @@ spring:
       ddl-auto: update
     show-sql: true
   kafka:
-      bootstrap-servers: kafka:9092
+    bootstrap-servers: kafka:9092
 
-## JPA / Hibernate
-#  spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-#  spring.jpa.hibernate.ddl-auto=create-drop
-#  spring.jpa.show-sql=true
-#  spring.jpa.properties.hibernate.format_sql=true
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - http://localhost:8081
 
 springdoc:
   api-docs:
@@ -39,7 +40,7 @@ management:
       show-details: always
       group:
         readiness:
-          include: db, kafka
+          include: db,kafka
         liveness:
           include: ping
 
