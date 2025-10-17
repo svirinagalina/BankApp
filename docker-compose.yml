@@ -93,6 +93,14 @@ services:
       SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
       OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      SPRING_MAIN_BANNER_MODE: "off"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -116,6 +124,14 @@ services:
       SPRING_DATASOURCE_PASSWORD: root
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      SPRING_MAIN_BANNER_MODE: "off"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -141,6 +157,14 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_PROFILES_ACTIVE: docker
       OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      SPRING_MAIN_BANNER_MODE: "off"
     restart: always
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
@@ -167,6 +191,14 @@ services:
       SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
       OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      SPRING_MAIN_BANNER_MODE: "off"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -191,6 +223,14 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_PROFILES_ACTIVE: docker
       OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      SPRING_MAIN_BANNER_MODE: "off"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -201,13 +241,21 @@ services:
   security-service:
     build:
       context: ./security-service
-      dockerfile: Dockerfile
     container_name: security-service
     ports:
       - "8085:8080"
     restart: always
     environment:
       OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      LOGGING_LEVEL_R_K_S_SECURITY: WARN   # приглушим пакет с JwtAuthenticationFilter
+      SPRING_MAIN_BANNER_MODE: "off"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -236,6 +284,14 @@ services:
       SPRING_CLOUD_CONFIG_ENABLED: "false"
       SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
       OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      SPRING_MAIN_BANNER_MODE: "off"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -258,7 +314,20 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://kyc-service_postgres:5432/kyc_verifications
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+      KYC_TOPICS_EVENTS: kyc-events
+
       OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      SPRING_MAIN_BANNER_MODE: "off"
 
   api-gateway:
     build:
@@ -269,6 +338,16 @@ services:
       - account-service
       - security-service
       - settings-service
+    environment:
+      OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      SPRING_MAIN_BANNER_MODE: "off"
 
 volumes:
   postgres_data:
