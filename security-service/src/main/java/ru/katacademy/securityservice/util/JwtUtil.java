@@ -1,15 +1,11 @@
 package ru.katacademy.securityservice.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.*;
@@ -17,23 +13,23 @@ import java.util.stream.Collectors;
 
 /**
  * JwtUtil —  генерация и валидация JWT-токенов.
- * <p>
- * - Создаёт подписанные JWT-токены на основе заданного subject(например имя пользователя);
- * - Проверяет валидность (подпись, срок действия);
- * - Извлекает из токена данные (claims);
- * - Использует алгоритм HMAC-SHA256 и секрет, заданный в application.yml.
- * <p>
+ *
+ *  - Создаёт подписанные JWT-токены на основе заданного subject(например имя пользователя);
+ *  - Проверяет валидность (подпись, срок действия);
+ *  - Извлекает из токена данные (claims);
+ *  - Использует алгоритм HMAC-SHA256 и секрет, заданный в application.yml.
+ *
  * Источник секрета:
- * - @Value("${jwt.secret}") — задаётся в конфигурации
- * <p>
+ *  - @Value("${jwt.secret}") — задаётся в конфигурации
+ *
  * Источник времени жизни:
- * - @Value("${jwt.expiration-ms}") — по умолчанию 3600000 мс (1 час)
- * <p>
+ *  - @Value("${jwt.expiration-ms}") — по умолчанию 3600000 мс (1 час)
+ *
  * Пример секции конфигурации:
- * jwt:
- * secret: "testsecretkeyfortestpurposesonly1234567890"
- * expiration-ms: 3600000
- * <p>
+ *  jwt:
+ *    secret: "testsecretkeyfortestpurposesonly1234567890"
+ *    expiration-ms: 3600000
+ *
  * Автор: Быстров М.
  * Дата: 10.06.2025
  */
@@ -45,6 +41,7 @@ public class JwtUtil {
     /**
      * Секретный ключ для HMAC-подписи.
      * Задаётся через application.yml как jwt.secret.
+     * Хранится в docker-compose.yml как JWT_SECRET.
      */
     @Value("${jwt.secret}")
     private String secret;
@@ -62,17 +59,36 @@ public class JwtUtil {
     private Key signingKey;
 
     /**
+     * Проверяет соответствие секрета критериям.
+     */
+    private void validateSecret(String secret) {
+        if (secret == null) {
+            throw new IllegalArgumentException("Секретный ключ не может быть null");
+        }
+
+        // Минимум 32 байта для HMAC-SHA256
+        if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalArgumentException("Длина секретного ключа должна составлять не менее 32 байт");
+        }
+
+        // Проверка формата — только латиница, цифры и спецсимволы
+        if (!secret.matches("^[A-Za-z0-9!@#$%^&*()_+=-]+$")) {
+            throw new IllegalArgumentException("Секретный ключ содержит недопустимые символы");
+        }
+    }
+
+    /**
      * Возвращает объект ключа для подписи на основе секрета.
      * Используется алгоритм HMAC-SHA256.
      */
     private Key getSigningKey() {
         if (signingKey == null) {
+            validateSecret(secret);
             this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
             log.info("JWT signing key initialized");
         }
         return signingKey;
     }
-
 
     /**
      * Генерирует новый JWT-токен для заданного пользователя (subject).

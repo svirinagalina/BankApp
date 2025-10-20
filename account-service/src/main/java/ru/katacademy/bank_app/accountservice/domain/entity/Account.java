@@ -1,12 +1,13 @@
-package ru.katacademy.bank_app.frauddetection.account.domain.entity;
+package ru.katacademy.bank_app.accountservice.domain.entity;
 
 import lombok.Getter;
-import ru.katacademy.bank_app.frauddetection.account.domain.enumtype.AccountStatus;
+import ru.katacademy.bank_app.accountservice.domain.enumtype.AccountStatus;
+import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.UserEntity;
 import ru.katacademy.bank_shared.valueobject.AccountNumber;
 import ru.katacademy.bank_shared.valueobject.Money;
 
-
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Класс, представляющий банковский счет.
@@ -21,17 +22,22 @@ import java.math.BigDecimal;
  * - currency: валюта счета.
  * - accountNumber: номер счета
  *
- * @author Sheffy
  */
 @Getter
-public  final class Account {
-    private Money money;
-    private AccountStatus status;
+public class Account {
+
+    private final Long id;
     private final AccountNumber accountNumber;
+    private UserEntity user;
+    private Money balance;
+    private AccountStatus status;
+    private final LocalDateTime createdAt;
 
 
-    public Account(AccountNumber accountNumber, Money money, AccountStatus status) {
-        if (money == null || money.amount().compareTo(BigDecimal.ZERO) < 0) {
+    public Account(Long id, UserEntity user, AccountNumber accountNumber,
+                   Money balance, AccountStatus status, LocalDateTime createdAt) {
+
+        if (balance == null || balance.amount().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Initial balance cannot " +
                     "be null or negative.");
         }
@@ -41,9 +47,12 @@ public  final class Account {
         if (status == null) {
             throw new IllegalArgumentException("Account status cannot be null.");
         }
-        this.money = money;
+        this.id = id;
+        this.user = user;
+        this.balance = balance;
         this.accountNumber = accountNumber;
         this.status = status;
+        this.createdAt = createdAt;
     }
 
     /**
@@ -84,7 +93,7 @@ public  final class Account {
      * @param money объект предоставляющий сумму валюты и вид валюты
      */
     public void deposit(Money money) {
-        this.money = this.money.add(money);
+        this.balance = this.balance.add(money);
     }
 
     /**
@@ -93,7 +102,7 @@ public  final class Account {
      * @param amount сумма денег, которую клиент хочет снять со счета.
      */
     public void withdraw(Money amount) {
-        this.money = this.money.subtract(amount);
+        this.balance = this.balance.subtract(amount);
     }
 
     /**
