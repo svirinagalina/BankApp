@@ -10,7 +10,6 @@ import ru.katacademy.bank_app.accountservice.domain.entity.Account;
  * Автор: Набеев В.В.
  * Дата: 2025-10-14
  */
-
 @Component
 public class AccountMapper {
     /**

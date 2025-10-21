@@ -50,7 +50,7 @@ class FraudDetectionServiceTest {
      * Создает тестовую конфигурацию с порогом 100 000
      */
     private FraudDetectionConfig createTestConfig() {
-        FraudDetectionConfig config = new FraudDetectionConfig();
+        final FraudDetectionConfig config = new FraudDetectionConfig();
         config.setSuspiciousAmount(BigDecimal.valueOf(100_000));
         config.setMaxOperationsPerMinute(10);
         config.setMaxOperationsPerHour(50);
@@ -61,8 +61,8 @@ class FraudDetectionServiceTest {
      * Создает аккаунт для тестов
      */
     private AccountDto createAccountDto() {
-        Money money = new Money(BigDecimal.valueOf(50_000), rub);
-        AccountDto accountDto = new AccountDto(1L, "12345678901234567890", 1L, money, ACTIVE);
+        final Money money = new Money(BigDecimal.valueOf(50_000), rub);
+        final AccountDto accountDto = new AccountDto(1L, "12345678901234567890", 1L, money, ACTIVE);
         return accountDto;
     }
 
@@ -72,7 +72,7 @@ class FraudDetectionServiceTest {
      */
     @Test
     void analyze_ShouldThrowException_WhenEventIsNull() {
-        AccountDto accountDto = createAccountDto();
+        final AccountDto accountDto = createAccountDto();
 
         assertThrows(IllegalArgumentException.class,
                 () -> service.analyze(null, accountDto));
@@ -111,7 +111,7 @@ class FraudDetectionServiceTest {
                 normalAmount,      // сумма перевода
                 LocalDateTime.now() // текущая дата и время
         );
-        AccountDto accountDto = createAccountDto();
+        final AccountDto accountDto = createAccountDto();
         service.analyze(event, accountDto);
 
         // Проверяем, что блокировка не вызывалась
@@ -133,7 +133,7 @@ class FraudDetectionServiceTest {
                 LocalDateTime.now()
         );
 
-        AccountDto accountDto = createAccountDto();
+        final AccountDto accountDto = createAccountDto();
         service.analyze(event, accountDto);
 
         // Проверяем, что блокировка вызвалась
@@ -155,7 +155,7 @@ class FraudDetectionServiceTest {
                 LocalDateTime.now()
         );
 
-        AccountDto accountDto = createAccountDto();
+        final AccountDto accountDto = createAccountDto();
         service.analyze(event, accountDto);
 
         verify(accountClient, never()).blockById(anyLong());

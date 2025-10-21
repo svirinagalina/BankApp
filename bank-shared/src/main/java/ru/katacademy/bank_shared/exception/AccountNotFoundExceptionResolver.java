@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.accountservice.exception;
+package ru.katacademy.bank_shared.exception;
 
 public class AccountNotFoundExceptionResolver extends RuntimeException {
     public AccountNotFoundExceptionResolver(String message) {

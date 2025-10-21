@@ -1,6 +1,7 @@
 package ru.katacademy.bank_app.frauddetection.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.frauddetection.client.AccountClient;
 import ru.katacademy.bank_app.frauddetection.client.AccountDto;
@@ -21,8 +22,9 @@ public class FraudDetectionService {
     private final FraudDetectionConfig fdConfig;
     private final AccountClient  accountClient;
 
+    @Autowired
     public FraudDetectionService(FraudDetectionConfig fdConfig, AccountClient accountClient) {
-        this.fdConfig = fdConfig;
+        this.fdConfig = new FraudDetectionConfig(fdConfig);
         this.accountClient = accountClient;
     }
 

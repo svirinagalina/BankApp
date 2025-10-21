@@ -8,6 +8,10 @@ import ru.katacademy.bank_app.accountservice.infrastructure.repository.AccountJp
 
 import java.util.Optional;
 
+/**
+ * Реализация порта {@link AccountRepository}.
+ * Делегирует операции JPA‑репозиторию и маппит сущности ↔ домен.
+ */
 @Repository
 public class AccountRepositoryImpl implements AccountRepository {
 

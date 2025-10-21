@@ -5,6 +5,9 @@ import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.A
 
 import java.util.Optional;
 
+/**
+ * JPA‑репозиторий для {@link AccountEntity}.
+ */
 public interface AccountJpaRepository extends JpaRepository<AccountEntity, Long> {
     long countByUserId(Long userId);
     Optional<AccountEntity> findById(Long id);

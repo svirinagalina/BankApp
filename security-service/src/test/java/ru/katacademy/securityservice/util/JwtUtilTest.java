@@ -60,7 +60,7 @@ class JwtUtilTest {
     @Test
     void generateToken_ShouldWork_WhenSecretIsValid() {
         // Устанавливаем валидный секрет
-        String validSecret = "valid_secret_12345678901234567890!@#";
+        final String validSecret = "valid_secret_12345678901234567890!@#";
         ReflectionTestUtils.setField(jwtUtil, "secret", validSecret);
 
         // Не должно быть исключения

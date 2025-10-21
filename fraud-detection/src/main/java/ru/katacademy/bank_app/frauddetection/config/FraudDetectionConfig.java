@@ -19,4 +19,14 @@ public class FraudDetectionConfig {
     private BigDecimal suspiciousAmount = BigDecimal.valueOf(100_000);
     private int maxOperationsPerMinute = 10;
     private int maxOperationsPerHour = 50;
+
+    public FraudDetectionConfig() {
+    }
+
+    public FraudDetectionConfig(FraudDetectionConfig other) {
+        // BigDecimal иммутабельный, можно просто присвоить ссылку
+        this.suspiciousAmount = other.suspiciousAmount;
+        this.maxOperationsPerMinute = other.maxOperationsPerMinute;
+        this.maxOperationsPerHour = other.maxOperationsPerHour;
+    }
 }
