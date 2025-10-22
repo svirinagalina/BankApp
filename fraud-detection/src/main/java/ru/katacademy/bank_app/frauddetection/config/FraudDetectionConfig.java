@@ -23,10 +23,9 @@ public class FraudDetectionConfig {
     public FraudDetectionConfig() {
     }
 
-    public FraudDetectionConfig(FraudDetectionConfig other) {
-        // BigDecimal иммутабельный, можно просто присвоить ссылку
-        this.suspiciousAmount = other.suspiciousAmount;
-        this.maxOperationsPerMinute = other.maxOperationsPerMinute;
-        this.maxOperationsPerHour = other.maxOperationsPerHour;
+    public FraudDetectionConfig(FraudDetectionConfig fraudDetectionConfig) {
+        this.suspiciousAmount = fraudDetectionConfig.suspiciousAmount;
+        this.maxOperationsPerMinute = fraudDetectionConfig.maxOperationsPerMinute;
+        this.maxOperationsPerHour = fraudDetectionConfig.maxOperationsPerHour;
     }
 }
