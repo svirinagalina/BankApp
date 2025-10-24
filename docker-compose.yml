@@ -175,9 +175,38 @@ services:
       retries: 3
       start_period: 20s
 
-  #security-service:
-    #environment:
-      #JWT_SECRET: "testsecretkeyfortestpurposesonly1234567890"
+  security-service:
+    build:
+      context: ./security-service
+      dockerfile: Dockerfile
+    container_name: security-service
+    depends_on:
+      - kafka
+      - postgres
+    ports:
+      - "8085:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/security_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      OTEL_SDK_DISABLED: "true"
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+      SPRING_MAIN_BANNER_MODE: "off"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
 volumes:
   postgres_data:
