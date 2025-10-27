@@ -88,7 +88,6 @@ services:
     ports:
       - "8080:8080"
     environment:
-      JWT_SECRET: "testsecretkeyfortestpurposesonly1234567890"
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/userDB
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
@@ -186,6 +185,7 @@ services:
     ports:
       - "8085:8080"
     environment:
+      JWT_SECRET: "testsecretkeyfortestpurposesonly1234567890"
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/security_db
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
