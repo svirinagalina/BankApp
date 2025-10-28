@@ -1,0 +1,16 @@
+
+user:
+  service:
+    #url: http://account-service:8080   # в docker-compose: http://account-service:8080
+    url: http://localhost:8080
+server:
+  port: 8082  # порт account-service
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/userDB
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

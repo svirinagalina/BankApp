@@ -30,6 +30,44 @@ class JwtUtilTest {
         ReflectionTestUtils.setField(jwtUtil, "expirationMs", 3600000L);
     }
 
+    @Test
+    void generateToken_ShouldThrowException_WhenSecretIsTooShort() {
+
+        ReflectionTestUtils.setField(jwtUtil, "secret", "short");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> jwtUtil.generateToken("testUser", 123L, List.of("ROLE_USER")));
+    }
+
+    @Test
+    void generateToken_ShouldThrowException_WhenSecretHasInvalidCharacters() {
+
+        ReflectionTestUtils.setField(jwtUtil, "secret", "секретскириллицей123456789012345");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> jwtUtil.generateToken("testUser", 123L, List.of("ROLE_USER")));
+    }
+
+    @Test
+    void generateToken_ShouldThrowException_WhenSecretIsNull() {
+
+        ReflectionTestUtils.setField(jwtUtil, "secret", null);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> jwtUtil.generateToken("testUser", 123L, List.of("ROLE_USER")));
+    }
+
+    @Test
+    void generateToken_ShouldWork_WhenSecretIsValid() {
+        // Устанавливаем валидный секрет
+        final String validSecret = "valid_secret_12345678901234567890!@#";
+        ReflectionTestUtils.setField(jwtUtil, "secret", validSecret);
+
+        // Не должно быть исключения
+        assertDoesNotThrow(() ->
+                jwtUtil.generateToken("testUser", 123L, List.of("ROLE_USER")));
+    }
+
     /**
      * Тест генерации токена.
      * Проверяет что:
