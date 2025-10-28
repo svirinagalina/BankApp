@@ -9,23 +9,19 @@ spring:
 
   cloud:
     gateway:
-      routes:
-        - id: account-service
-          uri: http://account-service:8080
-          predicates:
-            - Path=/api/accounts/**
-        - id: security-service
-          uri: http://security-service:8080
-          predicates:
-            - Path=/api/security/**
-
-      default-filters:
-        - AddResponseHeader=X-Gateway, bank-gateway
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-
+      server:
+        webflux:
+          default-filters:
+            - AddResponseHeader=X-Gateway, bank-gateway
+          routes:
+            - id: account-service
+              uri: http://account-service:8080
+              predicates:
+                        - Path=/api/accounts/**
+            - id: security-service
+              uri: http://security-service:8080
+              predicates:
+                        - Path=/api/security/**
 cors:
   allowed-origins:
     - http://localhost:3000
