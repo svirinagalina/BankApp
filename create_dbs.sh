@@ -1,41 +1,62 @@
-#!/usr/bin/env bash
-set -Eeuo pipefail
+#!/bin/bash
+set -e
 
-# Какие БД хотим иметь в основном postgres-контейнере
+echo "⏳ Waiting for Postgres to start..."
+until pg_isready -h localhost -U "$POSTGRES_USER" > /dev/null 2>&1; do
+  sleep 1
+done
+echo "✅ Postgres is ready."
+
 DATABASES=(
   "notifications_db"
   "security_db"
   "mainDB"
   "kyc_verifications"
   "audit_db"
+  "account_db"
+  "settings_db"
+  "auth_stats_db"
 )
 
-OWNER="${POSTGRES_USER:-root}"
-
-log() { echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"; }
-
-ensure_db() {
-  local db="$1"
-  local owner="$2"
-
-  # Проверяем существование
-  if psql -v ON_ERROR_STOP=1 -U "$owner" -d postgres -qAt \
-      -c "SELECT 1 FROM pg_database WHERE datname = '$db';" | grep -qx '1'; then
-    log "ℹ️  Database '$db' already exists — skip."
-    return 0
-  fi
-
-  # Создаём БД c корректной кодировкой
-  log "🛠  Creating database '$db' (OWNER: $owner)..."
-  psql -v ON_ERROR_STOP=1 -U "$owner" -d postgres -qAt <<-EOSQL
-    CREATE DATABASE "$db" WITH TEMPLATE template0 ENCODING 'UTF8';
-    ALTER DATABASE "$db" OWNER TO "$owner";
-EOSQL
-  log "✅ Database '$db' created."
-}
-
-log "===> Ensuring required databases exist (owner: $OWNER) ..."
+echo "🧩 Checking and creating databases..."
 for db in "${DATABASES[@]}"; do
-  ensure_db "$db" "$OWNER"
+  if ! psql -U "$POSTGRES_USER" -tc "SELECT 1 FROM pg_database WHERE datname = '$db'" | grep -q 1; then
+    echo "📗 Creating database: $db"
+    psql -U "$POSTGRES_USER" -c "CREATE DATABASE $db"
+  else
+    echo "✅ Database $db already exists."
+  fi
 done
-log "🎉 Done."
+
+echo "✅ All databases verified or created."
+
+# --- MinIO setup ---
+echo "⏳ Waiting for MinIO to be reachable..."
+MINIO_ENDPOINT=${MINIO_ENDPOINT:-http://minio:9000}
+until curl -s "$MINIO_ENDPOINT/minio/health/live" > /dev/null; do
+  sleep 2
+done
+echo "✅ MinIO is reachable."
+
+echo "🪣 Configuring MinIO bucket..."
+apk add --no-cache curl >/dev/null 2>&1 || true
+wget -q https://dl.min.io/client/mc/release/linux-amd64/mc -O /usr/local/bin/mc
+chmod +x /usr/local/bin/mc
+
+export MC_HOST_local="$MINIO_ENDPOINT"
+MC_ALIAS="local"
+MC_USER="${MINIO_ROOT_USER:-minioadmin}"
+MC_PASS="${MINIO_ROOT_PASSWORD:-minioadmin}"
+
+mc alias set $MC_ALIAS $MINIO_ENDPOINT $MC_USER $MC_PASS >/dev/null
+
+BUCKET_NAME=${MINIO_BUCKET:-kyc-files}
+
+if ! mc ls $MC_ALIAS/$BUCKET_NAME >/dev/null 2>&1; then
+  mc mb $MC_ALIAS/$BUCKET_NAME
+  echo "✅ MinIO bucket '$BUCKET_NAME' created."
+else
+  echo "✅ MinIO bucket '$BUCKET_NAME' already exists."
+fi
+
+echo "🎉 Initialization complete!"

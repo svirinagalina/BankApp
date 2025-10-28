@@ -6,7 +6,6 @@ spring:
     name: kyc-service
   jackson:
     time-zone: UTC
-  # PostgreSQL Database Settings
   cors:
     allowed-origins:
       - http://localhost:3000
@@ -34,3 +33,6 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+kyc:
+  topics:
+    events: kyc-events

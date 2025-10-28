@@ -28,30 +28,23 @@ dependencies {
 	implementation 'org.postgresql:postgresql:42.7.2'
 	implementation(project(":bank-shared"))
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-
-		// Lombok
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-
-		// MinIO
+    // MinIO
 	implementation 'io.minio:minio:8.5.7'
 	implementation 'commons-io:commons-io:2.11.0'
-
 	// Kafka
 	implementation 'org.springframework.kafka:spring-kafka:3.3.10'
 	testImplementation 'org.springframework.kafka:spring-kafka-test:3.3.10'
 	testImplementation 'org.assertj:assertj-core:3.24.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'com.h2database:h2'
 	testImplementation 'org.mockito:mockito-core:5.5.0'
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
 }
-
-
 
 tasks.named('test') {
 	useJUnitPlatform()

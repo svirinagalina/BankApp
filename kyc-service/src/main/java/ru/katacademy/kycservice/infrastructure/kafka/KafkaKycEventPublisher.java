@@ -11,7 +11,8 @@ import ru.katacademy.kycservice.application.port.out.KycEventPublisher;
 /**
  * Публикует события смены статуса KYC
  * <p>
- * Отправляет {@link KycStatusChangedEvent} в Kafka-топик, имя которого берётся из конфигурации {@code kyc.topics.events}.
+ * Отправляет {@link KycStatusChangedEvent} в Kafka-топик, имя которого берётся из
+ * конфигурации {@code kyc.topics.events}.
  * Для ключа сообщения используется {@code userId} события, чтобы сохранять порядок сообщений по пользователю.
  * Успешная отправка и ошибки логируются.
  * Метод publish: Публикует событие смены KYC-статуса в Kafka асинхронно.
@@ -25,19 +26,22 @@ public class KafkaKycEventPublisher implements KycEventPublisher {
     private final KafkaTemplate<String, KycStatusChangedEvent> template;
     private final String topic;
 
-    public KafkaKycEventPublisher(KafkaTemplate<String, KycStatusChangedEvent> template, @Value("${kyc.topics.events}") String topic) {
+    public KafkaKycEventPublisher(KafkaTemplate<String, KycStatusChangedEvent> template,
+                                  @Value("${kyc.topics.events:kyc-events}") String topic) {
         this.template = template;
         this.topic = topic;
     }
 
     @Override
     public void publish(KycStatusChangedEvent kycStatusChangedEvent) {
-        template.send(topic, kycStatusChangedEvent.userId(), kycStatusChangedEvent).whenComplete((res,ex) ->{
-            if(ex!=null){
+        template.send(topic, kycStatusChangedEvent.userId(), kycStatusChangedEvent)
+                .whenComplete((res, ex) -> {
+            if (ex != null) {
                 log.error("Kyc event publisher error: {}", kycStatusChangedEvent, ex);
             } else {
                 var md = res.getRecordMetadata();
-                log.info("Kyc event sent: topic={}, partition={}, offset={}, key={}", md.topic(), md.partition(), md.offset(), kycStatusChangedEvent.userId());
+                log.info("Kyc event sent: topic={}, partition={}, offset={}, key={}",
+                        md.topic(), md.partition(), md.offset(), kycStatusChangedEvent.userId());
             }
         });
     }
