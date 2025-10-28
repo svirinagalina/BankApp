@@ -1,10 +1,10 @@
 pluginManagement {
-	repositories {
-		mavenCentral()
-		gradlePluginPortal()
-		maven { url = 'https://repo.spring.io/milestone' }
-		maven { url = 'https://repo.spring.io/snapshot' }
-	}
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = 'https://repo.spring.io/milestone' }
+        maven { url = 'https://repo.spring.io/snapshot' }
+    }
 }
 
 rootProject.name = 'bank-app'
@@ -16,7 +16,7 @@ include("fraud-detection")
 include("audit")
 include("notification-service")
 include("account-service")
-include ("api-gateway")
-include 'auth-statistics-service'
+include("api-gateway")
+include("auth-statistics-service")
 include("kyc-service")
 

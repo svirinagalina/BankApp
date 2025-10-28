@@ -6,6 +6,5 @@ import ru.katacademy.bank_app.settingsservice.infrastructure.persistence.entity.
 /**
  * Spring Data JPA‑репозиторий для работы с {@link UserSettingsEntity}.
  */
-public interface UserSettingsJpaRepository
-        extends JpaRepository<UserSettingsEntity, Long> {
+public interface UserSettingsJpaRepository extends JpaRepository<UserSettingsEntity, Long> {
 }
