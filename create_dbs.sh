@@ -7,6 +7,7 @@ DATABASES=(
   "security_db"
   "mainDB"
   "kyc_verifications"
+  "audit_db"
 )
 
 OWNER="${POSTGRES_USER:-root}"
