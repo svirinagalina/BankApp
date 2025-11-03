@@ -3,6 +3,7 @@ package ru.katacademy.bank_app.audit.persistence.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 import ru.katacademy.bank_app.audit.application.port.out.AuditEntryRepository;
 import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
+@ActiveProfiles("test")
 class AuditEntryRepositoryImplTest {
 
     @Autowired
