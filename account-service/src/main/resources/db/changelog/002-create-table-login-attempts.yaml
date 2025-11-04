@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-table-login-attempts
+      author: nabeev_vasil
+      changes:
+        - createTable:
+            tableName: login_attempts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(254)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ip
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_agent
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: timestamp
+                  type: timestamp
+                  defaultValueComputed: "now()"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: success
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 002-insert-login-attempts-sample
+      author: nabeev_vasil
+      changes:
+        - insert:
+            tableName: login_attempts
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: email
+                  value: "email@gmail.com"
+              - column:
+                  name: ip
+                  value: "192.0.0"
+              - column:
+                  name: user_agent
+                  value: "userAgent_example"
+              - column:
+                  name: timestamp
+                  valueDate: "2025-01-01T00:00:00"
+              - column:
+                  name: success
+                  valueBoolean: true

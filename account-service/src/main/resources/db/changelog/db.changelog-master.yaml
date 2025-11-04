@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: 001-create-table-users.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 002-create-table-login-attempts.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 003-create-table-accounts.yaml
+      relativeToChangelogFile: true
