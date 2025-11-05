@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-table-users
+      author: nabeev_vasil
+      changes:
+        - sql:
+            dbms: postgresql
+            splitStatements: false
+            sql: CREATE EXTENSION IF NOT EXISTS pgcrypto;
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: full_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: email
+                  type: varchar(254)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password_hash
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: "now()"
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 001-insert-users-sample
+      author: nabeev_vasil
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: role
+                  value: "USER"
+              - column:
+                  name: full_name
+                  value: "Ivan Ivanov"
+              - column:
+                  name: email
+                  value: "email@gmail.com"
+              - column:
+                  name: password_hash
+                  value: "hashPassword"
+              - column:
+                  name: created_at
+                  valueDate: "2025-01-01T00:00:00"
