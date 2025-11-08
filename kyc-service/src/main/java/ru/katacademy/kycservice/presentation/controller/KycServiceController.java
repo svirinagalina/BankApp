@@ -44,7 +44,7 @@ import ru.katacademy.kycservice.domain.service.KycRequestService;
  * Дата: 2025-08-05
  */
 @RestController
-@RequestMapping("/kyc")
+@RequestMapping("/api/kyc")
 public class KycServiceController {
 
     private final KycRequestService kycRequestService;
