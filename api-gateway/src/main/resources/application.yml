@@ -1,5 +1,6 @@
+# было 8765
 server:
-  port: 8765
+  port: 8080
 
 spring:
   application:
@@ -9,20 +10,214 @@ spring:
 
   cloud:
     gateway:
+      # параметры таймаутов для HTTP-клиента
+      httpclient:
+        connect-timeout: 5000 # Время в миллисекундах на установку TCP-соединения к бэкенду.
+        response-timeout: 10s # Таймаут ожидания полного ответа от бэкенда.
+        pool:
+          max-idle-time: 30s # Как долго connection pool будет считать соединение idle, после чего оно автоматически закрывается.
+
       server:
         webflux:
           default-filters:
-            - AddResponseHeader=X-Gateway, bank-gateway
+            - AddResponseHeader=X-Gateway, bank-gateway          # Добавляет заголовок идентификации шлюза к каждому ответу.
+            - AddResponseHeader=X-Content-Type-Options, nosniff  # Защита от MIME sniffing (безопасный заголовок).
+            - AddResponseHeader=X-XSS-Protection, 0              # Резервный заголовок для браузеров (legacy) — базовая XSS-профилактика.
+            - AddResponseHeader=X-Frame-Options, DENY            # Защита от clickjacking.
+            - AddResponseHeader=Referrer-Policy, no-referrer     # Политика реферера — скрывает Referer при переходах.
+            - AddResponseHeader=Strict-Transport-Security, max-age=31536000; includeSubDomains
+
           routes:
-            - id: account-service
-              uri: http://account-service:8080
+            - id: account-service              # идентификатор маршрута.
+              uri: http://account-service:8080 # Целевой URL/хост сервиса (имя контейнера). Route перенаправляет сюда.
               predicates:
-                        - Path=/api/accounts/**
+                - Path=/api/accounts/**        # Predicate — совпадение пути. Гарантирует, что все запросы по префиксу /api/accounts/** обрабатываются этим route.
+              filters:
+                # retry и circuit breaker
+                - name: Retry # при ошибке автоматически повторяет запрос к бэкенду.
+                  args:
+                    retries: 2 # Количество дополнительных попыток (retry attempts).
+                    statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR # Список HTTP-статусов, при которых retry срабатывает.
+                    methods: GET,POST,PUT,DELETE # HTTP-методы, для которых разрешены retries.
+                    series: SERVER_ERROR # Указывает на серии кодов, SERVER_ERROR = 5xx.
+
+                    backoff:            # Конфигурация backoff (задержек между попытками).
+                      firstBackoff: 1s  # Задержка перед первой повторной попыткой.
+                      maxBackoff: 5s    # Максимальная задержка между попытками.
+                      factor: 2         # Коэффициент увеличения задержки.
+                - name: CircuitBreaker
+                  args:
+                    name: accountCircuit # имя CircuitBreaker (соотносится с resilience4j.instances).
+                    fallbackUri: forward:/fallback/account # URI, на который gateway форвардит запрос.
+
             - id: security-service
               uri: http://security-service:8080
               predicates:
-                        - Path=/api/security/**
+                - Path=/api/security/**
+              filters:
+                - name: Retry
+                  args:
+                    retries: 2
+                    statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                    methods: GET,POST,PUT,DELETE
+                    series: SERVER_ERROR
+                    exceptions: java.net.ConnectException, java.net.NoRouteToHostException
+
+                    backoff:
+                      firstBackoff: 1s
+                      maxBackoff: 5s
+                      factor: 2
+                - name: CircuitBreaker
+                  args:
+                    name: securityCircuit
+                    fallbackUri: forward:/fallback/security
+
+            - id: notification-service
+              uri: http://notification-service:8080
+              predicates:
+                - Path=/api/notifications/**
+              filters:
+                - name: Retry
+                  args:
+                    retries: 2
+                    statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                    methods: GET,POST,PUT,DELETE
+                    series: SERVER_ERROR
+                    exceptions: java.net.ConnectException, java.net.NoRouteToHostException
+
+                    backoff:
+                      firstBackoff: 1s
+                      maxBackoff: 5s
+                      factor: 2
+                - name: CircuitBreaker
+                  args:
+                    name: notificationCircuit
+                    fallbackUri: forward:/fallback/notification
+
+            - id: fraud-detection
+              uri: http://fraud-detection:8080
+              predicates:
+                - Path=/api/fraud/**
+              filters:
+                - name: Retry
+                  args:
+                    retries: 2
+                    statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                    methods: GET,POST,PUT,DELETE
+                    series: SERVER_ERROR
+                    exceptions: java.net.ConnectException, java.net.NoRouteToHostException
+
+                    backoff:
+                      firstBackoff: 1s
+                      maxBackoff: 5s
+                      factor: 2
+                - name: CircuitBreaker
+                  args:
+                    name: fraudCircuit
+                    fallbackUri: forward:/fallback/fraud
+
+            - id: audit-service
+              uri: http://audit-service:8080
+              predicates:
+                - Path=/api/audits/**
+              filters:
+                - name: Retry
+                  args:
+                    retries: 2
+                    statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                    methods: GET,POST,PUT,DELETE
+                    series: SERVER_ERROR
+                    exceptions: java.net.ConnectException, java.net.NoRouteToHostException
+
+                    backoff:
+                      firstBackoff: 1s
+                      maxBackoff: 5s
+                      factor: 2
+                - name: CircuitBreaker
+                  args:
+                    name: auditCircuit
+                    fallbackUri: forward:/fallback/audit
+
+            - id: kyc-service
+              uri: http://kyc-service:8080
+              predicates:
+                - Path=/api/kyc/**
+              filters:
+                - name: Retry
+                  args:
+                    retries: 2
+                    statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                    methods: GET,POST,PUT,DELETE
+                    series: SERVER_ERROR
+                    exceptions: java.net.ConnectException, java.net.NoRouteToHostException
+
+                    backoff:
+                      firstBackoff: 1s
+                      maxBackoff: 5s
+                      factor: 2
+                - name: CircuitBreaker
+                  args:
+                    name: kycCircuit
+                    fallbackUri: forward:/fallback/kyc
+
+            - id: settings-service
+              uri: http://settings-service:8080
+              predicates:
+                - Path=/api/settings/**
+              filters:
+                - name: Retry
+                  args:
+                    retries: 2
+                    statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                    methods: GET,POST,PUT,DELETE
+                    series: SERVER_ERROR
+                    exceptions: java.net.ConnectException, java.net.NoRouteToHostException
+
+                    backoff:
+                      firstBackoff: 1s
+                      maxBackoff: 5s
+                      factor: 2
+                - name: CircuitBreaker
+                  args:
+                    name: settingsCircuit
+                    fallbackUri: forward:/fallback/settings
+
 cors:
   allowed-origins:
     - http://localhost:3000
     - http://localhost:8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j: # локальная конфигурация circuit breakers.
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED            # Тип окна для подсчёта ошибок.
+        slidingWindowSize: 20                     # Размер окна (количество вызовов) для расчёта failure-rate.
+        minimumNumberOfCalls: 5                   # Минимум вызовов, прежде чем рассчитает failure rate.
+        failureRateThreshold: 50                  # Порог (в %) ошибки при котором CB откроется.
+        waitDurationInOpenState: 30s              # Как долго circuit будет в OPEN состоянии до перехода в HALF_OPEN.
+        permittedNumberOfCallsInHalfOpenState: 5  # Сколько пробных вызовов разрешить в HALF_OPEN.
+    instances:
+      accountCircuit:
+        baseConfig: default # Привязка конкретного имени circuit к конфигу.
+      securityCircuit:
+        baseConfig: default
+      notificationCircuit:
+        baseConfig: default
+      fraudCircuit:
+        baseConfig: default
+      auditCircuit:
+        baseConfig: default
+      kycCircuit:
+        baseConfig: default
+      settingsCircuit:
+        baseConfig: default
