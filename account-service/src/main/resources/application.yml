@@ -13,8 +13,10 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none #update
     show-sql: true
+  flyway:
+    enabled: false
   kafka:
     bootstrap-servers: kafka:9092
 

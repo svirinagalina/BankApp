@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.frauddetection.account.domain.enumtype;
+package ru.katacademy.bank_app.accountservice.domain.enumtype;
 
 /**
  * Перечисление, представляющее возможные статусы банковского счета.

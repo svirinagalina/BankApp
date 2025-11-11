@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Дата: 02.07.2025
  */
 @SpringBootTest(properties = {
+        "spring.profiles.active=test",
         // Точка входа клиента/шаблона — наш EmbeddedKafka-брокер
         "spring.kafka.bootstrap-servers=${spring.embedded.kafka.brokers}",
         // Если у вас вдруг остались смещённые оффсеты, всегда начинать с earliest

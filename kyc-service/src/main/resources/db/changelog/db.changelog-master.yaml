@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: 001-create-table-kyc-request.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 002-create-table-kyc-event.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 003-create-table-kyc-document.yaml
+      relativeToChangelogFile: true

@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 /**
  * Класс-сущность, нужен для записи аудита в базу данных.
  * <p>
@@ -47,5 +49,20 @@ public class AuditEntryEntity {
 
     @Column(name = "user_id")
     private String userId;
-}
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AuditEntryEntity that = (AuditEntryEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(timestamp, that.timestamp)
+                && Objects.equals(eventType, that.eventType) && Objects.equals(message, that.message)
+                && Objects.equals(userId, that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, timestamp, eventType, message, userId);
+    }
+}

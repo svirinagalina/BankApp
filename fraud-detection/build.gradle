@@ -36,8 +36,8 @@ checkstyle {
 }
 repositories {
 	mavenCentral()
-	maven { url = 'https://repo.spring.io/milestone' }
-	maven { url = 'https://repo.spring.io/snapshot' }
+    maven { url = "https://repo.spring.io/milestone" }
+    maven { url = "https://repo.spring.io/snapshot" }
 }
 
 jacoco {
@@ -105,7 +105,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation(project(":bank-shared"))
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.3.0-M1'
+    implementation(project(":bank-shared"))
 
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
@@ -120,9 +121,6 @@ dependencies {
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:kafka'
-
-
-
 }
 
 spotbugs {

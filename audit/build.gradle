@@ -108,8 +108,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'com.github.spotbugs:spotbugs-annotations:4.8.3'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	runtimeOnly 'org.postgresql:postgresql'
 
 

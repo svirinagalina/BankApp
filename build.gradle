@@ -37,14 +37,14 @@ tasks.spotbugsMain {
 allprojects {
 	repositories {
 		mavenCentral()
-		maven { url "https://repo.spring.io/milestone" }
-		maven { url "https://repo.spring.io/snapshot" }
+		maven { url = "https://repo.spring.io/milestone" }
+		maven { url = "https://repo.spring.io/snapshot" }
 	}
 }
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.0.0-M1"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.0.0-M1"
 	}
 }
 

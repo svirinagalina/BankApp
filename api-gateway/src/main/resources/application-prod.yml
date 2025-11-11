@@ -1,4 +1,0 @@
-cors:
-  allowed-origins:
-    - https://app.bank.example.com
-    - https://dashboard.bank.example.com
