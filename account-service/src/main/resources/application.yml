@@ -19,6 +19,17 @@ spring:
     enabled: false
   kafka:
     bootstrap-servers: kafka:9092
+    topic:
+      transferCompleted: transfer-completed-events
+    producer: # Конфигурация продюсера (отправителя сообщений)
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer # Сериализатор для ключей сообщений (преобразует String в байты)
+      value-serializer: org.springframework.kafka.support.serializer.ErrorHandlingSerializer # Сериализатор для значений сообщений
+      retries: 3 # Количество попыток повторной отправки при неудаче
+      acks: all
+    consumer:
+      group-id: account-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
 
 cors:
   allowed-origins:

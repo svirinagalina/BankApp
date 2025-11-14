@@ -111,6 +111,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.liquibase:liquibase-core'
 
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
+    annotationProcessor 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
