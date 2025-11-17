@@ -14,4 +14,5 @@ public interface AccountService {
     AccountEntity createAccount(UserEntity user, AccountNumber accountNumber, Money initialBalance);
     AccountDto getById(Long id);
     void blockAccountById(Long id);
+    void transferMoney(Long fromAccountId, Long toAccountId, Money amount);
 }
