@@ -48,7 +48,6 @@ import java.nio.charset.StandardCharsets;
  * }
  * }</pre>
  */
-
 @Component
 public class JwtHealthIndicator implements HealthIndicator {
 

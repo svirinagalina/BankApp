@@ -6,30 +6,34 @@ spring:
     name: account-service
   profiles:
     active: dev
+
   datasource:
     url: jdbc:postgresql://localhost:5433/mainDB
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
-      ddl-auto: none #update
+      ddl-auto: none
     show-sql: true
+
   flyway:
     enabled: false
+
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:9092
     topic:
       transferCompleted: transfer-completed-events
-    producer: # Конфигурация продюсера (отправителя сообщений)
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer # Сериализатор для ключей сообщений (преобразует String в байты)
-      value-serializer: org.springframework.kafka.support.serializer.ErrorHandlingSerializer # Сериализатор для значений сообщений
-      retries: 3 # Количество попыток повторной отправки при неудаче
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
       acks: all
     consumer:
       group-id: account-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 cors:
   allowed-origins:
@@ -58,4 +62,4 @@ management:
           include: ping
 
 kyc-service:
-  url: ${KYC_SERVICE_URL:http://kyc-service:8080}
+  url: ${KYC_SERVICE_URL:http://localhost:8081}

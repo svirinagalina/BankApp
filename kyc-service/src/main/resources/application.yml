@@ -11,7 +11,7 @@ spring:
       - http://localhost:3000
       - http://localhost:8080
   datasource:
-    url: jdbc:postgresql://kyc-service_postgres:5432/kyc_verifications
+    url: jdbc:postgresql://postgres:5432/kyc_verifications
     username: root
     password: root
     driver-class-name: org.postgresql.Driver

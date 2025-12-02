@@ -1,7 +1,6 @@
 package ru.katacademy.securityservice.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -54,9 +53,6 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final Environment env;
-
-    @Value("${cors.allowed-origins:http://localhost:3000}")
-    private List<String> allowedOrigins;
 
     /**
      * Фильтр, извлекающий и валидирующий JWT‑токен из заголовка Authorization.

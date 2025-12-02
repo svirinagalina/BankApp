@@ -45,3 +45,7 @@ management:
           include: ping
         readiness:
           include: jwt,ping
+
+logging:
+  level:
+    ru.katacademy.security.JwtAuthenticationFilter: WARN
