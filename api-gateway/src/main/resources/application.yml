@@ -1,54 +1,44 @@
-# было 8765
 server:
   port: 8080
 
 spring:
   application:
     name: api-gateway
-  profiles:
-    active: dev
 
   cloud:
     gateway:
-      # параметры таймаутов для HTTP-клиента
-      httpclient:
-        connect-timeout: 5000 # Время в миллисекундах на установку TCP-соединения к бэкенду.
-        response-timeout: 10s # Таймаут ожидания полного ответа от бэкенда.
-        pool:
-          max-idle-time: 30s # Как долго connection pool будет считать соединение idle, после чего оно автоматически закрывается.
-
       server:
         webflux:
           default-filters:
-            - AddResponseHeader=X-Gateway, bank-gateway          # Добавляет заголовок идентификации шлюза к каждому ответу.
-            - AddResponseHeader=X-Content-Type-Options, nosniff  # Защита от MIME sniffing (безопасный заголовок).
-            - AddResponseHeader=X-XSS-Protection, 0              # Резервный заголовок для браузеров (legacy) — базовая XSS-профилактика.
-            - AddResponseHeader=X-Frame-Options, DENY            # Защита от clickjacking.
-            - AddResponseHeader=Referrer-Policy, no-referrer     # Политика реферера — скрывает Referer при переходах.
+            - AddResponseHeader=X-Gateway, bank-gateway
+            - AddResponseHeader=X-Content-Type-Options, nosniff
+            - AddResponseHeader=X-XSS-Protection, 0
+            - AddResponseHeader=X-Frame-Options, DENY
+            - AddResponseHeader=Referrer-Policy, no-referrer
             - AddResponseHeader=Strict-Transport-Security, max-age=31536000; includeSubDomains
 
           routes:
-            - id: account-service              # идентификатор маршрута.
-              uri: http://account-service:8080 # Целевой URL/хост сервиса (имя контейнера). Route перенаправляет сюда.
+            - id: account-service
+              uri: http://account-service:8080
               predicates:
-                - Path=/api/accounts/**        # Predicate — совпадение пути. Гарантирует, что все запросы по префиксу /api/accounts/** обрабатываются этим route.
+                - Path=/api/accounts/**
               filters:
-                # retry и circuit breaker
-                - name: Retry # при ошибке автоматически повторяет запрос к бэкенду.
-                  args:
-                    retries: 2 # Количество дополнительных попыток (retry attempts).
-                    statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR # Список HTTP-статусов, при которых retry срабатывает.
-                    methods: GET,POST,PUT,DELETE # HTTP-методы, для которых разрешены retries.
-                    series: SERVER_ERROR # Указывает на серии кодов, SERVER_ERROR = 5xx.
 
-                    backoff:            # Конфигурация backoff (задержек между попытками).
-                      firstBackoff: 1s  # Задержка перед первой повторной попыткой.
-                      maxBackoff: 5s    # Максимальная задержка между попытками.
-                      factor: 2         # Коэффициент увеличения задержки.
+                - name: Retry
+                  args:
+                    retries: 2
+                    statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                    methods: GET,POST,PUT,DELETE
+                    series: SERVER_ERROR
+
+                    backoff:
+                      firstBackoff: 1s
+                      maxBackoff: 5s
+                      factor: 2
                 - name: CircuitBreaker
                   args:
-                    name: accountCircuit # имя CircuitBreaker (соотносится с resilience4j.instances).
-                    fallbackUri: forward:/fallback/account # URI, на который gateway форвардит запрос.
+                    name: accountCircuit
+                    fallbackUri: forward:/fallback/account
 
             - id: security-service
               uri: http://security-service:8080
@@ -181,6 +171,11 @@ spring:
                   args:
                     name: settingsCircuit
                     fallbackUri: forward:/fallback/settings
+          httpclient:
+            connect-timeout: 5000
+            response-timeout: 10s
+            pool:
+              max-idle-time: 30s
 
 cors:
   allowed-origins:
@@ -196,19 +191,19 @@ management:
     health:
       show-details: always
 
-resilience4j: # локальная конфигурация circuit breakers.
+resilience4j:
   circuitbreaker:
     configs:
       default:
-        slidingWindowType: COUNT_BASED            # Тип окна для подсчёта ошибок.
-        slidingWindowSize: 20                     # Размер окна (количество вызовов) для расчёта failure-rate.
-        minimumNumberOfCalls: 5                   # Минимум вызовов, прежде чем рассчитает failure rate.
-        failureRateThreshold: 50                  # Порог (в %) ошибки при котором CB откроется.
-        waitDurationInOpenState: 30s              # Как долго circuit будет в OPEN состоянии до перехода в HALF_OPEN.
-        permittedNumberOfCallsInHalfOpenState: 5  # Сколько пробных вызовов разрешить в HALF_OPEN.
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 5
     instances:
       accountCircuit:
-        baseConfig: default # Привязка конкретного имени circuit к конфигу.
+        baseConfig: default
       securityCircuit:
         baseConfig: default
       notificationCircuit:

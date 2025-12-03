@@ -8,7 +8,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @EnableAspectJAutoProxy
-@SpringBootApplication
+@SpringBootApplication(
+        scanBasePackages = {
+                "ru.katacademy.bank_app.accountservice",
+                "ru.katacademy.bank_shared"
+        }
+)
 @EnableJpaRepositories(basePackages =
         "ru.katacademy.bank_app.accountservice.infrastructure.repository")
 @EntityScan(basePackages =

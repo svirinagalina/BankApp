@@ -20,7 +20,7 @@ import ru.katacademy.bank_shared.event.TransferCompletedEvent;
 public class FraudDetectionService {
 
     private final FraudDetectionConfig fdConfig;
-    private final AccountClient  accountClient;
+    private final AccountClient accountClient;
 
     @Autowired
     public FraudDetectionService(FraudDetectionConfig fdConfig, AccountClient accountClient) {

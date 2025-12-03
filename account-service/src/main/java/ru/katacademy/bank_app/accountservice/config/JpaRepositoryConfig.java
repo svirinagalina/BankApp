@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "ru.katacademy.bank_app.accountservice.domain.repository")
+        basePackages = "ru.katacademy.bank_app.accountservice.domain")
 public class JpaRepositoryConfig {
 }

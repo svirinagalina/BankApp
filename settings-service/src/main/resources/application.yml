@@ -2,13 +2,21 @@ server:
   port: 8080
 
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
   application:
     name: settings-service
+
   datasource:
-    url: jdbc:postgresql://postgres:5432/settings_db
+    url: jdbc:postgresql://localhost:5432/settings_db
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
+
   jpa:
     properties:
       hibernate:
@@ -17,18 +25,22 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
-  flyway: # добавил
+
+  flyway:
     enabled: true
     baseline-on-migrate: true
+
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
 cors:
   allowed-origins:
     - http://localhost:3000
     - http://localhost:8080
+
 springdoc:
   api-docs:
     enabled: true
@@ -49,3 +61,7 @@ management:
           include: db, kafka
         liveness:
           include: ping
+
+bank:
+  security:
+    enabled: false

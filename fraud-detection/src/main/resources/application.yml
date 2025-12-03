@@ -1,16 +1,43 @@
-
-user:
-  service:
-    #url: http://account-service:8080   # в docker-compose: http://account-service:8080
-    url: http://localhost:8080
-server:
-  port: 8082  # порт account-service
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+  application:
+    name: fraud-detection
+
   datasource:
-    url: jdbc:postgresql://postgres:5432/userDB
+    url: jdbc:postgresql://localhost:5434/userDB
     username: root
     password: root
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+server:
+  port: 8080
+
+user:
+  service:
+    url: ${USER_SERVICE_URL:http://localhost:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          include: db
+        liveness:
+          include: ping
+
+bank:
+  security:
+    enabled: false

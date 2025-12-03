@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public class AccountRepositoryImpl implements AccountRepository {
 
-    private final AccountJpaRepository  accountJpaRepository;
+    private final AccountJpaRepository accountJpaRepository;
 
     public AccountRepositoryImpl(AccountJpaRepository accountJpaRepository) {
         this.accountJpaRepository = accountJpaRepository;
@@ -28,7 +28,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public Account save(Account account) {
-        final AccountEntity  accountEntity = AccountMapper.toEntity(account);
+        final AccountEntity accountEntity = AccountMapper.toEntity(account);
         final AccountEntity savedAccountEntity = accountJpaRepository.save(accountEntity);
         return AccountMapper.toDomain(savedAccountEntity);
 

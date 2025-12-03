@@ -16,6 +16,13 @@ spring:
   cloud:
     config:
       enabled: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+
 feign:
   client:
     config:
@@ -40,4 +47,8 @@ logging:
     org.springframework: INFO
 kyc-service:
   url: http://kyc-service:8080
+
+bank:
+  security:
+    enabled: false
 

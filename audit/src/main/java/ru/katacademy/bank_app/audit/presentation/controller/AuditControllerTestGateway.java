@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Контроллер для обработки HTTP-запросов
- *
+ * <p>
  * Обрабатывает маршруты "/api/audits".
  * В рамках работы с использованием API Gateway.
  */
@@ -17,7 +17,7 @@ public class AuditControllerTestGateway {
 
     /**
      * Тестовый endpoint, для проверки маршрутизации через API Gateway.
-     *
+     * <p>
      * Возвращает HTTP с текстом, что запрос успешно прошёл через gateway
      * и достиг audit-service.
      *
