@@ -36,3 +36,7 @@ springdoc:
 kyc:
   topics:
     events: kyc-events
+
+bank:
+  security:
+    enabled: false

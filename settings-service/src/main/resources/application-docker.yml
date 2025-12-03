@@ -45,3 +45,7 @@ management:
           include: db, kafka
         liveness:
           include: ping
+
+bank:
+  security:
+    enabled: false

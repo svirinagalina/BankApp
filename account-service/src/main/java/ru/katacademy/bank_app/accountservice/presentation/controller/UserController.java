@@ -17,6 +17,7 @@ import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.InvalidEmailException;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_shared.security.*;
 
 /**
  * Контроллер для управления пользователями через REST API.
@@ -83,11 +84,9 @@ public class UserController {
                                            Authentication authentication) {
 
         try {
-            // Получаем имя пользователя из аутентификации
             final String username = authentication.getName();
             final Long currentUserId = Long.valueOf(username);
 
-            // Проверяем права доступа
             final boolean isOwner = currentUserId.equals(id);
             final boolean isAdmin = authentication.getAuthorities()
                     .stream()
@@ -97,7 +96,6 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
-            // Если есть права доступа, получаем пользователя
             final UserDto userDto = userService.getById(id);
             return ResponseEntity.ok(userDto);
 

@@ -31,3 +31,7 @@ management:
           include: db
         liveness:
           include: ping
+
+bank:
+  security:
+    enabled: false

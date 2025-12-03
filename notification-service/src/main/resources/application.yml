@@ -27,3 +27,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+bank:
+  security:
+    enabled: false

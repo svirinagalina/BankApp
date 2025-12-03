@@ -4,8 +4,6 @@ server:
 spring:
   application:
     name: account-service
-  profiles:
-    active: dev
 
   datasource:
     url: jdbc:postgresql://localhost:5433/mainDB
@@ -63,3 +61,7 @@ management:
 
 kyc-service:
   url: ${KYC_SERVICE_URL:http://localhost:8081}
+
+bank:
+  security:
+    enabled: false

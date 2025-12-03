@@ -99,7 +99,6 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.7.2'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
     implementation 'org.springframework.kafka:spring-kafka'
-    implementation 'org.springframework.security:spring-security-crypto'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation(project(":bank-shared"))
     implementation 'org.springframework.boot:spring-boot-starter-aop'
@@ -125,7 +124,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.h2database:h2'
     testImplementation 'org.mockito:mockito-core'
-    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 jacocoTestReport {
