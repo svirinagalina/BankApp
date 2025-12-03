@@ -87,9 +87,9 @@ public class KycServiceController {
     })
     @PostMapping(path = "/{userId}/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> uploadKycDocument(
-            @Parameter(description = "ID пользователя для загрузки документа", example = "123") @PathVariable Long userId,
+            @Parameter(description = "ID пользователя для загрузки документа", example = "1") @PathVariable Long userId,
             @Parameter(description = "Тип документа (passport, utility_bill и т.д.)", example = "passport") @RequestParam String type,
-            @Parameter(description = "Файл документа для загрузки") @RequestParam MultipartFile file) {
+            @Parameter(description = "Файл документа для загрузки в формате .jpg не более 10мб") @RequestParam MultipartFile file) {
         kycRequestService.uploadDocument(userId, type, file);
         return ResponseEntity.accepted().build();
     }
