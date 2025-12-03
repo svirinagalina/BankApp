@@ -1,10 +1,11 @@
-package ru.katacademy.securityservice.util;
+package ru.katacademy.bank_shared.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -12,9 +13,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * JwtUtil —  генерация и валидация JWT-токенов.
+ * JwtUtil — генерация и валидация JWT-токенов.
  *
- *  - Создаёт подписанные JWT-токены на основе заданного subject(например имя пользователя);
  *  - Проверяет валидность (подпись, срок действия);
  *  - Извлекает из токена данные (claims);
  *  - Использует алгоритм HMAC-SHA256 и секрет, заданный в application.yml.
@@ -34,6 +34,10 @@ import java.util.stream.Collectors;
  * Дата: 10.06.2025
  */
 @Component
+@ConditionalOnProperty(
+        name = "bank.security.enabled",
+        havingValue = "true"
+)
 public class JwtUtil {
 
     private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
@@ -88,23 +92,6 @@ public class JwtUtil {
             log.info("JWT signing key initialized");
         }
         return signingKey;
-    }
-
-    /**
-     * Генерирует новый JWT-токен для заданного пользователя (subject).
-     *
-     * @param subject логин или ID пользователя
-     * @return строка токена (compact JWT)
-     */
-    public String generateToken(String subject, Long userId, Collection<String> roles) {
-        return Jwts.builder()
-                .setSubject(subject)
-                .claim("userId", userId)
-                .claim("roles", roles)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-                .signWith(getSigningKey())
-                .compact();
     }
 
     /**

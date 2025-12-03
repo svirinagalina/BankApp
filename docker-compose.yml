@@ -30,6 +30,7 @@ services:
       - "9092:9092"
       - "9094:9094"
     environment:
+      KAFKA_LOG4J_OPTS: "-Dlog4j.rootLogger=ERROR -Dlog4j.logger.org.apache.kafka=ERROR"
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_NODE_ID: 1
       KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
@@ -142,35 +143,35 @@ services:
       retries: 3
       start_period: 20s
 
-  security-service:
-    build:
-      context: ./security-service
-      dockerfile: Dockerfile
-    container_name: security-service
-    ports:
-      - "8085:8080"
-    environment:
-      JWT_SECRET: "testsecretkeyfortestpurposesonly1234567890"
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/security_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      LOGGING_LEVEL_ROOT: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
-      SPRING_MAIN_BANNER_MODE: "off"
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
+#  security-service:
+#    build:
+#      context: ./security-service
+#      dockerfile: Dockerfile
+#    container_name: security-service
+#    ports:
+#      - "8085:8080"
+#    environment:
+#      JWT_SECRET: "testsecretkeyfortestpurposesonly1234567890"
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/security_db
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: root
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#      SPRING_PROFILES_ACTIVE: docker
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#      LOGGING_LEVEL_ROOT: WARN
+#      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+#      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+#      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+#      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+#      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+#      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+#      SPRING_MAIN_BANNER_MODE: "off"
+#    healthcheck:
+#      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 3
+#      start_period: 20s
 
   api-gateway:
     build:
@@ -245,6 +246,8 @@ services:
     ports:
       - "8088:8080"
     environment:
+      JWT_SECRET: urjwtsecretvalue
+      JWT_EXPIRATION_MS: 3600000
       SPRING_PROFILES_ACTIVE: docker
 
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/account_db

@@ -5,15 +5,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
-@SpringBootApplication(scanBasePackages = "ru.katacademy.securityservice",
-		exclude = {
-				DataSourceAutoConfiguration.class,
-				HibernateJpaAutoConfiguration.class
-		})
+@SpringBootApplication(scanBasePackages = {"ru.katacademy.securityservice",
+        "ru.katacademy.bank_shared"},
+        exclude = {
+                DataSourceAutoConfiguration.class,
+                HibernateJpaAutoConfiguration.class
+        })
 public class SecurityServiceApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(SecurityServiceApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(SecurityServiceApplication.class, args);
+    }
 }

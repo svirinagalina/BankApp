@@ -1,4 +1,4 @@
-package ru.katacademy.securityservice.presentation.controller;
+package ru.katacademy.securityservice.presentation.controller.ping;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
