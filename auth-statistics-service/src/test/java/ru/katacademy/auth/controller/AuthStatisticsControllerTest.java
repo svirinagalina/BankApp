@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.katacademy.auth.application.dto.LoginAttemptDto;
-import ru.katacademy.auth.controller.AuthStatisticsController;
 import ru.katacademy.auth.domain.entity.LoginAttempt;
 import ru.katacademy.auth.domain.repository.LoginAttemptAuthRepository;
 import ru.katacademy.auth.infrastructure.mapper.LoginAttemptMapper;

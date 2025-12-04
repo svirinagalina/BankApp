@@ -1,0 +1,70 @@
+package ru.katacademy.bank_app.settingsservice.domain.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+/**
+ * Сущность настроек пользователя.
+ * <p>
+ * Хранит персональные настройки пользователя, такие как язык интерфейса,
+ * тема оформления и параметры уведомлений.
+ * </p>
+ * @author Sheffy
+ */
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
+public class UserSettings {
+
+    /**
+     * Уникальный идентификатор пользователя
+     */
+    private long userId;
+
+    /**
+     * Флаг включения уведомлений
+     */
+    private boolean notificationEnabled;
+
+    /**
+     * Язык интерфейса
+     */
+    private String language;
+
+    /**
+     * Флаг темной темы интерфейса
+     */
+    private boolean darkModeEnabled;
+
+    /**
+     * Дата и время создания настроек
+     */
+    private LocalDateTime createdAt;
+
+    /**
+     * Дата и время последнего обновления настроек
+     */
+    private LocalDateTime updatedAt;
+
+    /**
+     * JPA callback-метод, вызываемый перед созданием новой записи.
+     * Устанавливает даты создания и обновления.
+     */
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * JPA callback-метод, вызываемый перед обновлением записи.
+     * Обновляет дату изменения.
+     */
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+}
