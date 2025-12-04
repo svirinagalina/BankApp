@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.0'
+    id 'org.springframework.boot' version '3.3.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'checkstyle'
 	id("com.github.spotbugs") version "6.1.11"
@@ -42,25 +42,12 @@ repositories {
 
 
 dependencies {
-
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation(project(":bank-shared"))
-
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-
-	// Testing
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation'com.h2database:h2'
-
-	// Testcontainers для Kafka
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:kafka:1.19.3'
-
 }
 
 

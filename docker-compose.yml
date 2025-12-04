@@ -4,7 +4,7 @@ services:
   postgres:
     image: postgres:15
     container_name: bankapp-postgres
-    restart: always
+    restart: unless-stopped
     ports:
       - "5434:5432"
     environment:
@@ -25,12 +25,11 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.7.1
     container_name: kafka
-    restart: unless-stopped
+#    restart: unless-stopped
     ports:
       - "9092:9092"
       - "9094:9094"
     environment:
-      KAFKA_LOG4J_OPTS: "-Dlog4j.rootLogger=ERROR -Dlog4j.logger.org.apache.kafka=ERROR"
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_NODE_ID: 1
       KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
@@ -51,12 +50,15 @@ services:
       CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
 
       KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_LOG4J_OPTS: "-Dlog4j.configuration=file:/etc/kafka/log4j.properties"
     volumes:
       - kafka_data:/var/lib/kafka/data
+      - ./config/kafka/log4j.properties:/etc/kafka/log4j.properties
 
   minio:
     image: minio/minio
     container_name: minio
+    restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: minioadmin
@@ -76,6 +78,7 @@ services:
       context: ./fraud-detection
       dockerfile: Dockerfile
     container_name: fraud-detection
+#    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -114,6 +117,7 @@ services:
       context: ./notification-service
       dockerfile: Dockerfile
     container_name: notification-service
+#    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -148,6 +152,7 @@ services:
 #      context: ./security-service
 #      dockerfile: Dockerfile
 #    container_name: security-service
+##    restart: unless-stopped
 #    ports:
 #      - "8085:8080"
 #    environment:
@@ -178,6 +183,7 @@ services:
       context: ./api-gateway
       dockerfile: Dockerfile
     container_name: api-gateway
+#    restart: unless-stopped
     ports:
       - "8765:8080"
     environment:
@@ -199,6 +205,7 @@ services:
       context: ./audit
       dockerfile: Dockerfile
     container_name: audit-service
+#    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -238,6 +245,7 @@ services:
       context: ./account-service
       dockerfile: Dockerfile
     container_name: account-service
+#    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -246,8 +254,6 @@ services:
     ports:
       - "8088:8080"
     environment:
-      JWT_SECRET: urjwtsecretvalue
-      JWT_EXPIRATION_MS: 3600000
       SPRING_PROFILES_ACTIVE: docker
 
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/account_db
@@ -288,6 +294,7 @@ services:
       context: ./kyc-service
       dockerfile: Dockerfile
     container_name: kyc-service
+#    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -322,11 +329,12 @@ services:
       retries: 3
       start_period: 20s
 
-  settings-service:
+  user-settings-service:
     build:
-      context: ./settings-service
+      context: ./user-settings-service
       dockerfile: Dockerfile
-    container_name: settings-service
+    container_name: user-settings-service
+#    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
