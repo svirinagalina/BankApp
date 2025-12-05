@@ -1,7 +1,7 @@
 package ru.katacademy.bank_app.accountservice.application.service;
 
-import org.apache.kafka.common.KafkaException;
 import org.springframework.dao.DataAccessException;
+import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_app.accountservice.domain.entity.LoginAttemptEntry;
