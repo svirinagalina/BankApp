@@ -17,7 +17,6 @@ public class NotificationServiceImpl implements NotificationService {
     private TransferNotificationTemplate transferNotificationTemplate;
     private NotificationSender notificationSender;
 
-
     // Внедрение зависимостей, для методов
     public NotificationServiceImpl(PasswordChangedTemplate passwordChangedTemplate, TransferNotificationTemplate transferNotificationTemplate
             , WelcomeTemplate welcomeTemplate, NotificationSender notificationSender) {
