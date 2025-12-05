@@ -1,8 +1,8 @@
 package ru.katacademy.notification.application.service;
 
 import org.springframework.stereotype.Service;
+import ru.katacademy.bank_shared.event.TransferCompletedEvent;
 import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
-import ru.katacademy.bank_shared.event.notification.TransferCompletedEvent;
 import ru.katacademy.bank_shared.event.notification.UserRegisteredEvent;
 import ru.katacademy.notification.application.sender.NotificationSender;
 import ru.katacademy.notification.application.template.PasswordChangedTemplate;
@@ -28,7 +28,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     }
 
-
     @Override
     public void handleUserRegisteredEvent(UserRegisteredEvent event) {
         String text = welcomeTemplate.welcome(event.getUsername());
@@ -38,10 +37,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void handleTransferCompletedEvent(TransferCompletedEvent event) {
-        String text = transferNotificationTemplate.transferMessage(event.getUsername(), event.getAmount(), event.getRecipient());
+        String text = transferNotificationTemplate.transferMessage(event.accountNumberFrom().accountNumber(), String.valueOf(event.money().amount()), event.accountNumberTo().accountNumber());
         notificationSender.send(text);
-
-
     }
 
     @Override

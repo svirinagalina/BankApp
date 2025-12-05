@@ -1,7 +1,7 @@
 package ru.katacademy.notification.application.service;
 
+import ru.katacademy.bank_shared.event.TransferCompletedEvent;
 import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
-import ru.katacademy.bank_shared.event.notification.TransferCompletedEvent;
 import ru.katacademy.bank_shared.event.notification.UserRegisteredEvent;
 
 /**
