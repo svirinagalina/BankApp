@@ -10,24 +10,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
+import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
+import ru.katacademy.bank_shared.exception.InvalidEmailException;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_shared.security.*;
 
 /**
  * Контроллер для управления пользователями через REST API.
+ *
+ * <p>Методы:</p>
+ * <ul>
+ *     <li><b>POST /api/users/register</b> — регистрация нового пользователя</li>
+ *     <li><b>GET /api/users/{id}</b> — получение пользователя по ID</li>
+ * </ul>
+ *
+ * <p>Автор: Бачагов В.О.</p>
+ * <p>Дата: 2025-04-18</p>
  */
 @RestController
 @RequestMapping("/api/users")
-@Validated // Добавлено для валидации параметров методов
 public class UserController {
 
     private final UserService userService;
@@ -37,6 +42,14 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Регистрирует нового пользователя.
+     *
+     * @param cmd команда с данными для регистрации
+     * @return DTO зарегистрированного пользователя
+     * @throws EmailAlreadyTakenException если email уже зарегистрирован
+     * @throws InvalidEmailException      если Email не валидный
+     */
     @Operation(summary = "Регистрация пользователя", description = "Создаёт нового пользователя с переданными данными.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Пользователь успешно зарегистрирован",
@@ -52,6 +65,13 @@ public class UserController {
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
 
+    /**
+     * Получает пользователя по ID.
+     *
+     * @param id идентификатор пользователя
+     * @return DTO пользователя
+     * @throws UserNotFoundException если пользователь не найден
+     */
     @Operation(summary = "Получение пользователя по ID", description = "Возвращает информацию о пользователе по его ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь найден",
@@ -60,7 +80,7 @@ public class UserController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getById(@PathVariable @jakarta.validation.constraints.Min(1) Long id,
+    public ResponseEntity<UserDto> getById(@PathVariable Long id,
                                            Authentication authentication) {
 
         try {

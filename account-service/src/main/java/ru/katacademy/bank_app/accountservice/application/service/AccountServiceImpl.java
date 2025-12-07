@@ -1,6 +1,5 @@
 package ru.katacademy.bank_app.accountservice.application.service;
 
-import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.katacademy.bank_app.accountservice.application.dto.AccountDto;
@@ -88,7 +87,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         // Проверяем статус аккаунтов
-        if (fromAccount.getStatus() != AccountStatus.ACTIVE || toAccount.getStatus() != AccountStatus.ACTIVE) {
+        if (fromAccount.getStatus() != AccountStatus.ACTIVE | toAccount.getStatus() != AccountStatus.ACTIVE) {
             throw new AccountStatusException("Аккаунт не активен");
         }
 
@@ -109,10 +108,5 @@ public class AccountServiceImpl implements AccountService {
                 LocalDateTime.now()
         );
         transferEventPublisher.publish(event); // Публикуем событие в Kafka
-    }
-
-    @Override
-    public AccountEntity createAccount(Long userId, String accountNumber, BigDecimal initialBalance, String currency) {
-        return null;
     }
 }
