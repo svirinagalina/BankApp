@@ -8,14 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.katacademy.bank_app.accountservice.adapters.web.response.AccountDtoRequest;
 import ru.katacademy.bank_app.accountservice.application.dto.AccountDto;
+
 import ru.katacademy.bank_app.accountservice.domain.service.AccountService;
 import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_shared.exception.MaxAccountsExceededException;
@@ -40,16 +36,6 @@ public class AccountController {
                     responseCode = "201",
                     description = "Счет успешно создан",
                     content = @Content(schema = @Schema(implementation = AccountEntity.class))
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Ошибка валидации входных данных",
-                    content = @Content
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Пользователь не найден",
-                    content = @Content
             ),
             @ApiResponse(
                     responseCode = "500",
