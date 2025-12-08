@@ -30,14 +30,16 @@ import java.util.UUID;
 @Table(name = "kyc_request")
 @Getter
 @Setter
+@ToString(exclude = {"userId"})
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class KycRequestEntity {
     @Id
     @UuidGenerator
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(name = "id", updatable = false, nullable = false)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(name = "user_id", unique = true, nullable = false)

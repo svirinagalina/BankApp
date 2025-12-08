@@ -1,11 +1,7 @@
 package ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import java.time.LocalDateTime;
 
 /**
@@ -16,14 +12,16 @@ import java.time.LocalDateTime;
 @Table(name = "login_attempts")
 @Getter
 @Setter
+@ToString(exclude = {"ip", "userAgent"})
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class LoginAttemptEntryEntity {
 
     /** Идентификатор записи в БД. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     /** Идентификатор пользователя, сделавшего попытку. */

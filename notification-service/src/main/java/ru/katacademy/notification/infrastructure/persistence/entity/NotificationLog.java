@@ -1,6 +1,7 @@
 package ru.katacademy.notification.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -8,10 +9,15 @@ import java.time.LocalDateTime;
  * Сущность для хранения истории отправленных уведомлений.
  */
 @Entity
+@Getter
+@Setter
+@ToString(exclude = {"message"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "notification_log")
 public class NotificationLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     private String message;
@@ -24,30 +30,6 @@ public class NotificationLog {
 
     public NotificationLog(String message, LocalDateTime timestamp) {
         this.message = message;
-        this.timestamp = timestamp;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 }
