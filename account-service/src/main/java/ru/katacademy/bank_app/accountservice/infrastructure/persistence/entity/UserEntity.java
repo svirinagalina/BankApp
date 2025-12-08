@@ -1,14 +1,11 @@
 package ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_shared.conventor.EmailAttributeConverter;
 import ru.katacademy.bank_shared.valueobject.Email;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +15,10 @@ import java.util.List;
  * Соответствует доменному объекту {@link User}.
  */
 @Entity
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"passwordHash", "accounts"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor(force = true)
 @Table(name = "users")
 public class UserEntity {
@@ -26,6 +26,7 @@ public class UserEntity {
     /** Идентификатор записи в БД. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private final Long id;
 
     /** Роль пользователя. */
@@ -52,7 +53,6 @@ public class UserEntity {
 
     /** Банковские аккаунты пользователя. */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
     private List<AccountEntity> accounts = new ArrayList<>();
 
     public UserEntity(Long id, UserRole role, String fullName, Email email, String passwordHash, LocalDateTime createdAt) {

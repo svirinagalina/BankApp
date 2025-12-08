@@ -1,11 +1,7 @@
 package ru.katacademy.bank_app.settingsservice.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -20,14 +16,22 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserSettingsEntity {
 
     @Id
+    @EqualsAndHashCode.Include
     private Long userId;
+
     private boolean notificationEnabled;
+
     private String language;
+
     private boolean darkModeEnabled;
+
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
     /**

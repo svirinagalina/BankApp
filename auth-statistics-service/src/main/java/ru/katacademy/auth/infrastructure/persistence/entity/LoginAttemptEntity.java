@@ -1,12 +1,9 @@
 package ru.katacademy.auth.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.katacademy.auth.domain.entity.LoginAttempt;
 import ru.katacademy.auth.infrastructure.mapper.LoginAttemptMapper;
-
 import java.time.LocalDateTime;
 
 /**
@@ -26,10 +23,13 @@ import java.time.LocalDateTime;
 @Table(name = "auth_login_attempts")
 @Getter
 @Setter
+@ToString(exclude = {"userAgent", "ip"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 public class LoginAttemptEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(name = "user_id", nullable = false)

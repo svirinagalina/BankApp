@@ -1,16 +1,13 @@
 package ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import ru.katacademy.bank_app.accountservice.domain.entity.Account;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_shared.conventor.AccountNumberConverter;
 import ru.katacademy.bank_shared.conventor.MoneyConverter;
 import ru.katacademy.bank_shared.valueobject.AccountNumber;
 import ru.katacademy.bank_shared.valueobject.Money;
-
 import java.time.LocalDateTime;
 
 /**
@@ -20,13 +17,16 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"user"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@NoArgsConstructor(force = true)
 @Table(name = "accounts")
 public class AccountEntity {
 
     /** Идентификатор записи в БД. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     /** Номер аккаунта. */
@@ -51,9 +51,6 @@ public class AccountEntity {
     /** Время создания аккаунта. */
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    public AccountEntity() {
-    }
 
     public AccountEntity(AccountNumber accountNumber, UserEntity user, Money balance, AccountStatus status, LocalDateTime createdAt) {
         this.accountNumber = accountNumber;
