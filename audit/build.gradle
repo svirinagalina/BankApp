@@ -22,29 +22,51 @@ configurations {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spring.io/milestone' }
+    maven { url = 'https://repo.spring.io/snapshot' }
+}
+
 checkstyle {
     toolVersion = '10.12.3'
     configFile = rootProject.file('config/checkstyle/checkstyle.xml')
 }
 
 jacoco {
-    toolVersion = "0.8.11" // Версия JaCoCo
+    toolVersion = "0.8.11"
 }
 
+dependencies {
+    implementation platform(project(":bank-bom"))
+    testImplementation platform(project(":bank-bom"))
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'com.github.spotbugs:spotbugs-annotations'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    implementation(project(":bank-shared"))
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'com.h2database:h2'
+}
 
 test {
-    useJUnitPlatform {
-    }
-
+    useJUnitPlatform()
 }
 
 jacocoTestReport {
     dependsOn test
-    reports {
-        html.required = true // Локальный HTML-отчёт
-    }
-
-
+    reports { html.required = true }
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, includes: [
@@ -55,7 +77,6 @@ jacocoTestReport {
     }
 }
 
-// Проверка минимального покрытия
 jacocoTestCoverageVerification {
     dependsOn jacocoTestReport
     afterEvaluate {
@@ -69,59 +90,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             element = 'CLASS'
-            limit {
-                minimum = 0.80 // Требуемое покрытие (80%)
-            }
-            println "Проверяемые классы/пакеты:"
-            classDirectories.each { dir ->
-                println " - ${dir}"
-            }
+            limit { minimum = 0.80 }
         }
     }
-}
-
-import com.github.spotbugs.snom.Confidence
-import com.github.spotbugs.snom.Effort
-
-tasks.spotbugsMain {
-    reports.create("html") {
-        ignoreFailures = false
-        effort = Effort.DEFAULT
-        reportLevel = Confidence.LOW.LOW
-        required = true
-        outputLocation = file("$rootDir/build/reports/spotbugs/spotbugs.html")
-        setStylesheet("fancy-hist.xsl")
-    }
-}
-
-repositories {
-    mavenCentral()
-    maven { url = 'https://repo.spring.io/milestone' }
-    maven { url = 'https://repo.spring.io/snapshot' }
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.kafka:spring-kafka'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'com.github.spotbugs:spotbugs-annotations:4.8.3'
-    implementation 'org.flywaydb:flyway-core'
-    implementation 'org.flywaydb:flyway-database-postgresql'
-    implementation(project(":bank-shared"))
-
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-
-	runtimeOnly 'org.postgresql:postgresql'
-
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
-    testImplementation 'com.h2database:h2'
-
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
 }

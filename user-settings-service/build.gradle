@@ -23,7 +23,7 @@ configurations {
 
 checkstyle {
     toolVersion = '10.12.3'
-    configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
 }
 
 repositories {
@@ -37,77 +37,67 @@ jacoco {
 }
 
 test {
-    finalizedBy jacocoTestReport
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
     dependsOn test
-    reports {
-        html.required = true // Локальный HTML-отчёт
-    }
+    reports { html.required = true }
 
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, includes: [
-                    "ru/katacademy/bank_app/settingsservice/domain/entity/*",
-                    "ru/katacademy/bank_app/settingsservice/application/service/*",
+                    "ru/katacademy/bank_app/user-settings-service/domain/entity/**",
+                    "ru/katacademy/bank_app/user-settings-service/application/service/**"
             ])
         }))
     }
 }
 
-// Проверка минимального покрытия
 jacocoTestCoverageVerification {
     dependsOn jacocoTestReport
+
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, includes: [
-                    "ru/katacademy/bank_app/settingsservice/domain/entity/*",
-                    "ru/katacademy/bank_app/settingsservice/application/service/*",
+                    "ru/katacademy/bank_app/user-settings-service/domain/entity/**",
+                    "ru/katacademy/bank_app/user-settings-service/application/service/**"
             ])
         }))
     }
+
     violationRules {
         rule {
-            element = 'CLASS' // или 'PACKAGE'
-            limit {
-                minimum = 0.80 // Требуемое покрытие (80%)
-            }
-            println "Проверяемые классы/пакеты:"
-            classDirectories.each { dir ->
-                println " - ${dir}"
-            }
+            element = 'CLASS'
+            limit { minimum = 0.80 }
         }
     }
 }
 
 dependencies {
+    implementation platform(project(":bank-bom"))
+    testImplementation platform(project(":bank-bom"))
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation(project(":bank-shared"))
+    implementation project(":bank-shared")
+
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
 
-    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // Database
     runtimeOnly 'org.postgresql:postgresql'
 
-    // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.h2database:h2'
 }
 
 bootJar {
-    archiveFileName = 'app.jar'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
+    archiveFileName = "app.jar"
 }
