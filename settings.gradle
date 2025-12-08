@@ -19,4 +19,5 @@ include("account-service")
 include("api-gateway")
 include("auth-statistics-service")
 include("kyc-service")
+include("bank-bom")
 
