@@ -13,11 +13,11 @@ import ru.katacademy.bank_app.accountservice.application.dto.ErrorResponse;
 import ru.katacademy.bank_shared.exception.ValidationException;
 
 /**
- * Глобальный обработчик исключений для всего приложения.
+ * Обработчик исключений для account-service
  * Обрабатывает ошибки валидации (@Valid) и другие исключения.
  */
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class AccountServiceExceptionHandler {
 
     /**
      * Обрабатывает ошибки валидации, когда @Valid не проходит.

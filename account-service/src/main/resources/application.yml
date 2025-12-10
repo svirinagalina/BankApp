@@ -71,3 +71,8 @@ kyc-service:
 bank:
   security:
     enabled: false
+
+logging:
+  level:
+    org.springframework.context: DEBUG
+    org.springframework.beans: DEBUG

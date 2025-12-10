@@ -27,8 +27,5 @@ public class ErrorResponse {
     private String error;
     private String message;
     private String path;
-    private List<String> errors;
-
-    // Для детализации ошибок по полям (опционально)
-    private Object details;
+    private List<String> errors; //это список сообщений об ошибках и его будет достаточно!!!!
 }
