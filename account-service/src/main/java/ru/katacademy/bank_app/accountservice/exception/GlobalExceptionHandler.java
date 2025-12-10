@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(
             MethodArgumentNotValidException ex) {
 
-        List<String> errors = ex.getBindingResult()
+        final List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(error -> String.format("%s: %s",
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
                         error.getDefaultMessage()))
                 .collect(Collectors.toList());
 
-        ErrorResponse response = ErrorResponse.builder()
+        final ErrorResponse response = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
@@ -52,14 +52,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(
             ConstraintViolationException ex) {
 
-        List<String> errors = ex.getConstraintViolations()
+        final List<String> errors = ex.getConstraintViolations()
                 .stream()
                 .map(violation -> String.format("%s: %s",
                         violation.getPropertyPath().toString(),
                         violation.getMessage()))
                 .collect(Collectors.toList());
 
-        ErrorResponse response = ErrorResponse.builder()
+        final ErrorResponse response = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleOldValidationException(
             ValidationException ex) {
 
-        ErrorResponse response = ErrorResponse.builder()
+        final ErrorResponse response = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
