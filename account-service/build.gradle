@@ -19,49 +19,32 @@ repositories {
     mavenCentral()
 }
 
-dependencyManagement {
-    imports {
-        // ⚠️ Самая стабильная версия Spring Cloud
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.5"
-    }
-}
-
 dependencies {
-    // --- Spring Boot Core ---
+    implementation platform(project(":bank-bom"))
+    testImplementation platform(project(":bank-bom"))
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // --- SpringDoc ---
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui"
 
-    // --- Kafka ---
     implementation 'org.springframework.kafka:spring-kafka'
 
-    // --- Feign Client ---
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
-    // --- Liquibase ---
     implementation 'org.liquibase:liquibase-core'
 
-    // --- Shared modules ---
     implementation(project(":bank-shared"))
     implementation(project(":audit"))
 
-    // --- DB ---
     runtimeOnly 'org.postgresql:postgresql'
 
-    // --- Lombok ---
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // --- SpotBugs annotations (не обязательно) ---
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
-    annotationProcessor 'com.github.spotbugs:spotbugs-annotations:4.8.3'
-
-    // --- Testing ---
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.h2database:h2'
     testImplementation 'org.mockito:mockito-core'

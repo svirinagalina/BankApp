@@ -5,12 +5,9 @@ plugins {
     id("com.github.spotbugs") version "6.1.11"
 }
 
-// Отрубаем автоматическую загрузку jackson-module-scala
 configurations.all {
     exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-scala_2.13'
 }
-
-
 
 group = 'ru.katacademy.notification'
 version = '0.0.1-SNAPSHOT'
@@ -32,17 +29,14 @@ tasks.withType(Test).configureEach {
     }
 }
 
-
 tasks.spotbugsMain {
     reports {
         html {
             required = true
-            // Исправлено: теперь outputLocation указывает на файл, а не на директорию
             outputLocation = file("$rootDir/build/reports/spotbugs/spotbugsMain.html")
             stylesheet = 'fancy-hist.xsl'
         }
     }
-    // reportLevel и effort убраны, используются дефолтные значения
 }
 
 repositories {
@@ -52,20 +46,22 @@ repositories {
 }
 
 dependencies {
+    implementation platform(project(":bank-bom"))
+    testImplementation platform(project(":bank-bom"))
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.kafka:spring-kafka'
-    implementation 'org.postgresql:postgresql:42.7.3'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.liquibase:liquibase-core'
 
     implementation project(':bank-shared')
 
-    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // Тестирование
+    runtimeOnly 'org.postgresql:postgresql'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

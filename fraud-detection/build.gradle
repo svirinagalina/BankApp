@@ -1,140 +1,128 @@
 plugins {
-	id 'java'
+    id 'java'
     id 'org.springframework.boot' version '3.3.4'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id 'checkstyle'
-	id 'com.github.spotbugs'
-	id'jacoco'
-}
-dependencyManagement {
-	imports {
-		mavenBom 'com.fasterxml.jackson:jackson-bom:2.17.0'
-	}
-}
-
-configurations.all {
-	exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-scala_2.13'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'checkstyle'
+    id 'com.github.spotbugs'
+    id 'jacoco'
 }
 
 group = 'ru.katacademy.bank_app'
 version = '0.0.1-SNAPSHOT'
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-checkstyle {
-	toolVersion = '10.12.3'
-	configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
-}
+
 repositories {
-	mavenCentral()
+    mavenCentral()
     maven { url = "https://repo.spring.io/milestone" }
     maven { url = "https://repo.spring.io/snapshot" }
-}
-
-jacoco {
-	toolVersion = "0.8.11"
-}
-
-test {
-	useJUnitPlatform()
-	finalizedBy jacocoTestReport // Генерировать отчёт после тестов
-}
-
-jacocoTestReport {
-	dependsOn test
-	reports {
-		html.required = true // Локальный HTML-отчёт
-	}
-
-
-	afterEvaluate {
-		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it, includes: [
-					"ru/katacademy/bank_app/frauddetection/account/domain/**",
-					"ru/katacademy/bank_app/frauddetection/service/**",
-			])
-		}))
-	}
-}
-
-// Проверка минимального покрытия (опционально)
-jacocoTestCoverageVerification {
-	dependsOn jacocoTestReport
-	afterEvaluate {
-		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it, includes: [
-					"ru/katacademy/bank_app/frauddetection/account/domain/**",
-					"ru/katacademy/bank_app/frauddetection/service/**",
-			])
-		}))
-	}
-	violationRules {
-		rule {element = 'CLASS'
-			limit {
-				minimum = 0.80 // Требуемое покрытие (80%)
-			}
-			println "Проверяемые классы/пакеты:"
-			classDirectories.each { dir ->
-				println " - ${dir}"
-			}
-		}
-	}
-}
-
-dependencies {
-    // SpotBugs
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
-    // Spring Boot Starters
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.springframework.kafka:spring-kafka'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
-    implementation(project(":bank-shared"))
-
-    // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    // Database
-    runtimeOnly 'org.postgresql:postgresql'
-	// Testing
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'com.h2database:h2'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:kafka'
-}
-
-spotbugs {
-	toolVersion = '4.8.3'
-	ignoreFailures = false
-	showStackTraces = true
-}
-
-tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
-	reports {
-		html.required.set(true)
-		html.outputLocation.set(file("$buildDir/reports/spotbugs.html"))
-	}
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.3"
-        mavenBom "com.fasterxml.jackson:jackson-bom:2.17.0"
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    all {
+        exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-scala_2.13'
+    }
+}
+
+checkstyle {
+    toolVersion = '10.12.3'
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports { html.required = true }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, includes: [
+                    "ru/katacademy/bank_app/frauddetection/account/domain/**",
+                    "ru/katacademy/bank_app/frauddetection/service/**"
+            ])
+        }))
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, includes: [
+                    "ru/katacademy/bOank_app/frauddetection/account/domain/**",
+                    "ru/katacademy/bank_app/frauddetection/service/**"
+            ])
+        }))
+    }
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit { minimum = 0.80 }
+        }
+    }
+}
+
+dependencies {
+    implementation platform(project(":bank-bom"))
+    testImplementation platform(project(":bank-bom"))
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+    implementation project(":bank-shared")
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    compileOnly 'com.github.spotbugs:spotbugs-annotations'
+    annotationProcessor 'com.github.spotbugs:spotbugs-annotations'
+
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.h2database:h2'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:kafka'
+}
+
+spotbugs {
+    toolVersion = '4.8.3'
+    ignoreFailures = false
+    showStackTraces = true
+}
+
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+    reports {
+        html.required.set(true)
+        html.outputLocation.set(file("$buildDir/reports/spotbugs.html"))
     }
 }
 
 bootJar {
-	archiveFileName = 'app.jar'
+    archiveFileName = 'app.jar'
 }

@@ -42,8 +42,6 @@ allprojects {
     }
 }
 
-dependencies {}
-
 tasks.named('test') {
     useJUnitPlatform()
 }
