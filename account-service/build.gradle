@@ -35,7 +35,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // --- SpringDoc ---
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0"
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
     // --- Kafka ---
     implementation 'org.springframework.kafka:spring-kafka'
