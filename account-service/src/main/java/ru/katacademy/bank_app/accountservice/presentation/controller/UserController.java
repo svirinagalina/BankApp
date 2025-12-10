@@ -10,19 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.InvalidEmailException;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
+import ru.katacademy.bank_shared.security.*;
 
 /**
  * Контроллер для управления пользователями через REST API.
@@ -38,7 +33,6 @@ import ru.katacademy.bank_shared.exception.UserNotFoundException;
  */
 @RestController
 @RequestMapping("/api/users")
-@Validated // Добавлено для валидации параметров методов
 public class UserController {
 
     private final UserService userService;
@@ -86,7 +80,7 @@ public class UserController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getById(@PathVariable @jakarta.validation.constraints.Min(1) Long id,
+    public ResponseEntity<UserDto> getById(@PathVariable Long id,
                                            Authentication authentication) {
 
         try {
