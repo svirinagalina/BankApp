@@ -1,11 +1,12 @@
-package ru.katacademy.kycservice.infrastructure.config;
+package ru.katacademy.bank_app.accountservice.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+//Временное решение для разрешения на doc
 @Configuration
-public class CorsFilterConfig implements WebMvcConfigurer {
+public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -15,3 +16,4 @@ public class CorsFilterConfig implements WebMvcConfigurer {
                 .allowedHeaders("*");
     }
 }
+

@@ -371,7 +371,6 @@ services:
       retries: 3
       start_period: 20s
 
-
   minio-bootstrap:
     image: minio/mc
     depends_on:
@@ -385,7 +384,22 @@ services:
       mc mb -p local/kyc-files || true
     restart: "no"
 
-
+  swagger-aggregator:
+    image: swaggerapi/swagger-ui:latest
+    container_name: swagger_aggregator
+    ports:
+      - "80:8080"
+    environment:
+      URL: ''
+      URLS: '[{"url":"http://localhost:8082/v3/api-docs", "name":"User Settings Service"}, {"url":"http://localhost:8084/v3/api-docs", "name":"Kyc Service"}, {"url":"http://localhost:8088/v3/api-docs", "name":"Account Service"}]'
+      URLS_PRIMARY_NAME: 'Kyc Service'
+    depends_on:
+      account-service:
+        condition: service_healthy
+      kyc-service:
+        condition: service_healthy
+      user-settings-service:
+        condition: service_healthy
 
 volumes:
   postgres_data:
