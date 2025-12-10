@@ -3,23 +3,14 @@ package ru.katacademy.bank_app.accountservice.adapters.web.response;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.UserEntity;
 import ru.katacademy.bank_shared.valueobject.AccountNumber;
 import ru.katacademy.bank_shared.valueobject.Money;
 
-/**
- * DTO запроса для создания нового банковского счета.
- * Содержит данные, необходимые для создания счета.
- *
- * @author [Ваше Имя]
- * @version 1.0
- */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter
+@Getter
 public class AccountDtoRequest {
 
     /**
