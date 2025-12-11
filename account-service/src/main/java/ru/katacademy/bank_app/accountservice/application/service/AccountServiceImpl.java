@@ -1,5 +1,7 @@
 package ru.katacademy.bank_app.accountservice.application.service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.katacademy.bank_app.accountservice.application.dto.AccountDto;
@@ -9,18 +11,17 @@ import ru.katacademy.bank_app.accountservice.domain.entity.Account;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_app.accountservice.domain.mapper.AccountMapper;
 import ru.katacademy.bank_app.accountservice.domain.service.AccountService;
-
 import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.AccountEntity;
 import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.UserEntity;
 import ru.katacademy.bank_app.accountservice.infrastructure.repository.AccountJpaRepository;
-
 import ru.katacademy.bank_shared.event.TransferCompletedEvent;
-import ru.katacademy.bank_shared.exception.*;
+import ru.katacademy.bank_shared.exception.AccountNotFoundException;
+import ru.katacademy.bank_shared.exception.AccountNotFoundExceptionResolver;
+import ru.katacademy.bank_shared.exception.AccountStatusException;
+import ru.katacademy.bank_shared.exception.InsufficientFundsException;
+import ru.katacademy.bank_shared.exception.MaxAccountsExceededException;
 import ru.katacademy.bank_shared.valueobject.AccountNumber;
 import ru.katacademy.bank_shared.valueobject.Money;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * Реализация сервиса банковских аккаунтов.
