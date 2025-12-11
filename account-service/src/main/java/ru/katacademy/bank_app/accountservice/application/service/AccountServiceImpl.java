@@ -105,5 +105,4 @@ public class AccountServiceImpl implements AccountService {
         );
         transferEventPublisher.publish(event); // Публикуем событие в Kafka
     }
-
 }
