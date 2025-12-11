@@ -16,7 +16,7 @@ import ru.katacademy.bank_shared.exception.ValidationException;
  * Обработчик исключений для account-service
  * Обрабатывает ошибки валидации (@Valid) и другие исключения.
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "ru.katacademy.bank_app.accountservice")
 public class AccountServiceExceptionHandler {
 
     /**
