@@ -12,10 +12,6 @@ spring:
     name: kyc-service
   jackson:
     time-zone: UTC
-  cors:
-    allowed-origins:
-      - http://localhost:3000
-      - http://localhost:8080
   datasource:
     url: jdbc:postgresql://postgres:5432/kyc_verifications
     username: root
@@ -33,12 +29,7 @@ minio:
   secret-key: minioadmin
   bucket: kyc-documents
   auto-create-bucket: true
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
+
 kyc:
   topics:
     events: kyc-events
