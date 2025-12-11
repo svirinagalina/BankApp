@@ -395,11 +395,11 @@ services:
       URLS_PRIMARY_NAME: 'Kyc Service'
     depends_on:
       account-service:
-        condition: service_healthy
+        condition: service_started
       kyc-service:
-        condition: service_healthy
+        condition: service_started
       user-settings-service:
-        condition: service_healthy
+        condition: service_started
 
 volumes:
   postgres_data:
