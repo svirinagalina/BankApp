@@ -3,6 +3,8 @@ package ru.katacademy.bank_app.accountservice.infrastructure.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.katacademy.bank_app.accountservice.application.dto.KycRequestDTO;
 
 
@@ -37,6 +39,9 @@ public interface KycClient {
      *  Автор: Урбагаев Е.Д.
      *  Дата: 2025-09-09
      */
-    @GetMapping("/kyc/{userId}")
+    @GetMapping("/api/kyc/{userId}")
     KycRequestDTO getKyc(@PathVariable("userId") Long userId);
+
+    @PostMapping("/api/kyc/start")
+    void startKyc(@RequestParam("userId") Long userId);
 }
