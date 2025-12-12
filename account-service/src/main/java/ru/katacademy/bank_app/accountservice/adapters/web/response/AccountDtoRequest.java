@@ -18,7 +18,7 @@ public class AccountDtoRequest {
      * Не может быть null.
      */
     @NotNull(message = "Пользователь не может быть пустым")
-    @Valid // Важно! Для валидации вложенных объектов
+    @Valid
     private UserEntity user;
 
     /**
@@ -26,7 +26,7 @@ public class AccountDtoRequest {
      * Не может быть null.
      */
     @NotNull(message = "Номер счета не может быть пустым")
-    @Valid // Важно! Для валидации вложенных объектов
+    @Valid
     private AccountNumber number;
 
     /**
@@ -34,7 +34,7 @@ public class AccountDtoRequest {
      * Не может быть null, должен быть >= 0.
      */
     @NotNull(message = "Начальный баланс не может быть пустым")
-    @Valid // Важно! Для валидации вложенных объектов
+    @Valid
     @DecimalMin(value = "0.0", message = "Начальный баланс не может быть отрицательным")
     private Money initialBalance;
 

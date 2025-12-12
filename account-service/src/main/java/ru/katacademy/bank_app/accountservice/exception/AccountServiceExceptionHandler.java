@@ -9,11 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.katacademy.bank_app.accountservice.application.dto.ErrorResponse;
+import ru.katacademy.bank_app.accountservice.application.dto.ErrorResponseDto;
 import ru.katacademy.bank_shared.exception.ValidationException;
 
 /**
- * Глобальный обработчик исключений для всего приложения.
+ * Обработчик исключений для account-service.
  * Обрабатывает ошибки валидации (@Valid) и другие исключения.
  */
 @RestControllerAdvice(basePackages = "ru.katacademy.bank_app.accountservice")
@@ -23,7 +23,7 @@ public class AccountServiceExceptionHandler {
      * Обрабатывает ошибки валидации, когда @Valid не проходит.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(
+    public ResponseEntity<ErrorResponseDto> handleValidationException(
             MethodArgumentNotValidException ex) {
 
         final List<String> errors = ex.getBindingResult()
@@ -34,7 +34,7 @@ public class AccountServiceExceptionHandler {
                         error.getDefaultMessage()))
                 .collect(Collectors.toList());
 
-        final ErrorResponse response = ErrorResponse.builder()
+        final ErrorResponseDto response = ErrorResponseDto.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
@@ -49,7 +49,7 @@ public class AccountServiceExceptionHandler {
      * Обрабатывает ConstraintViolationException для валидации параметров методов.
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolationException(
+    public ResponseEntity<ErrorResponseDto> handleConstraintViolationException(
             ConstraintViolationException ex) {
 
         final List<String> errors = ex.getConstraintViolations()
@@ -59,7 +59,7 @@ public class AccountServiceExceptionHandler {
                         violation.getMessage()))
                 .collect(Collectors.toList());
 
-        final ErrorResponse response = ErrorResponse.builder()
+        final ErrorResponseDto response = ErrorResponseDto.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
@@ -74,10 +74,10 @@ public class AccountServiceExceptionHandler {
      * Обрабатывает старые ValidationException из ValidationAspect.
      */
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ErrorResponse> handleOldValidationException(
+    public ResponseEntity<ErrorResponseDto> handleOldValidationException(
             ValidationException ex) {
 
-        final ErrorResponse response = ErrorResponse.builder()
+        final ErrorResponseDto response = ErrorResponseDto.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())

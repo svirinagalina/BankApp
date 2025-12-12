@@ -16,4 +16,3 @@ public interface AccountService {
     void blockAccountById(Long id);
     void transferMoney(Long fromAccountId, Long toAccountId, Money amount);
 }
-

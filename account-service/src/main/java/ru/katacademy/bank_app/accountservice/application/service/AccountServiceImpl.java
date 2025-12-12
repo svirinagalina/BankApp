@@ -92,7 +92,6 @@ public class AccountServiceImpl implements AccountService {
         fromAccount.withdraw(amount);
         toAccount.deposit(amount);
 
-        // Сохраняем обновленные счета в базе данных
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
 
@@ -103,6 +102,6 @@ public class AccountServiceImpl implements AccountService {
                 amount,
                 LocalDateTime.now()
         );
-        transferEventPublisher.publish(event); // Публикуем событие в Kafka
+        transferEventPublisher.publish(event);
     }
 }
