@@ -36,6 +36,7 @@ import java.time.LocalDateTime;
  */
 @Setter
 @Getter
+@Deprecated
 public class PasswordChangedEvent {
     private Long userId;
     private LocalDateTime timestamp;

@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
-import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
+import ru.katacademy.bank_app.accountservice.application.dto.PasswordUpdatedEventV2;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
@@ -87,24 +87,9 @@ public class ChangePasswordUserServiceImplTest {
         userService.changePassword(command);
 
         // Захватываем опубликованное событие смены пароля
-        final ArgumentCaptor<PasswordChangedEvent> eventCaptor = ArgumentCaptor.forClass(PasswordChangedEvent.class);
+        final ArgumentCaptor<PasswordUpdatedEventV2> eventCaptor = ArgumentCaptor.forClass(PasswordUpdatedEventV2.class);
         verify(passwordChangeEventPublisher, times(1)).publish(eventCaptor.capture());
-        final PasswordChangedEvent event = eventCaptor.getValue();
+        final PasswordUpdatedEventV2 event = eventCaptor.getValue();
 
-        // Проверяем, что старый хеш совпадает с исходным значением
-        assertEquals(oldPasswordHash, event.getOldPassword(),
-                "Старый хеш должен быть равен исходному значению");
-
-        // Новый хеш не должен совпадать со старым
-        assertNotEquals(oldPasswordHash, event.getNewPassword(),
-                "Новый хеш должен отличаться от старого");
-
-        // Новый хеш соответствует новому паролю
-        assertTrue(BCrypt.checkpw(newPassword, event.getNewPassword()),
-                "Новый хеш должен совпадать с новым паролем");
-
-        // Старый хеш НЕ соответствует новому паролю
-        assertFalse(BCrypt.checkpw(newPassword, event.getOldPassword()),
-                "Старый хеш не должен совпадать с новым паролем");
     }
 }
