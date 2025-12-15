@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         // Публикуем событие о смене пароля
-        final PasswordUpdatedEventV2 event = new PasswordUpdatedEventV2 (
+        final PasswordUpdatedEventV2 event = new PasswordUpdatedEventV2(
                 user.getId()
         );
         passwordChangeEventPublisher.publish(event);
