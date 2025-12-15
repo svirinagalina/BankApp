@@ -33,7 +33,40 @@ public class AccountController {
 
     @Operation(
             summary = "Создание нового счета",
-            description = "Создает новый банковский счет для указанного пользователя"
+            description = "Создает новый банковский счет для указанного пользователя",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = AccountDtoRequest.class),
+                            examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                    name = "Пример запроса",
+                                    value = """
+                                            {
+                                              "user": {
+                                                "id": 1,
+                                                "role": "USER",
+                                                "fullName": "James Gosling",
+                                                "email": { "value": "jago@gmail.com" },
+                                                "passwordHash": "hash",
+                                                "createdAt": "2025-12-15T10:00:00",
+                                                "accounts": []
+                                              },
+                                              "number": {
+                                                "accountNumber": "12345678911234567891"
+                                              },
+                                              "initialBalance": {
+                                                "amount": 1000,
+                                                "currency": {
+                                                  "code": "RUB",
+                                                  "name": "Russian Ruble",
+                                                  "scale": 2
+                                                }
+                                              }
+                                            }
+                                            """
+                            )
+                    )
+            )
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -56,6 +89,7 @@ public class AccountController {
                     description = "Ошибка сервера"
             )
     })
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody AccountDtoRequest req) {
         try {
