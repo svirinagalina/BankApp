@@ -50,7 +50,23 @@ public class UserController {
      * @throws EmailAlreadyTakenException если email уже зарегистрирован
      * @throws InvalidEmailException      если Email не валидный
      */
-    @Operation(summary = "Регистрация пользователя", description = "Создаёт нового пользователя с переданными данными.")
+    @Operation(summary = "Регистрация пользователя", description = "Создаёт нового пользователя с переданными данными.",
+    requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            content = @Content(
+                    schema = @Schema(implementation = UserDto.class),
+                    examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                            name = "Пример запроса",
+                            value = """
+                                    {
+                                      "fullName": "James Gosling",
+                                      "email": "jago@gmail.com",
+                                      "password": "james1111"
+                                    }
+                                    """
+                    ))
+            )
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Пользователь успешно зарегистрирован",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))),

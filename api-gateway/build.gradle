@@ -18,7 +18,7 @@ repositories {
 }
 
 ext {
-    set('springCloudVersion', "2025.0.0")
+    set('springCloudVersion', "2023.0.3")
 }
 
 bootJar {
@@ -30,7 +30,7 @@ dependencies {
     testImplementation platform(project(":bank-bom"))
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux'
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
     implementation 'org.springframework.retry:spring-retry'
     implementation 'io.github.resilience4j:resilience4j-spring-boot3'
