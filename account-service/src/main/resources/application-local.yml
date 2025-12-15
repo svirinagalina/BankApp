@@ -14,29 +14,28 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
-        default_schema: account_service_local
+        default_schema: account-service_local
 
   flyway:
     enabled: false
 
-# Если kafka нужна, то снимите комменты, а также навестите файл - KafkaHealthIndicator!
-#  kafka:
-#    bootstrap-servers: localhost:9092
-#    topic:
-#      transferCompleted: transfer-completed-events
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      retries: 3
-#      acks: all
-#    consumer:
-#      group-id: account-service-group
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  kafka:
+    bootstrap-servers: #localhost:9092
+    topic:
+      transferCompleted: transfer-completed-events
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+      acks: all
+    consumer:
+      group-id: account-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 cors:
   allowed-origins:

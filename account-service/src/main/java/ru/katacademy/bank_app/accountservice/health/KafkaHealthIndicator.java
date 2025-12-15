@@ -22,20 +22,9 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * Компонент активен только вне профиля {@code test} (см. аннотацию {@link Profile}).
  * </p>
- *
- * <br>
- * Автор: Aleksandr Bronnikov
- * <br>
- * Дата: 11.12.2025
- * <p>
- *
- * @Profile("docker") - Временное решение для профиля, если kafka у вас не настроена.
- * Предыдущее значение профиля в @Profile("!test") - если нужна kafka и в локальном профиле тоже!
- * Если выберете "!test" без рабочей kafka, локальное приложение будет работать не корректно и actuator/health не будет отрабатывать
- * </p>
  */
 @Component
-@Profile("docker")
+@Profile("!test")
 public class KafkaHealthIndicator implements HealthIndicator {
 
     /**
