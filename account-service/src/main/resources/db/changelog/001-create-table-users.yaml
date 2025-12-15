@@ -22,7 +22,7 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     nullable: false
-                    unique: true
+                    unique: false
               - column:
                   name: full_name
                   type: varchar(100)

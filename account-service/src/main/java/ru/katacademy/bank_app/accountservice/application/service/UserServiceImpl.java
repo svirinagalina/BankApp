@@ -89,10 +89,8 @@ public class UserServiceImpl implements UserService {
         final User newUser = UserFactory.create(cmd);
         final User savedUser = userRepository.save(newUser);
 
-        final var kyc = kycClient.getKyc(savedUser.getId());
-        if (kyc == null || !kyc.status().isApproved()) {
-            throw new KycException("User is not KYC-verified");
-        }
+        kycClient.startKyc(savedUser.getId());
+
         return userMapper.toDto(savedUser);
     }
 

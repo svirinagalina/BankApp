@@ -14,6 +14,7 @@ import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
 import ru.katacademy.bank_app.accountservice.application.service.UserServiceImpl;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
+import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.UserEntity;
 import ru.katacademy.bank_shared.enums.KycStatus;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
@@ -74,17 +75,15 @@ class UserServiceImplTest {
 
         final UserDto expectedDto = new UserDto(1L, fullName, email, UserRole.USER);
 
-        final KycRequestDTO kycRequestDTO = new KycRequestDTO(1L, KycStatus.APPROVED);
-
         when(userRepository.findByEmail(any(Email.class))).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(userMapper.toDto(savedUser)).thenReturn(expectedDto);
-        when(kycClient.getKyc(anyLong())).thenReturn(kycRequestDTO);
-
 
         final UserDto result = userService.register(cmd);
 
         assertThat(result).isEqualTo(expectedDto);
+
+        verify(kycClient).startKyc(1L);
     }
 
     // проверяем, что если пользователь с таким email уже существует, выбрасываем исключение
@@ -252,9 +251,6 @@ class UserServiceImplTest {
         );
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-        // Мокаем KYC
-        when(kycClient.getKyc(1L)).thenReturn(new KycRequestDTO(1L, KycStatus.APPROVED));
-
         // Мокаем маппинг User -> UserDto
         final UserDto userDtoMock = new UserDto(
                 1L,
@@ -272,30 +268,35 @@ class UserServiceImplTest {
         assertEquals(1L, userDto.id());
         assertEquals("approved@test.com", userDto.email());
         assertEquals(UserRole.USER, userDto.role());
-    }
 
-    @Test
-    void register_fails_whenKycRejected() {
-        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
-        when(userRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(kycClient.getKyc(null)).thenReturn(new KycRequestDTO(1L, KycStatus.REJECTED));
-
-        final var command = new RegisterUserCommand("Test Testov", "rejected@test.com", "Password123");
-
-        final DomainException ex = assertThrows(DomainException.class, () -> userService.register(command));
-        assert ex.getMessage().equals("User is not KYC-verified");
+        verify(kycClient).startKyc(1L);
     }
 
     @Test
     void register_fails_whenKycServiceUnavailable() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
-        when(userRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
-        when(kycClient.getKyc(null)).thenThrow(new KycServiceUnavailableException("Verification service temporarily unavailable"));
+        when(userRepository.save(any())).thenAnswer(invocation -> {
+            final User u = invocation.getArgument(0);
+            return new User(
+                    1L,
+                    u.getRole(),
+                    u.getFullName(),
+                    u.getEmail(),
+                    u.getPasswordHash(),
+                    u.getCreatedAt()
+            );
+        });
+
+        doThrow(new KycServiceUnavailableException("Verification service temporarily unavailable"))
+                .when(kycClient).startKyc(anyLong());
 
         final var command = new RegisterUserCommand("Test Testov", "fail@test.com", "Password123");
 
-        final KycServiceUnavailableException ex = assertThrows(KycServiceUnavailableException.class,
-                () -> userService.register(command));
-        assert ex.getMessage().equals("Verification service temporarily unavailable");
+        final var ex = assertThrows(
+                KycServiceUnavailableException.class,
+                () -> userService.register(command)
+        );
+
+        assertEquals("Verification service temporarily unavailable", ex.getMessage());
     }
 }

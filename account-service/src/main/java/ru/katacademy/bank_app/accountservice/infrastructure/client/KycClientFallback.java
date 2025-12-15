@@ -10,4 +10,9 @@ public class KycClientFallback implements KycClient {
     public KycRequestDTO getKyc(Long userId) {
         throw new KycServiceUnavailableException("Verification service temporarilly unavailable");
     }
+
+    @Override
+    public void startKyc(Long userId) {
+        throw new KycServiceUnavailableException("KYC service temporarily unavailable");
+    }
 }
