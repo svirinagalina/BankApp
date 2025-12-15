@@ -9,10 +9,8 @@ import java.sql.Statement;
  * Автор: Aleksandr Bronnikov
  * <br>
  * Дата: 15.12.2025
- *
  * <p>Автоматическое создание базы данных при запуске сервиса</p>
  */
-
 public class DatabaseInitializer {
 
     public static void main(final String[] args) {
