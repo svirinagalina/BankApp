@@ -33,11 +33,6 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
-cors:
-  allowed-origins:
-    - http://localhost:3000
-    - http://localhost:8080
-
 management:
   endpoints:
     web:
