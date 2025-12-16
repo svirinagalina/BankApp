@@ -2,7 +2,7 @@ package ru.katacademy.bank_app.accountservice.infrastructure.messaging;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
+import ru.katacademy.bank_app.accountservice.application.dto.PasswordUpdatedEventV2;
 import ru.katacademy.bank_shared.kafka.KafkaProducer;
 
 /**
@@ -28,7 +28,7 @@ public class PasswordChangeEventPublisher {
 
     private final KafkaProducer producer;
 
-    public void publish(PasswordChangedEvent event) {
+    public void publish(PasswordUpdatedEventV2 event) {
         final String message = String.format("Была совершена смена пароля: %s", event);
         producer.send("user-change-password-event", message);
     }

@@ -5,7 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
-import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
+import ru.katacademy.bank_app.accountservice.application.dto.PasswordUpdatedEventV2;
 import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
@@ -165,10 +165,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         // Публикуем событие о смене пароля
-        final PasswordChangedEvent event = new PasswordChangedEvent(
-                user.getId(),
-                oldPasswordHash,  // значение пароля до изменений
-                user.getPasswordHash()  // передаем обновленное значение
+        final PasswordUpdatedEventV2 event = new PasswordUpdatedEventV2(
+                user.getId()
         );
         passwordChangeEventPublisher.publish(event);
     }

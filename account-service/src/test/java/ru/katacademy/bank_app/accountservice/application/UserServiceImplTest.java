@@ -7,10 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
-import ru.katacademy.bank_app.accountservice.application.dto.KycRequestDTO;
-import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
-import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
-import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
+import ru.katacademy.bank_app.accountservice.application.dto.*;
 import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
 import ru.katacademy.bank_app.accountservice.application.service.UserServiceImpl;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
@@ -175,7 +172,7 @@ class UserServiceImplTest {
 
         verify(userRepository).save(user);
         assertThat(BCrypt.checkpw(newPassword, user.getPasswordHash())).isTrue();
-        verify(eventPublisher).publish(any(PasswordChangedEvent.class));
+        verify(eventPublisher).publish(any(PasswordUpdatedEventV2.class));
     }
 
     // Тест проверяет, что метод changePassword() выбрасывает исключение InvalidPasswordException,

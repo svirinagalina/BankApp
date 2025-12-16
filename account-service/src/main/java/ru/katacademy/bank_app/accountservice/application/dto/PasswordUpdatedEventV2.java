@@ -1,12 +1,9 @@
 package ru.katacademy.bank_app.accountservice.application.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 /**
- * Класс, {@code PasswordChangedEvent} представляющий событие изменения пароля пользователя.
+ * Класс, {@code PasswordUpdatedEventV2} представляющий событие обновление пароля пользователя.
  *
  * <p>Используется для хранения информации о
  * событии, в котором пользователь изменяет свой пароль.</p>
@@ -15,16 +12,13 @@ import java.time.LocalDateTime;
  * <ul>
  *     <li><b>userId</b> - идентификатор пользователя, чей пароль изменился;</li>
  *     <li><b>timestamp</b> - временная метка, когда произошло изменение;</li>
- *     <li><b>oldPassword</b> - старый пароль пользователя;</li>
- *     <li><b>newPassword</b> - новый пароль пользователя.</li>
  * </ul>
  *
  * <p>Класс поддерживает два конструктора:</p>
  * <ul>
  *     <li>Конструктор по умолчанию, который устанавливает временную
  *         метку на текущее время;</li>
- *     <li>Конструктор, принимающий параметры: идентификатор пользователя,
- *         старый пароль и новый пароль.</li>
+ *     <li>Конструктор, принимающий параметры: идентификатор пользователя.</li>
  * </ul>
  *
  * <p>Доступ к полям осуществляется с помощью методов-геттеров и
@@ -34,23 +28,18 @@ import java.time.LocalDateTime;
  * Автор: Колпаков А.С..
  * Дата: 2025-05-07
  */
-@Setter
-@Getter
-@Deprecated
-public class PasswordChangedEvent {
+
+
+public class PasswordUpdatedEventV2 {
     private Long userId;
     private LocalDateTime timestamp;
-    private String oldPassword;
-    private String newPassword;
 
-    public PasswordChangedEvent() {
+    public PasswordUpdatedEventV2() {
         this.timestamp = LocalDateTime.now();
     }
 
-    public PasswordChangedEvent(Long userId, String oldPassword, String newPassword) {
+    public PasswordUpdatedEventV2(Long userId) {
         this();
         this.userId = userId;
-        this.oldPassword = oldPassword;
-        this.newPassword = newPassword;
     }
 }
