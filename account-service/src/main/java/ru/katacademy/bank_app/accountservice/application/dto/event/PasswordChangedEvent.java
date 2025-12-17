@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.accountservice.application.dto;
+package ru.katacademy.bank_app.accountservice.application.dto.event;
 
 import lombok.Getter;
 import lombok.Setter;

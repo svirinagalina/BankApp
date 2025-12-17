@@ -2,7 +2,7 @@ package ru.katacademy.bank_app.accountservice.infrastructure.messaging;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
+import ru.katacademy.bank_app.accountservice.application.dto.event.PasswordChangedEvent;
 import ru.katacademy.bank_shared.kafka.KafkaProducer;
 
 /**

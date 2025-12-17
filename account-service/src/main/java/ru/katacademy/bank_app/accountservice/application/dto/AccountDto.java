@@ -1,6 +1,7 @@
 package ru.katacademy.bank_app.accountservice.application.dto;
 
 import ru.katacademy.bank_app.accountservice.domain.enumtype.AccountStatus;
+import ru.katacademy.bank_shared.valueobject.AccountNumber;
 import ru.katacademy.bank_shared.valueobject.Money;
 
 /**
@@ -17,9 +18,8 @@ import ru.katacademy.bank_shared.valueobject.Money;
  */
 public record AccountDto(
         Long id,
-        String accountNumber,
+        AccountNumber accountNumber,  // Доменный объект ✓
         Long userId,
-        Money balance,
-        AccountStatus status
-) {
-}
+        Money balance,                // Доменный объект ✓
+        AccountStatus status          // Доменный объект ✓
+) {}

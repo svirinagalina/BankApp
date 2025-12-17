@@ -1,12 +1,11 @@
 package ru.katacademy.bank_app.accountservice.domain.factory;
 
+import java.time.LocalDateTime;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import ru.katacademy.bank_shared.valueobject.Email;
-import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
+import ru.katacademy.bank_app.accountservice.adapters.web.request.user.RegisterUserRequest;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
-
-import java.time.LocalDateTime;
+import ru.katacademy.bank_shared.valueobject.Email;
 
 /**
  * Фабрика для создания экземпляров {@link User} из команд и DTO.
@@ -17,13 +16,17 @@ import java.time.LocalDateTime;
  * Дата: 2025-04-18
  */
 public class UserFactory {
+    private UserFactory() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     /**
      * Создает нового пользователя из команды регистрации.
      *
      * @param cmd команда с данными для регистрации
      * @return новый пользователь
      */
-    public static User create(RegisterUserCommand cmd) {
+    public static User create(RegisterUserRequest cmd) {
 
         final String passwordHash = BCrypt.hashpw(cmd.password(), BCrypt.gensalt());
 

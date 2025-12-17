@@ -5,8 +5,8 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
-import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
-import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
+import ru.katacademy.bank_app.accountservice.application.dto.event.PasswordChangedEvent;
+import ru.katacademy.bank_app.accountservice.adapters.web.request.user.RegisterUserRequest;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Auditable(action = "Регистрация аккаунта")
     @Transactional
     @Override
-    public UserDto register(RegisterUserCommand cmd) throws DomainException {
+    public UserDto register(RegisterUserRequest cmd) throws DomainException {
 
         final Optional<User> existingUser = userRepository.findByEmail(new Email(cmd.email()));
         if (existingUser.isPresent()) {
@@ -196,7 +196,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Пароль не может быть Null");
         }
 
-        final String regex = "^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$";
+        final String regex = "^(?=.*\\d)(?=.*[a-zA-Z])[a-zA-Z0-9]{8,}$";
         return input.matches(regex);
     }
 }

@@ -22,7 +22,7 @@ public class AccountMapper {
     public AccountDto toDto(Account account) {
         return new AccountDto(
                 account.getId(),
-                account.getAccountNumber().value(),
+                account.getAccountNumber(),
                 account.getUser().getId(),
                 account.getBalance(),
                 account.getStatus()

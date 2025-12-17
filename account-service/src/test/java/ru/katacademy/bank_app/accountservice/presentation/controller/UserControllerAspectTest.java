@@ -18,7 +18,7 @@
 //import org.springframework.test.context.ActiveProfiles;
 //import org.springframework.test.web.servlet.MockMvc;
 //import org.springframework.test.web.servlet.MvcResult;
-//import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
+//import ru.katacademy.bank_app.accountservice.adapters.web.request.user.RegisterUserRequest;
 //import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 //import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
 //
@@ -84,7 +84,7 @@
 //     */
 //    @Test
 //    void whenValidInput_thenReturns200() throws Exception {
-//        final RegisterUserCommand validCommand = new RegisterUserCommand("Andrey", "andrey@mail.com", "12345678");
+//        final RegisterUserRequest validCommand = new RegisterUserRequest("Andrey", "andrey@mail.com", "12345678");
 //
 //        mockMvc.perform(post("/api/users/register")
 //                        .contentType(MediaType.APPLICATION_JSON)
@@ -102,7 +102,7 @@
 //    @Test
 //    void whenInvalidInput_thenReturns400AndErrors() throws Exception {
 //
-//        final RegisterUserCommand invalidCommand = new RegisterUserCommand("", "andreymail.com", "");
+//        final RegisterUserRequest invalidCommand = new RegisterUserRequest("", "andreymail.com", "");
 //
 //        final MvcResult result = mockMvc.perform(post("/api/users/register")
 //                        .contentType(MediaType.APPLICATION_JSON)

@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
-import ru.katacademy.bank_app.accountservice.application.dto.PasswordChangedEvent;
+import ru.katacademy.bank_app.accountservice.application.dto.event.PasswordChangedEvent;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * </ul>
  * </p>
  */
-public class ChangePasswordUserServiceImplTest {
+class ChangePasswordUserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
