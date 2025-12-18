@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * </p>
  */
 @Component
-@Profile("!test")
+@Profile("docker")
 public class KafkaHealthIndicator implements HealthIndicator {
 
     /**
