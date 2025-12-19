@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * </p>
  *
  * <p>
- * Компонент активен только вне профиля {@code test} (см. аннотацию {@link Profile}).
+ * Компонент активен только в профиле {@code docker} (см. аннотацию {@link Profile}).
  * </p>
  */
 @Component
