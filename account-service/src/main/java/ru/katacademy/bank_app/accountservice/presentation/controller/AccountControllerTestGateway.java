@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
  * Дата: 20.06.2025
  */
 @RestController
-@RequestMapping("/api/accounts")
+//@RequestMapping("/api/accounts")
+@RequestMapping("/")
 public class AccountControllerTestGateway {
 
     /**
