@@ -1,10 +1,10 @@
-server:
-  port: ${SERVER_PORT:8080}
-
 spring:
   application:
     name: security-service
 
-bank:
-  security:
-    enabled: true
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
