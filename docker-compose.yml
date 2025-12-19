@@ -25,7 +25,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.7.1
     container_name: kafka
-#    restart: unless-stopped
+    #    restart: unless-stopped
     ports:
       - "9092:9092"
       - "9094:9094"
@@ -78,7 +78,7 @@ services:
       context: ./fraud-detection
       dockerfile: Dockerfile
     container_name: fraud-detection
-#    restart: unless-stopped
+    #    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -117,7 +117,7 @@ services:
       context: ./notification-service
       dockerfile: Dockerfile
     container_name: notification-service
-#    restart: unless-stopped
+    #    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -147,52 +147,48 @@ services:
       retries: 3
       start_period: 20s
 
-#  security-service:
-#    build:
-#      context: ./security-service
-#      dockerfile: Dockerfile
-#    container_name: security-service
-##    restart: unless-stopped
-#    ports:
-#      - "8085:8080"
-#    environment:
-#      JWT_SECRET: "testsecretkeyfortestpurposesonly1234567890"
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/security_db
-#      SPRING_DATASOURCE_USERNAME: root
-#      SPRING_DATASOURCE_PASSWORD: root
-#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-#      SPRING_PROFILES_ACTIVE: docker
-#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-#      LOGGING_LEVEL_ROOT: WARN
-#      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-#      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
-#      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
-#      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
-#      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
-#      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
-#      SPRING_MAIN_BANNER_MODE: "off"
-#    healthcheck:
-#      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 3
-#      start_period: 20s
+  #  security-service:
+  #    build:
+  #      context: ./security-service
+  #      dockerfile: Dockerfile
+  #    container_name: security-service
+  ##    restart: unless-stopped
+  #    ports:
+  #      - "8085:8080"
+  #    environment:
+  #      JWT_SECRET: "testsecretkeyfortestpurposesonly1234567890"
+  #      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/security_db
+  #      SPRING_DATASOURCE_USERNAME: root
+  #      SPRING_DATASOURCE_PASSWORD: root
+  #      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  #      SPRING_PROFILES_ACTIVE: docker
+  #      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+  #      LOGGING_LEVEL_ROOT: WARN
+  #      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
+  #      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: WARN
+  #      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: WARN
+  #      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
+  #      LOGGING_LEVEL_ORG_APACHE_KAFKA_CLIENTS: WARN
+  #      LOGGING_LEVEL_ORG_APACHE_KAFKA_COMMON_METRICS: ERROR
+  #      SPRING_MAIN_BANNER_MODE: "off"
+  #    healthcheck:
+  #      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
+  #      interval: 10s
+  #      timeout: 5s
+  #      retries: 3
+  #      start_period: 20s
 
   api-gateway:
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
     container_name: api-gateway
-#    restart: unless-stopped
+    #    restart: unless-stopped
     ports:
       - "8765:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info"
-      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
       SPRING_MAIN_BANNER_MODE: "off"
-      LOGGING_LEVEL_ROOT: "INFO"
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: "WARN"
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health/liveness && wget --spider -q http://localhost:8080/actuator/health/readiness" ]
       interval: 10s
@@ -200,35 +196,21 @@ services:
       retries: 3
       start_period: 20s
 
-  audit-service:
+  auth-statistics-service:
     build:
-      context: ./audit
+      context: ./auth-statistics-service
       dockerfile: Dockerfile
-    container_name: audit-service
-#    restart: unless-stopped
+    container_name: auth-statistics-service
+    #    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
         condition: service_started
     ports:
-      - "8086:8080"
+      - "8089:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/audit_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SPRING_JPA_HIBERNATE_DDL_AUTO: none
-
-      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info"
-      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
-
-      LOGGING_LEVEL_ROOT: INFO
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
     healthcheck:
       test: [
         "CMD-SHELL",
@@ -240,12 +222,38 @@ services:
       retries: 3
       start_period: 20s
 
+  audit-service:
+    build:
+      context: ./audit
+      dockerfile: Dockerfile
+    container_name: audit-service
+    #    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    ports:
+      - "8086:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "wget --spider -q http://localhost:8080/actuator/health/liveness && \
+           wget --spider -q http://localhost:8080/actuator/health/readiness"
+      ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
   account-service:
     build:
       context: ./account-service
       dockerfile: Dockerfile
     container_name: account-service
-#    restart: unless-stopped
+    #    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -255,33 +263,8 @@ services:
       - "8088:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/account_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      SPRING_JPA_HIBERNATE_DDL_AUTO: none
-
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KYC_TOPICS_EVENTS: kyc-events
-      SPRING_KAFKA_PRODUCER_KEY_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
-      SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
-      SPRING_KAFKA_CONSUMER_KEY_DESERIALIZER: org.apache.kafka.common.serialization.StringDeserializer
-      SPRING_KAFKA_CONSUMER_VALUE_DESERIALIZER: org.apache.kafka.common.serialization.StringDeserializer
-
-      SPRING_CLOUD_CONFIG_ENABLED: "false"
-      SPRING_CLOUD_CONFIG_IMPORT_CHECK_ENABLED: "false"
-
       SECURITY_JWT_SECRET: "supersecretkeyforlocaldev"
-
-      LOGGING_LEVEL_ROOT: INFO
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: WARN
-      LOGGING_LEVEL_ORG_HIBERNATE: WARN
-      LOGGING_LEVEL_ORG_APACHE_KAFKA: WARN
-      LOGGING_LEVEL_FEIGN: WARN
-
-      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info"
-      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
-
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
       interval: 10s
@@ -294,7 +277,7 @@ services:
       context: ./kyc-service
       dockerfile: Dockerfile
     container_name: kyc-service
-#    restart: unless-stopped
+    #    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -334,7 +317,7 @@ services:
       context: ./user-settings-service
       dockerfile: Dockerfile
     container_name: user-settings-service
-#    restart: unless-stopped
+    #    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy

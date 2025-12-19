@@ -1,4 +1,4 @@
-package ru.katacademy.bank_app.accountservice.util;
+package ru.katacademy.auth.util;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class DatabaseInitializer {
 
     @PostConstruct
     public void init() {
-        log.info("Запуск инициализации схемы для account-service: {}", schemaName);
+        log.info("Запуск инициализации схемы для auth-statistics-service: {}", schemaName);
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement()) {
             statement.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName);

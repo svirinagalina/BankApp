@@ -19,20 +19,7 @@ repositories {
     mavenCentral()
 }
 
-ext {
-    initBaseUrl = 'jdbc:postgresql://localhost:5432/postgres'
-    initUser = 'root'
-    initPass = 'root'
-
-    localTargetDbName = 'mainDB'
-    localTargetSchemaName = 'account-service_local'
-
-    dbInitMainClass = 'ru.katacademy.bank_app.accountservice.util.DatabaseInitializer'
-}
-
 dependencies {
-    implementation 'org.postgresql:postgresql'
-
     implementation platform(project(":bank-bom"))
     testImplementation platform(project(":bank-bom"))
 
@@ -61,31 +48,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.h2database:h2'
     testImplementation 'org.mockito:mockito-core'
-}
-
-tasks.register('createLocalDatabase', JavaExec) {
-    description = 'Создает базу данных mainDB и схему для локального профиля.'
-
-    dependsOn compileJava
-
-    classpath = sourceSets.main.runtimeClasspath
-
-    mainClass = dbInitMainClass
-
-    args = [
-            initBaseUrl,
-            initUser,
-            initPass,
-            localTargetDbName,
-            localTargetSchemaName
-    ]
-
-    ignoreExitValue = true as JavaExecSpec
-}
-
-bootRun {
-    dependsOn createLocalDatabase
-    systemProperty 'spring.profiles.active', 'local'
 }
 
 test {
