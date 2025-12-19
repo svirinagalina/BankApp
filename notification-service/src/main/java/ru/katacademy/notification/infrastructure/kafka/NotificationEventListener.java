@@ -1,5 +1,6 @@
 package ru.katacademy.notification.infrastructure.kafka;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.katacademy.bank_shared.event.TransferCompletedEvent;
@@ -12,6 +13,7 @@ import ru.katacademy.notification.application.service.NotificationService;
  * Слушает события из Kafka и делегирует их обработку {@link NotificationService}.
  */
 @Component
+@Profile("docker")
 public class NotificationEventListener {
 
     private NotificationService notificationService;
