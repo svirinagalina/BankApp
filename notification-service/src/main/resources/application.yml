@@ -1,39 +1,10 @@
 spring:
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
-      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
-  kafka:
-    bootstrap-servers: kafka:9092
-    consumer:
-      group-id: notification-service
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring:
-          json:
-            trusted:
-              packages: ru.katacademy.*
-            use:
-              type:
-                headers: false
+  application:
+    name: notification-service
 
-  datasource:
-    url: jdbc:postgresql://postgres:5432/notifications_db
-    username: root
-    password: root
-    driver-class-name: org.postgresql.Driver
+server:
+  port: 8080
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
-bank:
-  security:
-    enabled: false
+logging:
+  level:
+    root: INFO
