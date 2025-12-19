@@ -23,6 +23,9 @@ spring:
   flyway:
     enabled: false
 
+server:
+  port: 8081  # Локальный порт для fraud-detection
+
 user:
   service:
     url: http://localhost:8088
