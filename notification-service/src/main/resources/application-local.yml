@@ -23,6 +23,9 @@ spring:
   flyway:
     enabled: false
 
+server:
+  port: 8089  # Локальный порт для notification-service
+
 bank:
   security:
     enabled: false

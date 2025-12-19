@@ -22,7 +22,6 @@ import ru.katacademy.kycservice.application.port.out.KycEventPublisher;
  * Дата: 19-12-2025
  * Автор: Dmitrii Krasitskii
  */
-
 @Component
 @Profile("local")
 public class LocalKycEventPublisher implements KycEventPublisher {

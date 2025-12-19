@@ -25,6 +25,9 @@ spring:
   flyway:
     enabled: false
 
+server:
+  port: 8084  # Локальный порт для kyc-service
+
 bank:
   security:
     enabled: false
