@@ -124,6 +124,12 @@ Bank-App моделирует основные бизнес-процессы ц�
     - MinIO: `9000` (API), `9001` (консоль).
     - fraud-detection: `8081`, user-settings-service: `8082`, kyc-service: `8084` (остальные сервисы доступны внутри сети `docker-compose`).
 
+
+    ЗАКРЫТЫЕ ПОРТЫ, НЕ ИСПОЛЬЗОВАТЬ!
+    587, 25, 2525, 389, 3389, 53413, 465
+
+
+
 ### Переменные окружения
 `docker-compose.yml` задаёт основные значения (можно переопределять при запуске):
 - `POSTGRES_DB=userDB`, `POSTGRES_USER=root`, `POSTGRES_PASSWORD=root`.
