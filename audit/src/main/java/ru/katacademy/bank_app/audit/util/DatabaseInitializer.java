@@ -1,5 +1,6 @@
-package ru.katacademy.bank_app.accountservice.util;
+package ru.katacademy.bank_app.audit.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,13 +25,14 @@ public class DatabaseInitializer {
     @Value("${spring.jpa.properties.hibernate.default_schema}")
     private String schemaName;
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "DataSource is a managed Spring bean")
     public DatabaseInitializer(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     @PostConstruct
     public void init() {
-        log.info("Запуск инициализации схемы для account-service: {}", schemaName);
+        log.info("Запуск инициализации схемы для audit-service: {}", schemaName);
         try (Connection connection = dataSource.getConnection();
              Statement statement = connection.createStatement()) {
             statement.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName);
