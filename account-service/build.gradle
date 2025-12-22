@@ -20,6 +20,8 @@ repositories {
 }
 
 dependencies {
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
     implementation platform(project(":bank-bom"))
     testImplementation platform(project(":bank-bom"))
 

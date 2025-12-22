@@ -22,7 +22,7 @@ spring:
           predicates:
             - Path=/api/accounts/**
           filters:
-
+            - StripPrefix=2
             - name: Retry
               args:
                 retries: 2

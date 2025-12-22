@@ -1,6 +1,43 @@
+server:
+  shutdown: graceful
+
 spring:
   application:
     name: account-service
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  datasource:
+    hikari:
+      connection-timeout: 3000
+      validation-timeout: 2000
+
+  kafka:
+    admin:
+      properties:
+        request.timeout.ms: 2000
+        default.api.timeout.ms: 2000
+        metadata.max.age.ms: 3000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db,kafka
+          show-components: always
+        liveness:
+          include: livenessState,ping
+
+  health:
+    kafka:
+      enabled: true
 
 logging:
   level:
