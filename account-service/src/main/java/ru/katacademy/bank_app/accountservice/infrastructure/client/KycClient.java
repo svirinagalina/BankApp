@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.katacademy.bank_app.accountservice.application.dto.KycRequestDTO;
+import ru.katacademy.bank_app.accountservice.adapters.web.request.kyc.UpdateKycStatusRequest;
 
 
 @FeignClient(
@@ -33,14 +33,14 @@ public interface KycClient {
      * </p>
      *
      *  * @see KycClientFallback
-     *  * @see KycRequestDTO
+     *  * @see UpdateKycStatusRequest
      *  * @see org.springframework.cloud.openfeign.FeignClient
      * <p>
      *  Автор: Урбагаев Е.Д.
      *  Дата: 2025-09-09
      */
     @GetMapping("/api/kyc/{userId}")
-    KycRequestDTO getKyc(@PathVariable("userId") Long userId);
+    UpdateKycStatusRequest getKyc(@PathVariable("userId") Long userId);
 
     @PostMapping("/api/kyc/start")
     void startKyc(@RequestParam("userId") Long userId);

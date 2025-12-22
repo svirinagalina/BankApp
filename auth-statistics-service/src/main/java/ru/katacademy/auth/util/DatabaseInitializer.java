@@ -37,7 +37,6 @@ public class DatabaseInitializer {
             log.info("Схема {} успешно проверена/создана", schemaName);
         } catch (Exception e) {
             log.error("Ошибка при создании схемы БД: ", e);
-            throw new RuntimeException(e);
-        }
+            throw new IllegalStateException("Схема БД не создана");        }
     }
 }

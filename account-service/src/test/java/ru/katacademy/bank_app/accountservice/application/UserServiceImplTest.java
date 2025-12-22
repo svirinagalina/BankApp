@@ -6,13 +6,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import ru.katacademy.bank_app.accountservice.adapters.web.request.user.RegisterUserRequest;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
 import ru.katacademy.bank_app.accountservice.application.dto.*;
 import ru.katacademy.bank_app.accountservice.application.port.out.UserRepository;
 import ru.katacademy.bank_app.accountservice.application.service.UserServiceImpl;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
-import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.UserEntity;
-import ru.katacademy.bank_shared.enums.KycStatus;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
 import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
 import ru.katacademy.bank_shared.exception.KycServiceUnavailableException;
@@ -61,7 +60,7 @@ class UserServiceImplTest {
     // Проверяем добавление нового пользователя
     @Test
     void register_ShouldReturnUserDto_WhenValidCommandProvided() throws DomainException {
-        final RegisterUserCommand cmd = new RegisterUserCommand(fullName, email, password);
+        final RegisterUserRequest cmd = new RegisterUserRequest(fullName, email, password);
 
         final User newUser = new User(UserRole.USER, cmd.fullName(), new Email(cmd.email()),
                 cmd.password(), LocalDateTime.now());
@@ -86,7 +85,7 @@ class UserServiceImplTest {
     // проверяем, что если пользователь с таким email уже существует, выбрасываем исключение
     @Test
     void register_ShouldThrowEmailAlreadyTakenException_WhenEmailExists() {
-        final RegisterUserCommand cmd = new RegisterUserCommand(fullName, email, password);
+        final RegisterUserRequest cmd = new RegisterUserRequest(fullName, email, password);
 
         final User existingUser = new User(UserRole.USER, fullName,
                 new Email(email), password, LocalDateTime.now());
@@ -195,15 +194,15 @@ class UserServiceImplTest {
     @Test
     void changePassword_ShouldThrowException_WhenNewPasswordSameAsOld() {
         final Long userId = 1L;
-        final String password = "SamePassword123";
-        final String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+        final String newPassword = "SamePassword123";
+        final String passwordHash = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
         final User user = new User(userId, UserRole.USER, fullName,
                 new Email(email), passwordHash, LocalDateTime.now());
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        final ChangePasswordCommand cmd = new ChangePasswordCommand(userId, password, password);
+        final ChangePasswordCommand cmd = new ChangePasswordCommand(userId, newPassword, newPassword);
 
         assertThatThrownBy(() -> userService.changePassword(cmd))
                 .isInstanceOf(InvalidPasswordException.class)
@@ -232,7 +231,7 @@ class UserServiceImplTest {
     @Test
     void register_success_whenKycApproved() throws DomainException {
 
-        final var command = new RegisterUserCommand("Test Testov", "approved@test.com", "Password123");
+        final var command = new RegisterUserRequest("Test Testov", "approved@test.com", "Password123");
 
         // Мокаем поиск пользователя по email
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
@@ -287,7 +286,7 @@ class UserServiceImplTest {
         doThrow(new KycServiceUnavailableException("Verification service temporarily unavailable"))
                 .when(kycClient).startKyc(anyLong());
 
-        final var command = new RegisterUserCommand("Test Testov", "fail@test.com", "Password123");
+        final var command = new RegisterUserRequest("Test Testov", "fail@test.com", "Password123");
 
         final var ex = assertThrows(
                 KycServiceUnavailableException.class,

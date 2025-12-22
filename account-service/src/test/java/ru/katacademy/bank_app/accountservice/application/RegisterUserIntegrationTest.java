@@ -9,7 +9,7 @@
 //import org.springframework.http.MediaType;
 //import org.springframework.test.context.ActiveProfiles;
 //import org.springframework.test.web.servlet.MockMvc;
-//import ru.katacademy.bank_app.accountservice.application.dto.KycRequestDTO;
+//import ru.katacademy.bank_app.accountservice.adapters.web.request.kyc.UpdateKycStatusRequest;
 //import ru.katacademy.bank_shared.enums.KycStatus;
 //import ru.katacademy.bank_app.accountservice.infrastructure.client.KycClient;
 //import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
@@ -45,7 +45,7 @@
 //    @Test
 //    void register_success_whenKycApproved() throws Exception {
 //        when(kycClient.getKyc(any()))
-//                .thenReturn(new KycRequestDTO(1L, KycStatus.APPROVED));
+//                .thenReturn(new UpdateKycStatusRequest(1L, KycStatus.APPROVED));
 //
 //        mockMvc.perform(post("/api/users/register")
 //                        .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -58,7 +58,7 @@
 //    @Test
 //    void register_fails_whenKycPending() throws Exception {
 //        when(kycClient.getKyc(any()))
-//                .thenReturn(new KycRequestDTO(1L, KycStatus.PENDING));
+//                .thenReturn(new UpdateKycStatusRequest(1L, KycStatus.PENDING));
 //
 //        mockMvc.perform(post("/api/users/register")
 //                        .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -70,7 +70,7 @@
 //    @Test
 //    void register_fails_whenKycRejected() throws Exception {
 //        when(kycClient.getKyc(any()))
-//                .thenReturn(new KycRequestDTO(1L, KycStatus.REJECTED));
+//                .thenReturn(new UpdateKycStatusRequest(1L, KycStatus.REJECTED));
 //
 //        mockMvc.perform(post("/api/users/register")
 //                        .contentType(MediaType.APPLICATION_JSON_VALUE)

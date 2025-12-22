@@ -1,0 +1,35 @@
+*   [33mb68d0f4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mCleanArchitecture[m[33m, [m[1;31morigin/CleanArchitecture[m[33m)[m Merge branch 'dev' into CleanArchitecture # Please enter a commit message to explain why this merge is necessary, # especially if it merges an updated upstream into a topic branch. # # Lines starting with '#' will be ignored, and an empty message aborts # the commit.
+[31m|[m[32m\[m  
+[31m|[m *   [33m0617e54[m[33m ([m[1;31morigin/dev[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mdev[m[33m)[m Merge branch 'feature/Настроить-профили-local-и-docker-для-модулей-api-gateway-audit-и-auth-statistic-service' into 'dev'
+[31m|[m [33m|[m[34m\[m  
+[31m|[m [33m|[m * [33mee3a990[m Глобальные исправления в сервисах account-service, audit, api-gateway, auth-statistics-service
+[31m|[m * [34m|[m [33m193e24b[m upd README.md
+[31m|[m [34m|[m[34m/[m  
+* [34m|[m [33m65a9132[m Merge branch 'dev' into 'CleanArchitecture'
+[35m|[m[34m\[m[34m|[m 
+[35m|[m *   [33m55e6778[m[33m ([m[1;31morigin/shared-kernel[m[33m)[m Merge branch 'PasswordChangeNew' into 'dev'
+[35m|[m [1;31m|[m[1;32m\[m  
+[35m|[m [1;31m|[m *   [33m5cbae98[m Merge remote-tracking branch 'origin/PasswordChangeNew' into PasswordChangeNew
+[35m|[m [1;31m|[m [1;33m|[m[1;34m\[m  
+[35m|[m [1;31m|[m [1;33m|[m * [33m4d20919[m Удалил EventFieldsArchTest, как ты и просил
+[35m|[m [1;31m|[m * [1;34m|[m [33m4946d7b[m Удалил EventFieldsArchTest, как ты и просил, а также убрал проблем перед скобкой в классе UserServiceImpl на 170 строчке
+[35m|[m [1;31m|[m [1;34m|[m[1;34m/[m  
+[35m|[m [1;31m|[m * [33m114f7a1[m Сделаны задания: Событие PasswordChangedEvent помечено как deprecated. Создано новое событие PasswordUpdatedEventV2 без полей, содержащих пароли. Все продюсеры и консьюмеры мигрированы на использование PasswordUpdatedEventV2. Добавлено ArchUnit-правило: классы в пакетах ..events.. не могут содержать поля password, oldPassword, newPassword.
+* [1;31m|[m [1;34m|[m [33m150348c[m Внесены все изменения согласно задачи!
+[1;31m|[m[1;31m/[m [1;34m/[m  
+* [1;34m|[m   [33me6d55f6[m Merge branch 'feature/Настроить-профили-local-и-docker-для-account-service-и-обеспечить-его-запуск-без-Docker' into 'dev'
+[1;35m|[m[1;36m\[m [1;34m\[m  
+[1;35m|[m * [1;34m|[m [33m671ff0a[m Фикс отступа
+[1;35m|[m * [1;34m|[m [33medd51b1[m Испраления для Lint проверки
+[1;35m|[m * [1;34m|[m   [33m275d9e6[m Merge branch 'feature/Настроить-профили-local-и-docker-для-account-service-и-обеспечить-его-запуск-без-Docker' of https://gitlab.com/katacademy-group/banking-projects/bank-app into feature/Настроить-профили-local-и-docker-для-account-service-и-обеспечить-его-запуск-без-Docker
+[1;35m|[m [31m|[m[32m\[m [1;34m\[m  
+[1;35m|[m [31m|[m * [1;34m\[m   [33m9c4b19e[m Merge branch 'dev' into 'feature/Настроить-профили-local-и-docker-для-account-service-и-обеспечить-его-запуск-без-Docker'
+[1;35m|[m [31m|[m [33m|[m[34m\[m [1;34m\[m  
+[1;35m|[m * [33m|[m [34m|[m [1;34m|[m [33medddd12[m Откат KafkaHealthIndicator, решение проблемы с kafka при запуске сервиса, добавлена реализация бд при запуске через gradlew
+[1;35m|[m [33m|[m[33m/[m [34m/[m [1;34m/[m  
+[1;35m|[m * [34m|[m [1;34m|[m [33m9f83608[m Настроить профили local и docker для account-service и обеспечить его запуск без Docker
+* [34m|[m [34m|[m [1;34m|[m   [33mdf85aac[m Merge branch 'feature/Проверка_всех_эндпоинтов_Swagger' into 'dev'
+[34m|[m[36m\[m [34m\[m [34m\[m [1;34m\[m  
+[34m|[m [36m|[m[34m_[m[34m|[m[34m/[m [1;34m/[m  
+[34m|[m[34m/[m[36m|[m [34m|[m [1;34m|[m   
+[34m|[m * [34m|[m [1;34m|[m [33mccb29d1[m Добавил OpenAPI-аннотации и примеры запросов для создания пользователя и счета

@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * </ul>
  * </p>
  */
-public class ChangePasswordUserServiceImplTest {
+class ChangePasswordUserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;

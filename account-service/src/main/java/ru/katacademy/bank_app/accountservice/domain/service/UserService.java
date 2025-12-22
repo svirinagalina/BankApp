@@ -1,8 +1,8 @@
 package ru.katacademy.bank_app.accountservice.domain.service;
 
 
+import ru.katacademy.bank_app.accountservice.adapters.web.request.user.RegisterUserRequest;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
-import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 
 /**
@@ -25,7 +25,7 @@ public interface UserService {
      * @param cmd команда с данными для регистрации
      * @return DTO зарегистрированного пользователя
      */
-    UserDto register(RegisterUserCommand cmd);
+    UserDto register(RegisterUserRequest cmd);
 
     /**
      * Получает пользователя по ID.

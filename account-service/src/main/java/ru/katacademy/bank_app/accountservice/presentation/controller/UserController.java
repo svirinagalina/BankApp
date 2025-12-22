@@ -11,13 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import ru.katacademy.bank_app.accountservice.application.dto.RegisterUserCommand;
+import ru.katacademy.bank_app.accountservice.adapters.web.request.user.RegisterUserRequest;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
 import ru.katacademy.bank_shared.exception.InvalidEmailException;
 import ru.katacademy.bank_shared.exception.UserNotFoundException;
-import ru.katacademy.bank_shared.security.*;
 
 /**
  * Контроллер для управления пользователями через REST API.
@@ -76,7 +75,7 @@ public class UserController {
                     content = @Content)
     })
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@Valid @RequestBody RegisterUserCommand cmd) {
+    public ResponseEntity<UserDto> register(@Valid @RequestBody RegisterUserRequest cmd) {
         final UserDto userDto = userService.register(cmd);
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
