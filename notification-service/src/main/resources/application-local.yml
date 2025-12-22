@@ -1,3 +1,6 @@
+server:
+  port: 8089  # Локальный порт для notification-service
+
 spring:
   autoconfigure:
     exclude:
@@ -23,8 +26,17 @@ spring:
   flyway:
     enabled: false
 
-server:
-  port: 8089  # Локальный порт для notification-service
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      group-id: fraud-detection-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
 
 bank:
   security:

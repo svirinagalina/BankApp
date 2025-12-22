@@ -3,7 +3,6 @@ package ru.katacademy.kycservice.infrastructure.kafka;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import ru.katacademy.bank_shared.event.kyc.KycStatusChangedEvent;
@@ -21,7 +20,6 @@ import ru.katacademy.kycservice.application.port.out.KycEventPublisher;
  * Автор: Белявский Г.А.
  */
 @Component
-@Profile("docker")
 public class KafkaKycEventPublisher implements KycEventPublisher {
     private static final Logger log = LoggerFactory.getLogger(KafkaKycEventPublisher.class);
 

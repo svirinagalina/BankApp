@@ -9,7 +9,6 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.katacademy.kycservice.application.port.out.MinioStorage;
@@ -33,7 +32,6 @@ import java.util.UUID;
  * Дата: 2025-08-05
  */
 @Service
-@Profile("docker")
 public class MinioStorageImpl implements MinioStorage {
 
     private static final Logger log = LoggerFactory.getLogger(MinioStorageImpl.class);

@@ -1,3 +1,6 @@
+server:
+  port: 8084
+
 spring:
   autoconfigure:
     exclude:
@@ -23,8 +26,17 @@ spring:
   flyway:
     enabled: false
 
-server:
-  port: 8081  # Локальный порт для fraud-detection
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      group-id: fraud-detection-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
 
 user:
   service:
@@ -40,7 +52,7 @@ management:
       show-details: always
       group:
         readiness:
-          include: db # kafka НЕ включаем
+          include: db,kafka
         liveness:
           include: ping
 

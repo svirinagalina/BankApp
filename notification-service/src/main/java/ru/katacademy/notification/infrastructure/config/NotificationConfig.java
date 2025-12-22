@@ -2,7 +2,6 @@ package ru.katacademy.notification.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import ru.katacademy.notification.application.sender.NotificationSender;
 import ru.katacademy.notification.application.service.NotificationService;
 import ru.katacademy.notification.application.service.NotificationServiceImpl;
@@ -13,7 +12,6 @@ import ru.katacademy.notification.infrastructure.persistence.repository.Notifica
 import ru.katacademy.notification.infrastructure.sender.NotificationSenderImpl;
 
 @Configuration
-@Profile("docker")
 public class NotificationConfig {
 
     @Bean

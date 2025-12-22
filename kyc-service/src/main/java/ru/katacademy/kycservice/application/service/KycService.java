@@ -2,26 +2,23 @@ package ru.katacademy.kycservice.application.service;
 
 import org.springframework.stereotype.Service;
 import ru.katacademy.bank_shared.enums.KycStatus;
-import ru.katacademy.bank_shared.event.kyc.KycStatusChangedEvent;
 import ru.katacademy.kycservice.application.port.out.KycDocumentRepository;
 import ru.katacademy.kycservice.application.port.out.KycRequestRepository;
 import ru.katacademy.kycservice.domain.entity.KycDocument;
 import ru.katacademy.kycservice.domain.entity.KycRequest;
-import ru.katacademy.kycservice.application.port.out.KycEventPublisher;
-
-import java.time.Instant;
+import ru.katacademy.kycservice.infrastructure.kafka.producer.KycEventProducer;
 
 @Service
 public class KycService {
 
-    private final KycEventPublisher eventPublisher;
+    private final KycEventProducer producer;
     private final KycDocumentRepository kycDocumentRepository;
     private final KycRequestRepository kycRequestRepository;
 
-    public KycService(KycEventPublisher eventPublisher,
+    public KycService(KycEventProducer producer,
                       KycDocumentRepository kycDocumentRepository,
                       KycRequestRepository kycRequestRepository) {
-        this.eventPublisher = eventPublisher;
+        this.producer = producer;
         this.kycDocumentRepository = kycDocumentRepository;
         this.kycRequestRepository = kycRequestRepository;
     }
@@ -48,14 +45,8 @@ public class KycService {
         kycRequestRepository.save(kycRequest);
 
         // 4. Отправляем событие в Kafka
-        eventPublisher.publish(
-                new KycStatusChangedEvent(
-                        kycRequest.getUserId().toString(),
-                        kycRequest.getStatus(),
-                        Instant.now(),
-                        "kyc-service"
-                )
-        );
+        String event = isValid ? "KYC_APPROVED" : "KYC_REJECTED";
+        producer.sendMessage(kycRequest.getUserId().toString(), event);
     }
 
     /**

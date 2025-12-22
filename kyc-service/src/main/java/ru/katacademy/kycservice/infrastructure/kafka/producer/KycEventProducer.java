@@ -1,11 +1,9 @@
 package ru.katacademy.kycservice.infrastructure.kafka.producer;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("docker")
 public class KycEventProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;

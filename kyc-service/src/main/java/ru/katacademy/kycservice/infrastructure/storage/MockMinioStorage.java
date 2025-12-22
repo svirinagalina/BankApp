@@ -1,12 +1,8 @@
 package ru.katacademy.kycservice.infrastructure.storage;
 
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ru.katacademy.kycservice.application.port.out.MinioStorage;
 
-@Component
-@Profile("local")
 public class MockMinioStorage implements MinioStorage {
 
     @Override

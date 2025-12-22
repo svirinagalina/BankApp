@@ -1,11 +1,9 @@
 package ru.katacademy.notification.infrastructure.kafka;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("docker")
 public class KafkaProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;

@@ -20,11 +20,11 @@ import java.util.concurrent.TimeUnit;
  * </p>
  *
  * <p>
- * Компонент активен только вне профиля {@code docker} (см. аннотацию {@link Profile}).
+ * Компонент активен только вне профиля {@code test} (см. аннотацию {@link Profile}).
  * </p>
  */
 @Component
-@Profile("docker")
+@Profile("!test")
 public class KafkaHealthIndicator implements HealthIndicator {
 
     /**
