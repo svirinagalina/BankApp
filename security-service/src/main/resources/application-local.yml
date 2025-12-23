@@ -1,0 +1,51 @@
+server:
+  port: 8090  # Локальный порт для security-service
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+
+  datasource:
+    url: jdbc:postgresql://localhost:5434/security_db
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: security_service_local
+        hbm2ddl:
+          create_namespaces: true
+
+  flyway:
+    enabled: false
+
+  liquibase:
+    enabled: false
+
+bank:
+  security:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          # db не включаем, так как пока нет сущностей,чтобы не было ошибки Included health contributor 'db' in group 'readiness' does not exist
+          include: []
+        liveness:
+          include: ping
