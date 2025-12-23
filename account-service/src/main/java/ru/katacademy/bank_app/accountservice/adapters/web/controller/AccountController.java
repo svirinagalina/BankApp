@@ -129,7 +129,10 @@ public class AccountController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<AccountResponse> getAccountById(@PathVariable Long id) {
+    public ResponseEntity<AccountResponse> getAccountById(
+            @PathVariable
+            @Schema(description = "ID счета", requiredMode = Schema.RequiredMode.REQUIRED)
+            Long id) {
         final AccountDto accountDto = accountService.getById(id);
         final AccountResponse response = AccountWebMapper.toAccountResponse(accountDto);
         return ResponseEntity.ok(response);
@@ -147,7 +150,10 @@ public class AccountController {
             )
     })
     @PostMapping("/{id}/block")
-    public ResponseEntity<Void> blockAccount(@PathVariable Long id) {
+    public ResponseEntity<Void> blockAccount(
+            @PathVariable
+            @Schema(description = "ID счета для блокировки", requiredMode = Schema.RequiredMode.REQUIRED)
+            Long id) {
         accountService.blockAccountById(id);
         return ResponseEntity.noContent().build();
     }

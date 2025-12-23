@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.katacademy.bank_app.accountservice.adapters.web.mapper.UserWebMapper;
 import ru.katacademy.bank_app.accountservice.adapters.web.request.user.RegisterUserRequest;
+import ru.katacademy.bank_app.accountservice.adapters.web.response.user.UserRegisteredResponse;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
@@ -53,7 +55,7 @@ public class UserController {
     requestBody =  @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true,
             content = @Content(
-                    schema = @Schema(implementation = UserDto.class),
+                    schema = @Schema(implementation = RegisterUserRequest.class),
                     examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
                             name = "Пример запроса",
                             value = """
@@ -68,16 +70,18 @@ public class UserController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Пользователь успешно зарегистрирован",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))),
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserRegisteredResponse.class))),
             @ApiResponse(responseCode = "400", description = "Ошибка валидации входных данных",
                     content = @Content),
             @ApiResponse(responseCode = "409", description = "Email уже зарегистрирован",
                     content = @Content)
     })
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@Valid @RequestBody RegisterUserRequest cmd) {
+    public ResponseEntity<UserRegisteredResponse> register(@Valid @RequestBody RegisterUserRequest cmd) {
         final UserDto userDto = userService.register(cmd);
-        return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+        final UserRegisteredResponse response = UserWebMapper.toUserRegisteredResponse(userDto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     /**
@@ -90,13 +94,17 @@ public class UserController {
     @Operation(summary = "Получение пользователя по ID", description = "Возвращает информацию о пользователе по его ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь найден",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))),
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден",
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getById(@PathVariable Long id,
-                                           Authentication authentication) {
+    public ResponseEntity<UserDto> getById(
+            @PathVariable
+            @Schema(description = "ID пользователя", requiredMode = Schema.RequiredMode.REQUIRED)
+            Long id,
+            Authentication authentication) {
 
         try {
             final String username = authentication.getName();

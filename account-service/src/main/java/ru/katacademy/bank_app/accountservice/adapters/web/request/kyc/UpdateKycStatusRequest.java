@@ -12,11 +12,11 @@ import lombok.Setter;
 public class UpdateKycStatusRequest {
 
     @NotBlank(message = "ID пользователя не может быть пустым")
-    @Pattern(regexp = "^\\\\d+$", message = "ID пользователя должен быть числом")
+    @Pattern(regexp = "^\\d+$", message = "ID пользователя должен быть числом")
     @Schema(description = "ID пользователя",
             example = "123",
             requiredMode = Schema.RequiredMode.REQUIRED)
-    private String userId; // ✅ String - будет парситься в Long
+    private String userId;
 
     @NotBlank(message = "Статус KYC не может быть пустым")
     @Pattern(regexp = "PENDING|IN_PROGRESS|APPROVED|REJECTED|EXPIRED",
@@ -26,5 +26,5 @@ public class UpdateKycStatusRequest {
             example = "APPROVED",
             allowableValues = {"PENDING", "IN_PROGRESS", "APPROVED", "REJECTED", "EXPIRED"},
             requiredMode = Schema.RequiredMode.REQUIRED)
-    private String status; // ✅ String - будет парситься в KycStatus
+    private String status;
 }
