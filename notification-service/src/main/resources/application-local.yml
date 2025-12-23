@@ -10,7 +10,7 @@ spring:
       - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/mainDB
+    url: jdbc:postgresql://localhost:5434/notifications_db
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
@@ -22,8 +22,13 @@ spring:
     properties:
       hibernate:
         default_schema: notification_service_local
+        hbm2ddl:
+          create_namespaces: true
 
   flyway:
+    enabled: false
+
+  liquibase:
     enabled: false
 
   kafka:

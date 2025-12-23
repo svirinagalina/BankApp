@@ -10,7 +10,7 @@ spring:
       - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/mainDB
+    url: jdbc:postgresql://localhost:5434/userDB
     username: root
     password: root
     driver-class-name: org.postgresql.Driver

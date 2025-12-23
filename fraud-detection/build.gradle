@@ -98,8 +98,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    compileOnly 'com.github.spotbugs:spotbugs-annotations'
-    annotationProcessor 'com.github.spotbugs:spotbugs-annotations'
 
     runtimeOnly 'org.postgresql:postgresql'
 

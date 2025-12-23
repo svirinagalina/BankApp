@@ -10,7 +10,7 @@ spring:
       - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/mainDB
+    url: jdbc:postgresql://localhost:5434/kyc_verifications
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
@@ -22,11 +22,16 @@ spring:
     properties:
       hibernate:
         default_schema: kyc_service_local
+        hbm2ddl:
+          create_namespaces: true
         jdbc:
           time_zone: UTC
 
   flyway:
     enabled: false
+
+  liquibase:
+      enabled: false
 
   kafka:
     bootstrap-servers: localhost:9094
