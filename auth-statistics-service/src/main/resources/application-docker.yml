@@ -31,6 +31,19 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
 
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  health:
+    kafka:
+      enabled: false
+
 bank:
   security:
     enabled: false
