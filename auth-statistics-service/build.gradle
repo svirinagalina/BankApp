@@ -30,10 +30,11 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'org.postgresql:postgresql'
 
     implementation platform(project(":bank-bom"))
     testImplementation platform(project(":bank-bom"))
+
+    implementation 'org.postgresql:postgresql'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -46,8 +47,6 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
-    runtimeOnly 'org.postgresql:postgresql'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.h2database:h2'

@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8765
 
 spring:
   cloud:
@@ -20,127 +20,36 @@ spring:
         - id: account-service
           uri: http://account-service:8080
           predicates:
-            - Path=/api/accounts/**
+            - Path=/account-service/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
             - name: Retry
               args:
                 retries: 2
                 statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
                 methods: GET,POST,PUT,DELETE
                 series: SERVER_ERROR
-
                 backoff:
                   firstBackoff: 1s
                   maxBackoff: 5s
                   factor: 2
-
             - name: CircuitBreaker
               args:
                 name: accountCircuit
                 fallbackUri: forward:/fallback/account
 
-        - id: security-service
-          uri: http://security-service:8080
-          predicates:
-            - Path=/api/security/**
-          filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: securityCircuit
-                fallbackUri: forward:/fallback/security
-
-        - id: notification-service
-          uri: http://notification-service:8080
-          predicates:
-            - Path=/api/notifications/**
-          filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: notificationCircuit
-                fallbackUri: forward:/fallback/notification
-
-        - id: fraud-detection
-          uri: http://fraud-detection:8080
-          predicates:
-            - Path=/api/fraud/**
-          filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: fraudCircuit
-                fallbackUri: forward:/fallback/fraud
-
-        - id: audit-service
-          uri: http://audit-service:8080
-          predicates:
-            - Path=/api/audits/**
-          filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: auditCircuit
-                fallbackUri: forward:/fallback/audit
-
         - id: kyc-service
           uri: http://kyc-service:8080
           predicates:
-            - Path=/api/kyc/**
+            - Path=/kyc-service/**
           filters:
+            - StripPrefix=1
             - name: Retry
               args:
                 retries: 2
                 statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
                 methods: GET,POST,PUT,DELETE
                 series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
                 backoff:
                   firstBackoff: 1s
                   maxBackoff: 5s
@@ -150,19 +59,18 @@ spring:
                 name: kycCircuit
                 fallbackUri: forward:/fallback/kyc
 
-        - id: settings-service
-          uri: http://settings-service:8080
+        - id: user-settings-service
+          uri: http://user-settings-service:8080
           predicates:
-            - Path=/api/settings/**
+            - Path=/user-settings-service/**
           filters:
+            - StripPrefix=1
             - name: Retry
               args:
                 retries: 2
                 statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
                 methods: GET,POST,PUT,DELETE
                 series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
                 backoff:
                   firstBackoff: 1s
                   maxBackoff: 5s
@@ -171,10 +79,44 @@ spring:
               args:
                 name: settingsCircuit
                 fallbackUri: forward:/fallback/settings
-cors:
-  allowed-origins:
-    - http://localhost:3000
-    - http://localhost:8080
+
+        - id: fraud-detection
+          uri: http://fraud-detection:8080
+          predicates:
+            - Path=/fraud-detection/**
+          filters:
+            - StripPrefix=1
+            - name: Retry
+              args:
+                retries: 2
+                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
+                methods: GET,POST,PUT,DELETE
+                series: SERVER_ERROR
+                backoff:
+                  firstBackoff: 1s
+                  maxBackoff: 5s
+                  factor: 2
+
+        - id: audit-service
+          uri: http://audit-service:8080
+          predicates:
+            - Path=/audit-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: notification-service
+          uri: http://notification-service:8080
+          predicates:
+            - Path=/notification-service/**
+          filters:
+            - StripPrefix=1
+
+        - id: security-service
+          uri: http://security-service:8080
+          predicates:
+            - Path=/security-service/**
+          filters:
+            - StripPrefix=1
 
 management:
   endpoints:
@@ -199,14 +141,6 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 5
     instances:
       accountCircuit:
-        baseConfig: default
-      securityCircuit:
-        baseConfig: default
-      notificationCircuit:
-        baseConfig: default
-      fraudCircuit:
-        baseConfig: default
-      auditCircuit:
         baseConfig: default
       kycCircuit:
         baseConfig: default
