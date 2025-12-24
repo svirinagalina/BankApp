@@ -65,6 +65,15 @@ docker compose up -d account-service
 ### Опять же в качестве примера буду использовать account-service.
 
 #### У нас есть **application-local.yml** профиль и его мы можем запустить несколькими способами:
+#### Для запуска приложения с активным профилем local:
+
+Перед запуском сервисов поднимите контейнеры(без них некоторые сервисы не запустятся):
+
+```
+docker compose up -d minio
+docker compose up -d kafka
+docker compose up -d postgres
+```
 
 1. Через IDE (**IntelliJIDEA**)  
    Во вкладке **Services** находим наш **AccountServiceApplication**,
