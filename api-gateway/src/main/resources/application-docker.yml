@@ -1,5 +1,5 @@
 server:
-  port: 8765
+  port: 8080
 
 spring:
   cloud:
@@ -11,32 +11,50 @@ spring:
         - AddResponseHeader=X-Frame-Options, DENY
         - AddResponseHeader=Referrer-Policy, no-referrer
         - AddResponseHeader=Strict-Transport-Security, max-age=31536000; includeSubDomains
-      httpclient:
-        connect-timeout: 5000
-        response-timeout: 10s
-        pool:
-          max-idle-time: 30s
+
       routes:
+        - id: swagger-ui
+          uri: http://account-service:8080
+          predicates:
+            - Path=/,/swagger-ui.html
+          filters:
+            - SetPath=/swagger-ui.html
+
+        - id: swagger-resources
+          uri: http://account-service:8080
+          predicates:
+            - Path=/webjars/**,/swagger-ui/**
+          filters:
+            - PreserveHostHeader
+
+        - id: account-service-openapi
+          uri: http://account-service:8080
+          predicates:
+            - Path=/account-service/v3/api-docs
+          filters:
+            - SetPath=/v3/api-docs
+
+        - id: kyc-service-openapi
+          uri: http://kyc-service:8080
+          predicates:
+            - Path=/kyc-service/v3/api-docs
+          filters:
+            - SetPath=/v3/api-docs
+
+        - id: user-settings-service-openapi
+          uri: http://user-settings-service:8080
+          predicates:
+            - Path=/user-settings-service/v3/api-docs
+          filters:
+            - SetPath=/v3/api-docs
+
+        #      БИЗНЕС-МАРШРУТЫ СЕРВИСОВ
         - id: account-service
           uri: http://account-service:8080
           predicates:
             - Path=/account-service/**
           filters:
             - StripPrefix=1
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: accountCircuit
-                fallbackUri: forward:/fallback/account
 
         - id: kyc-service
           uri: http://kyc-service:8080
@@ -44,20 +62,6 @@ spring:
             - Path=/kyc-service/**
           filters:
             - StripPrefix=1
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: kycCircuit
-                fallbackUri: forward:/fallback/kyc
 
         - id: user-settings-service
           uri: http://user-settings-service:8080
@@ -65,84 +69,47 @@ spring:
             - Path=/user-settings-service/**
           filters:
             - StripPrefix=1
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: settingsCircuit
-                fallbackUri: forward:/fallback/settings
 
-        - id: fraud-detection
-          uri: http://fraud-detection:8080
-          predicates:
-            - Path=/fraud-detection/**
-          filters:
-            - StripPrefix=1
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
+#     SPRINGDOC CONFIG
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    display-request-duration: true
+    default-models-expand-depth: 1
+    default-model-expand-depth: 1
+    doc-expansion: none
+    tags-sorter: alpha
+    operations-sorter: alpha
+    # ссылки на все сервисы в dropdown(при необходимости добавьте сервису сюжа и в routes)
+    urls:
+      - url: /account-service/v3/api-docs
+        name: Account Service
+      - url: /kyc-service/v3/api-docs
+        name: kyc Service
+      - url: /user-settings-service/v3/api-docs
+        name: User Settings Service
 
-        - id: audit-service
-          uri: http://audit-service:8080
-          predicates:
-            - Path=/audit-service/**
-          filters:
-            - StripPrefix=1
-
-        - id: notification-service
-          uri: http://notification-service:8080
-          predicates:
-            - Path=/notification-service/**
-          filters:
-            - StripPrefix=1
-
-        - id: security-service
-          uri: http://security-service:8080
-          predicates:
-            - Path=/security-service/**
-          filters:
-            - StripPrefix=1
+    config-url: /v3/api-docs/swagger-config
+    urls-primary-name: Kyc Service
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,liveness,readiness,gateway,routes
   endpoint:
+    gateway:
+      enabled: true
     health:
       probes:
         enabled: true
       show-details: always
 
-resilience4j:
-  circuitbreaker:
-    configs:
-      default:
-        slidingWindowType: COUNT_BASED
-        slidingWindowSize: 20
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 30s
-        permittedNumberOfCallsInHalfOpenState: 5
-    instances:
-      accountCircuit:
-        baseConfig: default
-      kycCircuit:
-        baseConfig: default
-      settingsCircuit:
-        baseConfig: default
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springdoc: DEBUG
