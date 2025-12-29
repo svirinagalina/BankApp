@@ -11,204 +11,105 @@ spring:
         - AddResponseHeader=X-Frame-Options, DENY
         - AddResponseHeader=Referrer-Policy, no-referrer
         - AddResponseHeader=Strict-Transport-Security, max-age=31536000; includeSubDomains
-      httpclient:
-        connect-timeout: 5000
-        response-timeout: 10s
-        pool:
-          max-idle-time: 30s
+
       routes:
+        - id: swagger-ui
+          uri: http://account-service:8080
+          predicates:
+            - Path=/,/swagger-ui.html
+          filters:
+            - SetPath=/swagger-ui.html
+
+        - id: swagger-resources
+          uri: http://account-service:8080
+          predicates:
+            - Path=/webjars/**,/swagger-ui/**
+          filters:
+            - PreserveHostHeader
+
+        - id: account-service-openapi
+          uri: http://account-service:8080
+          predicates:
+            - Path=/account-service/v3/api-docs
+          filters:
+            - SetPath=/v3/api-docs
+
+        - id: kyc-service-openapi
+          uri: http://kyc-service:8080
+          predicates:
+            - Path=/kyc-service/v3/api-docs
+          filters:
+            - SetPath=/v3/api-docs
+
+        - id: user-settings-service-openapi
+          uri: http://user-settings-service:8080
+          predicates:
+            - Path=/user-settings-service/v3/api-docs
+          filters:
+            - SetPath=/v3/api-docs
+
+        #      БИЗНЕС-МАРШРУТЫ СЕРВИСОВ
         - id: account-service
           uri: http://account-service:8080
           predicates:
-            - Path=/api/accounts/**
+            - Path=/account-service/**
           filters:
-            - StripPrefix=2
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-
-            - name: CircuitBreaker
-              args:
-                name: accountCircuit
-                fallbackUri: forward:/fallback/account
-
-        - id: security-service
-          uri: http://security-service:8080
-          predicates:
-            - Path=/api/security/**
-          filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: securityCircuit
-                fallbackUri: forward:/fallback/security
-
-        - id: notification-service
-          uri: http://notification-service:8080
-          predicates:
-            - Path=/api/notifications/**
-          filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: notificationCircuit
-                fallbackUri: forward:/fallback/notification
-
-        - id: fraud-detection
-          uri: http://fraud-detection:8080
-          predicates:
-            - Path=/api/fraud/**
-          filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: fraudCircuit
-                fallbackUri: forward:/fallback/fraud
-
-        - id: audit-service
-          uri: http://audit-service:8080
-          predicates:
-            - Path=/api/audits/**
-          filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
-
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: auditCircuit
-                fallbackUri: forward:/fallback/audit
+            - StripPrefix=1
 
         - id: kyc-service
           uri: http://kyc-service:8080
           predicates:
-            - Path=/api/kyc/**
+            - Path=/kyc-service/**
           filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
+            - StripPrefix=1
 
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: kycCircuit
-                fallbackUri: forward:/fallback/kyc
-
-        - id: settings-service
-          uri: http://settings-service:8080
+        - id: user-settings-service
+          uri: http://user-settings-service:8080
           predicates:
-            - Path=/api/settings/**
+            - Path=/user-settings-service/**
           filters:
-            - name: Retry
-              args:
-                retries: 2
-                statuses: BAD_GATEWAY, GATEWAY_TIMEOUT, INTERNAL_SERVER_ERROR
-                methods: GET,POST,PUT,DELETE
-                series: SERVER_ERROR
-                exceptions: java.net.ConnectException, java.net.NoRouteToHostException
+            - StripPrefix=1
 
-                backoff:
-                  firstBackoff: 1s
-                  maxBackoff: 5s
-                  factor: 2
-            - name: CircuitBreaker
-              args:
-                name: settingsCircuit
-                fallbackUri: forward:/fallback/settings
-cors:
-  allowed-origins:
-    - http://localhost:3000
-    - http://localhost:8080
+#     SPRINGDOC CONFIG
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    display-request-duration: true
+    default-models-expand-depth: 1
+    default-model-expand-depth: 1
+    doc-expansion: none
+    tags-sorter: alpha
+    operations-sorter: alpha
+    # ссылки на все сервисы в dropdown(при необходимости добавьте сервису сюжа и в routes)
+    urls:
+      - url: /account-service/v3/api-docs
+        name: Account Service
+      - url: /kyc-service/v3/api-docs
+        name: kyc Service
+      - url: /user-settings-service/v3/api-docs
+        name: User Settings Service
+
+    config-url: /v3/api-docs/swagger-config
+    urls-primary-name: Kyc Service
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,liveness,readiness,gateway,routes
   endpoint:
+    gateway:
+      enabled: true
     health:
       probes:
         enabled: true
       show-details: always
 
-resilience4j:
-  circuitbreaker:
-    configs:
-      default:
-        slidingWindowType: COUNT_BASED
-        slidingWindowSize: 20
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 30s
-        permittedNumberOfCallsInHalfOpenState: 5
-    instances:
-      accountCircuit:
-        baseConfig: default
-      securityCircuit:
-        baseConfig: default
-      notificationCircuit:
-        baseConfig: default
-      fraudCircuit:
-        baseConfig: default
-      auditCircuit:
-        baseConfig: default
-      kycCircuit:
-        baseConfig: default
-      settingsCircuit:
-        baseConfig: default
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springdoc: DEBUG
