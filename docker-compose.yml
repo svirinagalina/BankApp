@@ -55,6 +55,37 @@ services:
       - kafka_data:/var/lib/kafka/data
       - ./config/kafka/log4j.properties:/etc/kafka/log4j.properties
 
+#  schema-registry:
+#    image: confluentinc/cp-schema-registry:7.0.9
+#    container_name: schema-registry
+#    depends_on:
+#      kafka:
+#        condition: service_healthy
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+#      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka:9092"
+#      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+#      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: WARN
+#      SCHEMA_REGISTRY_COMPATIBILITY_LEVEL: BACKWARD
+#    volumes:
+#      - ./shared/kafka/config:/etc/kafka
+#      - ./shared/kafka/schemas:/schemas
+#      - schema_registry_secrets:/etc/schema-registry/secrets
+
+#  kafdrop:
+#    image: obsidiandynamics/kafdrop:4.0.1
+#    container_name: kafdrop
+#    restart: "no"
+#    ports:
+#      - "9000:9000"
+#    environment:
+#      KAFKA_BROKERCONNECT: "kafka:9092"
+#      JVM_OPTS: "-XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+#    depends_on:
+#      - kafka
+
   minio:
     image: minio/minio
     container_name: minio
