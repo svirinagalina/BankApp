@@ -5,3 +5,37 @@ spring:
 logging:
   level:
     root: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+      base-path: /actuator
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
+gateway:
+  downstream:
+    services:
+      account-service:
+        readiness-path: /actuator/health/readiness
+      kyc-service:
+        readiness-path: /actuator/health/readiness
+      user-settings-service:
+        readiness-path: /actuator/health/readiness
+      audit-service:
+        readiness-path: /actuator/health/readiness
+      security-service:
+        readiness-path: /actuator/health/readiness
+      auth-statistics-service:
+        readiness-path: /actuator/health/readiness
+      fraud-detection:
+        readiness-path: /actuator/health/readiness
+      notification-service:
+        readiness-path: /actuator/health/readiness
