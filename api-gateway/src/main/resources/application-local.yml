@@ -156,3 +156,23 @@ resilience4j:
         baseConfig: default
       settingsCircuit:
         baseConfig: default
+
+gateway:
+  downstream:
+    services:
+      account-service:
+        base-url: http://localhost:8081
+      kyc-service:
+        base-url: http://localhost:8086
+      user-settings-service:
+        base-url: http://localhost:8091
+      audit-service:
+        base-url: http://localhost:8082
+      security-service:
+        base-url: http://localhost:8090
+      auth-statistics-service:
+        base-url: http://localhost:8083
+      fraud-detection:
+        base-url: http://localhost:8084
+      notification-service:
+        base-url: http://localhost:8089

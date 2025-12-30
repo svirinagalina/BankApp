@@ -113,3 +113,13 @@ logging:
   level:
     org.springframework.cloud.gateway: DEBUG
     org.springdoc: DEBUG
+
+gateway:
+  downstream:
+    services:
+      account-service:
+        base-url: http://account-service:8080
+      kyc-service:
+        base-url: http://kyc-service:8080
+      user-settings-service:
+        base-url: http://user-settings-service:8080

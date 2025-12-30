@@ -43,10 +43,15 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,liveness,readiness
   endpoint:
     health:
       show-details: always
+      group:
+        readiness:
+          include: db
+        liveness:
+          include: ping
 
 bank:
   security:
