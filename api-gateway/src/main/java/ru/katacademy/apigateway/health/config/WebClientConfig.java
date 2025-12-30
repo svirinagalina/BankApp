@@ -1,4 +1,4 @@
-package ru.katacademy.apigateway.config;
+package ru.katacademy.apigateway.health.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

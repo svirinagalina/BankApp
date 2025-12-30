@@ -6,6 +6,20 @@ logging:
   level:
     root: INFO
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+      base-path: /actuator
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
 gateway:
   downstream:
     services:

@@ -155,3 +155,42 @@ Bank-App моделирует основные бизнес-процессы ц�
 - Клиент PostgreSQL (psql) для отладки схем.
 - Kafka CLI (опционально) для просмотра топиков.
 - Доступ к портам 5434, 9092/9094, 9000/9001 и сервисным портам из Docker Compose.
+
+# API Gateway - Monitoring Endpoints
+
+## 🩺 Health Checks
+- **Gateway Health**: `GET /actuator/health` - Общее состояние здоровья самого API Gateway
+- **Liveness Probe**: `GET /actuator/health/liveness` -  Проверка "живости" для Kubernetes (возвращает UP если приложение запущено)
+- **Readiness Probe**: `GET /actuator/health/readiness` - Проверка готовности для Kubernetes (возвращает UP если приложение готово принимать трафик)
+
+## 🔧 Gateway Monitoring
+- **Gateway Routes**: `GET /actuator/gateway/routes` -  Полный список всех сконфигурированных маршрутов с фильтрами и предикатами
+- **Route Filters**: `GET /actuator/gateway/routefilters` - Список доступных фильтров для маршрутов
+- **Global Filters**: `GET /actuator/gateway/globalfilters` - Список глобальных фильтров, применяемых ко всем запросам
+
+## 📊 Custom Monitoring Endpoints
+- **Service Statuses**: `GET /actuator/service-status` - Текущие статусы всех downstream-сервисов (READY/NOT_READY/UNAVAILABLE)
+- **Downstream Health**: `GET /actuator/downstream-health` - Cтатус всех сервисов с детальной информацией
+
+## 📚 API Documentation
+- **OpenAPI Spec**: `GET /v3/api-docs` -  OpenAPI спецификация в JSON формате
+- **Swagger Config**: `GET /v3/api-docs/swagger-config` - Конфигурация Swagger UI
+
+## 🔌 Service-specific Documentation (Документация по сервисам)
+- Account Service: `/account-service/v3/api-docs` - Документация сервиса управления аккаунтами
+- KYC Service: `/kyc-service/v3/api-docs` - Документация сервиса проверки клиентов
+- User Settings: `/user-settings-service/v3/api-docs` - Документация сервиса настроек пользователя
+- Audit Service: `/audit-service/v3/api-docs` - Документация сервиса аудита и логирования
+- Security Service: `/security-service/v3/api-docs` - Документация сервиса безопасности
+- Fraud Detection: `/fraud-detection/v3/api-docs` - Документация сервиса обнаружения мошенничества
+- Notification Service: `/notification-service/v3/api-docs` - Документация сервиса уведомлений
+- Auth Statistics: `/auth-statistics-service/v3/api-docs` - Документация сервиса статистики аутентификации
+
+## Circuit Breaker
+- Все переходы состояний логируются
+- Fallback автоматически перенаправляет на соответствующие endpoint'ы
+
+## 📈 Health Checking
+- Периодическая проверка readiness: каждые 5 секунд
+- Сервисы проверяются по: `{base-url}/actuator/health/readiness`
+- Статусы хранятся в `DownstreamServiceRegistry`

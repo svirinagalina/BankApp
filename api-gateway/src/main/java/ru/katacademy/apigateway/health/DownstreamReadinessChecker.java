@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.katacademy.apigateway.dto.ReadinessResponse;
+import ru.katacademy.apigateway.health.config.ServiceConfig;
 
 import java.time.Duration;
 import java.util.Map;
@@ -89,7 +90,7 @@ public class DownstreamReadinessChecker {
      * описанных в {@link DownstreamServiceProperties}.
      */
     private void checkAllServices() {
-        Map<String, DownstreamServiceProperties.ServiceConfig> services =
+        Map<String, ServiceConfig> services =
                 properties.getServices();
 
         if (services == null || services.isEmpty()) {
@@ -112,7 +113,7 @@ public class DownstreamReadinessChecker {
      * @param config      конфигурация сервиса
      */
     private void checkSingleService(String serviceName,
-                                    DownstreamServiceProperties.ServiceConfig config) {
+                                    ServiceConfig config) {
 
         if (config.getBaseUrl() == null) {
             log.warn("Service '{}' has no baseUrl configured, marking as UNAVAILABLE", serviceName);
