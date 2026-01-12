@@ -17,19 +17,19 @@ import lombok.Setter;
 public class CreateAccountRequest {
 
     @NotBlank(message = "ID пользователя не может быть пустым")
-    @Pattern(regexp = "^\\\\d+$", message = "ID пользователя должен быть числом")
+    @Pattern(regexp = "^\\d+$", message = "ID пользователя должен быть числом")
     @Schema(description = "ID пользователя-владельца счета",
             example = "123",
             requiredMode = Schema.RequiredMode.REQUIRED)
-    private String userId; // ✅ String - будет парситься в Long
+    private String userId;
 
     @NotBlank(message = "Номер счета не может быть пустым")
     @Size(min = 20, max = 20, message = "Номер счета должен содержать 20 символов")
-    @Pattern(regexp = "^\\\\d+$", message = "Номер счета должен содержать только цифры")
+    @Pattern(regexp = "^\\d+$", message = "Номер счета должен содержать только цифры")
     @Schema(description = "Номер банковского счета (20 цифр)",
             example = "40817810099910004321",
             requiredMode = Schema.RequiredMode.REQUIRED)
-    private String accountNumber; // ✅ String - будет парситься в AccountNumber
+    private String accountNumber;
 
     @NotNull(message = "Начальный баланс не может быть null")
     @PositiveOrZero(message = "Начальный баланс не может быть отрицательным")
@@ -37,7 +37,7 @@ public class CreateAccountRequest {
     @Schema(description = "Начальный баланс счета",
             example = "1000.00",
             requiredMode = Schema.RequiredMode.REQUIRED)
-    private BigDecimal initialBalance; // ✅ BigDecimal - часть Money
+    private BigDecimal initialBalance;
 
     @NotBlank(message = "Валюта не может быть пустой")
     @Size(min = 3, max = 3, message = "Код валюты должен содержать 3 символа")
@@ -45,12 +45,13 @@ public class CreateAccountRequest {
     @Schema(description = "Код валюты счета (ISO 4217)",
             example = "RUB",
             requiredMode = Schema.RequiredMode.REQUIRED)
-    private String currency; // ✅ String - часть Money
+    private String currency;
 
     @Pattern(regexp = "CHECKING|SAVINGS|DEPOSIT|CREDIT",
             message = "Недопустимый тип счета")
     @Schema(description = "Тип счета",
             example = "CHECKING",
-            allowableValues = {"CHECKING", "SAVINGS", "DEPOSIT", "CREDIT"})
+            allowableValues = {"CHECKING", "SAVINGS", "DEPOSIT", "CREDIT"},
+    requiredMode = Schema.RequiredMode.REQUIRED)
     private String accountType;
 }

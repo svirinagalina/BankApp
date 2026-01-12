@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * Тест лоя проверки работы методов AccountServiceImpl
  */
 @ExtendWith(MockitoExtension.class)
-public class AccountServiceImplTest {
+class AccountServiceImplTest {
 
     @Mock
     private AccountJpaRepository accountJpaRepository;
@@ -61,7 +61,7 @@ public class AccountServiceImplTest {
 
         when(accountJpaRepository.countByUserId(anyLong())).thenReturn(0L);
 
-        final AccountEntity savedEntity = new AccountEntity(number, user, money, AccountStatus.ACTIVE, now);
+        final AccountEntity savedEntity = new AccountEntity(number, user, money, AccountStatus.ACTIVE, now, now);
         when(accountJpaRepository.save(any(AccountEntity.class))).thenReturn(savedEntity);
 
         final AccountEntity result = accountService.createAccount(user, number, money);
@@ -87,7 +87,7 @@ public class AccountServiceImplTest {
     @Test
     void getById_success() {
         final UserEntity user = mock(UserEntity.class);
-        final Account account = new Account(1L, user, number, money, AccountStatus.ACTIVE, now);
+        final Account account = new Account(1L, user, number, money, AccountStatus.ACTIVE, now, now);
         when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
 
         final AccountDto dto = mock(AccountDto.class);
@@ -116,7 +116,7 @@ public class AccountServiceImplTest {
     @Test
     void blockAccountById_success() {
         final UserEntity user = mock(UserEntity.class);
-        final AccountEntity entity = new AccountEntity(number, user, money, AccountStatus.ACTIVE, now);
+        final AccountEntity entity = new AccountEntity(number, user, money, AccountStatus.ACTIVE, now, now);
 
         when(accountJpaRepository.findById(1L)).thenReturn(Optional.of(entity));
         when(accountJpaRepository.save(entity)).thenReturn(entity);
@@ -137,8 +137,8 @@ public class AccountServiceImplTest {
         final Money moneyFrom = new Money(BigDecimal.valueOf(50_000), rub);
         final Money moneyTo = new Money(BigDecimal.valueOf(80_000), rub);
 
-        final Account accountFrom = new Account(1L, user, numFrom, moneyFrom, AccountStatus.ACTIVE, now);
-        final Account accountTo = new Account(2L, user, numTo, moneyTo, AccountStatus.ACTIVE, now);
+        final Account accountFrom = new Account(1L, user, numFrom, moneyFrom, AccountStatus.ACTIVE, now, now);
+        final Account accountTo = new Account(2L, user, numTo, moneyTo, AccountStatus.ACTIVE, now, now);
 
         when(accountRepository.findById(1L)).thenReturn(Optional.of(accountFrom));
         when(accountRepository.findById(2L)).thenReturn(Optional.of(accountTo));
@@ -163,11 +163,11 @@ public class AccountServiceImplTest {
         final Money moneyFrom = new Money(BigDecimal.valueOf(50_000), rub);
         final Money moneyTo = new Money(BigDecimal.valueOf(80_000), rub);
 
-        final Account from = new Account(1L, user, numFrom, moneyFrom, AccountStatus.ACTIVE, now);
-        final Account to = new Account(2L, user, numTo, moneyTo, AccountStatus.ACTIVE, now);
+        final Account accountFrom = new Account(1L, user, numFrom, moneyFrom, AccountStatus.ACTIVE, now, now);
+        final Account accountTo = new Account(2L, user, numTo, moneyTo, AccountStatus.ACTIVE, now, now);
 
-        when(accountRepository.findById(1L)).thenReturn(Optional.of(from));
-        when(accountRepository.findById(2L)).thenReturn(Optional.of(to));
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(accountFrom));
+        when(accountRepository.findById(2L)).thenReturn(Optional.of(accountTo));
 
         final Money transferAmount = new Money(BigDecimal.valueOf(60_000), rub);
 
@@ -202,11 +202,11 @@ public class AccountServiceImplTest {
         final Money moneyFrom = new Money(BigDecimal.valueOf(50_000), rub);
         final Money moneyTo = new Money(BigDecimal.valueOf(80_000), rub);
 
-        final Account from = new Account(1L, user, numFrom, moneyFrom, AccountStatus.BLOCKED, now);
-        final Account to = new Account(2L, user, numTo, moneyTo, AccountStatus.ACTIVE, now);
+        final Account accountFrom = new Account(1L, user, numFrom, moneyFrom, AccountStatus.BLOCKED, now, now);
+        final Account accountTo = new Account(2L, user, numTo, moneyTo, AccountStatus.ACTIVE, now, now);
 
-        when(accountRepository.findById(1L)).thenReturn(Optional.of(from));
-        when(accountRepository.findById(2L)).thenReturn(Optional.of(to));
+        when(accountRepository.findById(1L)).thenReturn(Optional.of(accountFrom));
+        when(accountRepository.findById(2L)).thenReturn(Optional.of(accountTo));
 
         try {
             accountService.transferMoney(1L, 2L, new Money(BigDecimal.valueOf(5_000), rub));

@@ -4,6 +4,7 @@ package ru.katacademy.bank_app.accountservice.domain.service;
 import ru.katacademy.bank_app.accountservice.adapters.web.request.user.RegisterUserRequest;
 import ru.katacademy.bank_app.accountservice.application.command.ChangePasswordCommand;
 import ru.katacademy.bank_app.accountservice.application.dto.UserDto;
+import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.UserEntity;
 
 /**
  * Сервис для работы с пользователями.
@@ -38,4 +39,5 @@ public interface UserService {
 
     void changePassword(ChangePasswordCommand command);
 
+    UserEntity getEntityById(Long id);
 }

@@ -16,7 +16,6 @@ import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.U
 import ru.katacademy.bank_app.accountservice.infrastructure.repository.AccountJpaRepository;
 import ru.katacademy.bank_shared.event.TransferCompletedEvent;
 import ru.katacademy.bank_shared.exception.AccountNotFoundException;
-import ru.katacademy.bank_shared.exception.AccountNotFoundExceptionResolver;
 import ru.katacademy.bank_shared.exception.AccountStatusException;
 import ru.katacademy.bank_shared.exception.InsufficientFundsException;
 import ru.katacademy.bank_shared.exception.MaxAccountsExceededException;
@@ -51,7 +50,15 @@ public class AccountServiceImpl implements AccountService {
             throw new MaxAccountsExceededException("User " + user + " уже имеет " + count + " аккаунтов");
         }
 
-        final AccountEntity account = new AccountEntity(accountNumber, user, initialBalance, AccountStatus.ACTIVE, LocalDateTime.now());
+        final LocalDateTime now = LocalDateTime.now();
+        final AccountEntity account = new AccountEntity(
+                accountNumber,
+                user,
+                initialBalance,
+                AccountStatus.ACTIVE,
+                now,
+                now
+        );
         return accountJpaRepository.save(account);
     }
 
@@ -59,7 +66,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountDto getById(Long id) {
         final Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotFoundExceptionResolver("Аккаунт с id " + id + " не найден"));
+                .orElseThrow(() -> new AccountNotFoundException("Аккаунт с id " + id + " не найден"));
 
         return accountMapper.toDto(account);
     }
@@ -68,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void blockAccountById(Long id) {
         final AccountEntity account = accountJpaRepository.findById(id)
-                .orElseThrow(() -> new AccountNotFoundExceptionResolver("Аккаунт с id " + id + " не найден"));
+                .orElseThrow(() -> new AccountNotFoundException("Аккаунт с id " + id + " не найден"));
         account.setStatus(AccountStatus.BLOCKED);
         accountJpaRepository.save(account);
     }

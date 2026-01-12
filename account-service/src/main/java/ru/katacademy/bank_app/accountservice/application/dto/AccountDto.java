@@ -1,5 +1,6 @@
 package ru.katacademy.bank_app.accountservice.application.dto;
 
+import java.time.LocalDateTime;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.AccountStatus;
 import ru.katacademy.bank_shared.valueobject.AccountNumber;
 import ru.katacademy.bank_shared.valueobject.Money;
@@ -18,8 +19,11 @@ import ru.katacademy.bank_shared.valueobject.Money;
  */
 public record AccountDto(
         Long id,
-        AccountNumber accountNumber,  // Доменный объект ✓
+        AccountNumber accountNumber,
         Long userId,
-        Money balance,                // Доменный объект ✓
-        AccountStatus status          // Доменный объект ✓
-) {}
+        Money balance,
+        AccountStatus status,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+) {
+}
