@@ -271,6 +271,7 @@ class UserServiceImplTest {
     @Test
     void register_fails_whenKycServiceUnavailable() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+
         when(userRepository.save(any())).thenAnswer(invocation -> {
             final User u = invocation.getArgument(0);
             return new User(
@@ -283,16 +284,31 @@ class UserServiceImplTest {
             );
         });
 
+        // Настраиваем маппер - это ключевое!
+        final UserDto expectedDto = new UserDto(
+                1L,
+                "Test Testov",
+                "fail@test.com",
+                UserRole.USER
+        );
+        when(userMapper.toDto(any(User.class))).thenReturn(expectedDto);
+
+        // KYC падает
         doThrow(new KycServiceUnavailableException("Verification service temporarily unavailable"))
                 .when(kycClient).startKyc(anyLong());
 
         final var command = new RegisterUserRequest("Test Testov", "fail@test.com", "Password123");
 
-        final var ex = assertThrows(
-                KycServiceUnavailableException.class,
-                () -> userService.register(command)
-        );
+        // Регистрация должна пройти успешно (KYC ошибка ловится внутри)
+        final UserDto result = userService.register(command);
 
-        assertEquals("Verification service temporarily unavailable", ex.getMessage());
+        // Проверки
+        assertNotNull(result);
+        assertEquals(1L, result.id());
+        assertEquals("fail@test.com", result.email());
+        assertEquals(UserRole.USER, result.role());
+
+        // KYC всё равно вызывался
+        verify(kycClient).startKyc(anyLong());
     }
 }

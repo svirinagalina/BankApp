@@ -52,11 +52,18 @@ public class AccountEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public AccountEntity(AccountNumber accountNumber, UserEntity user, Money balance, AccountStatus status, LocalDateTime createdAt) {
+    /** Время последнего обновления аккаунта. */
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    public AccountEntity(AccountNumber accountNumber, UserEntity user,
+                         Money balance, AccountStatus status,
+                         LocalDateTime createdAt,  LocalDateTime updatedAt) {
         this.accountNumber = accountNumber;
         this.user = user;
         this.balance = balance;
         this.status = status;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

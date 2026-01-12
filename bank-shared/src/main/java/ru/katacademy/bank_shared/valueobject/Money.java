@@ -1,6 +1,7 @@
 package ru.katacademy.bank_shared.valueobject;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Представляет неизменяемый объект денег.
@@ -22,6 +23,9 @@ public record Money(BigDecimal amount, Currency currency) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Amount must be greater than zero.");
         }
+        if (currency == null) {
+            throw new IllegalArgumentException("Currency cannot be null.");
+        }
     }
 
     /**
@@ -32,19 +36,9 @@ public record Money(BigDecimal amount, Currency currency) {
      */
     public void checkCurrencyMatch(Money money) {
         if (!this.currency.equals(money.currency)) {
-            throw new IllegalArgumentException("Currency does not match currency.");
-        }
-    }
-
-    /**
-     * Проверяет, допустимо ли вычитание (чтобы результат не был отрицательным).
-     *
-     * @param other объект Money для сравнения
-     * @throws IllegalArgumentException если результат будет отрицательным
-     */
-    private void checkSubtractionAllowed(Money other) {
-        if (this.amount.compareTo(other.amount) < 0) {
-            throw new IllegalArgumentException("Resulting amount must not be negative.");
+            throw new IllegalArgumentException(
+                    "Currencies don't match: " + this.currency.code() +
+                            " vs " + money.currency.code());
         }
     }
 
@@ -69,7 +63,12 @@ public record Money(BigDecimal amount, Currency currency) {
      */
     public Money subtract(Money other) {
         checkCurrencyMatch(other);
-        checkSubtractionAllowed(other);
+        if (this.amount.compareTo(other.amount) < 0) {
+            throw new IllegalArgumentException(
+                    "Insufficient funds: " + this.amount + " " + this.currency.code() +
+                            " < " + other.amount + " " + other.currency.code()
+            );
+        }
         return new Money(this.amount.subtract(other.amount), this.currency);
     }
 
@@ -84,5 +83,32 @@ public record Money(BigDecimal amount, Currency currency) {
     public boolean isGreaterThan(Money other) {
         checkCurrencyMatch(other);
         return this.amount.compareTo(other.amount) > 0;
+    }
+
+    /**
+     * Умножает сумму на множитель.
+     */
+    public Money multiply(BigDecimal multiplier) {
+        if (multiplier == null) {
+            throw new IllegalArgumentException("Multiplier cannot be null.");
+        }
+        return new Money(this.amount.multiply(multiplier), this.currency);
+    }
+
+    /**
+     * Проверяет, равна ли сумма нулю.
+     */
+    public boolean isZero() {
+        return this.amount.compareTo(BigDecimal.ZERO) == 0;
+    }
+
+    /**
+     * Возвращает сумму с округлением в соответствии с валютой.
+     */
+    public Money rounded() {
+        return new Money(
+                this.amount.setScale(this.currency.scale(), RoundingMode.HALF_EVEN),
+                this.currency
+        );
     }
 }

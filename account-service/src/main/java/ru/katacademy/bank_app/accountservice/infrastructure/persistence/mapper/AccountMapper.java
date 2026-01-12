@@ -8,6 +8,10 @@ import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.A
  */
 public class AccountMapper {
 
+    private AccountMapper() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     /**
      * Доменную модель в JPA‑сущность.
      *
@@ -20,7 +24,8 @@ public class AccountMapper {
                 account.getUser(),
                 account.getBalance(),
                 account.getStatus(),
-                account.getCreatedAt()
+                account.getCreatedAt(),
+                account.getUpdatedAt()
         );
     }
 
@@ -37,7 +42,8 @@ public class AccountMapper {
                 accountEntity.getAccountNumber(),
                 accountEntity.getBalance(),
                 accountEntity.getStatus(),
-                accountEntity.getCreatedAt()
+                accountEntity.getCreatedAt(),
+                accountEntity.getUpdatedAt()
         );
     }
 }

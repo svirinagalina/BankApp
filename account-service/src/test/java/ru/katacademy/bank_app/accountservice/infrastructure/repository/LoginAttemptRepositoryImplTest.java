@@ -22,12 +22,15 @@ class LoginAttemptRepositoryImplTest {
     void saveAndFindById() {
         final LoginAttemptRepository repo = new LoginAttemptRepositoryImpl(jpaRepo);
 
+        final LocalDateTime now = LocalDateTime.now();
+
         final LoginAttemptEntry attempt = new LoginAttemptEntry(
                 null,
-                "user-xyz",
+                123L,
+                "user@example.com",
                 "10.0.2.3",
-                "userA",
-                LocalDateTime.now(),
+                "Mozilla/5.0",
+                now,
                 false
         );
         final LoginAttemptEntry saved = repo.save(attempt);

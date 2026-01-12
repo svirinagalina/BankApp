@@ -51,6 +51,7 @@ public class CreateAccountRequest {
             message = "Недопустимый тип счета")
     @Schema(description = "Тип счета",
             example = "CHECKING",
-            allowableValues = {"CHECKING", "SAVINGS", "DEPOSIT", "CREDIT"})
+            allowableValues = {"CHECKING", "SAVINGS", "DEPOSIT", "CREDIT"},
+    requiredMode = Schema.RequiredMode.REQUIRED)
     private String accountType;
 }

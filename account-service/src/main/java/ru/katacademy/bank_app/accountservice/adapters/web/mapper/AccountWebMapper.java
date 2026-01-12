@@ -27,8 +27,8 @@ public class AccountWebMapper {
                 .balance(extractBalanceAmount(dto))
                 .currency(extractCurrencyCode(dto))
                 .status(extractStatusName(dto))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(getCreatedAtWithDefault(dto.createdAt()))
+                .updatedAt(getUpdatedAtWithDefault(dto.updatedAt()))
                 .build();
     }
 
@@ -43,7 +43,7 @@ public class AccountWebMapper {
                 .userId(dto.userId())
                 .initialBalance(extractBalanceAmount(dto))
                 .currency(extractCurrencyCode(dto))
-                .createdAt(LocalDateTime.now())
+                .createdAt(getCreatedAtWithDefault(dto.createdAt()))
                 .message("Счет успешно создан")
                 .build();
     }
@@ -82,5 +82,19 @@ public class AccountWebMapper {
             return null;
         }
         return dto.status().name();
+    }
+
+    private static LocalDateTime getCreatedAtWithDefault(LocalDateTime createdAt) {
+        if (createdAt != null) {
+            return createdAt;
+        }
+        return LocalDateTime.now();
+    }
+
+    private static LocalDateTime getUpdatedAtWithDefault(LocalDateTime updatedAt) {
+        if (updatedAt != null) {
+            return updatedAt;
+        }
+        return LocalDateTime.now();
     }
 }
