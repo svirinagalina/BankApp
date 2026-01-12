@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id("com.github.spotbugs") version "6.1.11"
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
 }
 
 group = 'ru.katacademy.bank-app'
@@ -24,6 +25,10 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    implementation 'org.apache.avro:avro:1.11.3'
+    implementation 'io.confluent:kafka-avro-serializer:7.7.1'
+    implementation 'io.confluent:kafka-schema-registry-client:7.7.1'
+
 	compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 	annotationProcessor 'com.github.spotbugs:spotbugs-annotations:4.8.3'
 
@@ -40,6 +45,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 }
 
+avro {
+    stringType = "String"
+    outputCharacterEncoding = "UTF-8"
+}
+
 test {
 	useJUnitPlatform()
 }
@@ -48,6 +58,7 @@ repositories {
 	mavenCentral()
 	maven { url = 'https://repo.spring.io/milestone' }
 	maven { url = 'https://repo.spring.io/snapshot' }
+    maven { url = 'https://packages.confluent.io/maven/' }
 }
 
 tasks.spotbugsMain {
@@ -56,6 +67,7 @@ tasks.spotbugsMain {
 		outputLocation = file("$rootDir/reports/spotbugs-bank-shared.html")
 		setStylesheet("fancy-hist.xsl")
 	}
+    excludeFilter = file("config/spotbugs/exclude-filter.xml")
 }
 
 check.dependsOn spotbugsMain
