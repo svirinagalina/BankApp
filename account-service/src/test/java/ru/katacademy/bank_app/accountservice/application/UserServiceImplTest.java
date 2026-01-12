@@ -284,7 +284,6 @@ class UserServiceImplTest {
             );
         });
 
-        // Настраиваем маппер - это ключевое!
         final UserDto expectedDto = new UserDto(
                 1L,
                 "Test Testov",
@@ -293,22 +292,18 @@ class UserServiceImplTest {
         );
         when(userMapper.toDto(any(User.class))).thenReturn(expectedDto);
 
-        // KYC падает
         doThrow(new KycServiceUnavailableException("Verification service temporarily unavailable"))
                 .when(kycClient).startKyc(anyLong());
 
         final var command = new RegisterUserRequest("Test Testov", "fail@test.com", "Password123");
 
-        // Регистрация должна пройти успешно (KYC ошибка ловится внутри)
         final UserDto result = userService.register(command);
 
-        // Проверки
         assertNotNull(result);
         assertEquals(1L, result.id());
         assertEquals("fail@test.com", result.email());
         assertEquals(UserRole.USER, result.role());
 
-        // KYC всё равно вызывался
         verify(kycClient).startKyc(anyLong());
     }
 }
