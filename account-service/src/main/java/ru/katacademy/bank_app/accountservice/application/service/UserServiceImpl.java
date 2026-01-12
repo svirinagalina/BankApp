@@ -1,5 +1,8 @@
 package ru.katacademy.bank_app.accountservice.application.service;
 
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -15,11 +18,14 @@ import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_app.accountservice.infrastructure.client.KycClient;
 import ru.katacademy.bank_app.accountservice.infrastructure.messaging.PasswordChangeEventPublisher;
+import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.UserEntity;
+import ru.katacademy.bank_app.accountservice.infrastructure.repository.UserJpaRepository;
 import ru.katacademy.bank_app.audit.annotation.Auditable;
-import ru.katacademy.bank_shared.exception.*;
+import ru.katacademy.bank_shared.exception.DomainException;
+import ru.katacademy.bank_shared.exception.EmailAlreadyTakenException;
+import ru.katacademy.bank_shared.exception.InvalidPasswordException;
+import ru.katacademy.bank_shared.exception.UserNotFoundException;
 import ru.katacademy.bank_shared.valueobject.Email;
-
-import java.util.Optional;
 
 /**
  * Реализация сервиса пользователей.
@@ -39,21 +45,28 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+
+
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordChangeEventPublisher passwordChangeEventPublisher;
     private final KycClient kycClient;
+    private final UserJpaRepository userJpaRepository;
 
     @Autowired
     public UserServiceImpl(
             UserRepository userRepository,
             UserMapper userMapper,
-            PasswordChangeEventPublisher passwordChangeEventPublisher, KycClient kycClient
+            PasswordChangeEventPublisher passwordChangeEventPublisher,
+            KycClient kycClient,
+            UserJpaRepository userJpaRepository
     ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordChangeEventPublisher = passwordChangeEventPublisher;
         this.kycClient = kycClient;
+        this.userJpaRepository = userJpaRepository;
     }
 
     /**
@@ -78,7 +91,6 @@ public class UserServiceImpl implements UserService {
         }
 
 
-
         if (!isValidPassword(cmd.password())) {
             throw new InvalidPasswordException(
                     "Пароль должен состоять не менее чем из 8 символов, " +
@@ -89,8 +101,11 @@ public class UserServiceImpl implements UserService {
         final User newUser = UserFactory.create(cmd);
         final User savedUser = userRepository.save(newUser);
 
-        kycClient.startKyc(savedUser.getId());
-
+        try {
+            kycClient.startKyc(savedUser.getId());
+        } catch (Exception e) {
+            log.warn("KYC initialization failed for user {}: {}", savedUser.getId(), e.getMessage());
+        }
         return userMapper.toDto(savedUser);
     }
 
@@ -111,6 +126,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + id + " не найден"));
 
         return userMapper.toDto(user);
+    }
+
+    @Override
+    public UserEntity getEntityById(Long id) {
+        return userJpaRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + id + " не найден"));
     }
 
     /**
