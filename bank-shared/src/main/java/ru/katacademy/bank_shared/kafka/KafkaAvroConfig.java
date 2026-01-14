@@ -22,7 +22,7 @@ public class KafkaAvroConfig {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
-        configProps.put("schema.registry.url", "http://localhost:8081");
+        configProps.put("schema.registry.url", "http://localhost:9091");
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

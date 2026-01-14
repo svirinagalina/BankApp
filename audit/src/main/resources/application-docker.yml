@@ -16,6 +16,14 @@ spring:
 
   kafka:
     bootstrap-servers: kafka:9092
+    consumer:
+      group-id: audit-service-password-consumer
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        schema.registry.url: schema-registry:9091
+        specific.avro.reader: true
 
   jpa:
     hibernate:
