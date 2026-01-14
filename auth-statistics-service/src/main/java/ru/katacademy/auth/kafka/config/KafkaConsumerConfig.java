@@ -15,12 +15,52 @@ import ru.katacademy.bank.events.password.v1.PasswordChangedEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Конфигурация Kafka-потребителя для обработки событий смены пароля пользователя.
+ * <p>
+ * Настраивает фабрику consumer'ов для получения Avro-сообщений типа {@link PasswordChangedEvent}.
+ * Сообщения приходят из топика Kafka {@code password-events} и десериализуются с помощью Avro.
+ * </p>
+ *
+ * <p>
+ * <b>Конфигурация consumer:</b>
+ * <ul>
+ *   <li>Bootstrap-серверы: берутся из свойства {@code spring.kafka.bootstrap-servers}</li>
+ *   <li>Группа consumer'ов: {@code auth-statistic-service-group}</li>
+ *   <li>Десериализация ключа: {@link StringDeserializer}</li>
+ *   <li>Десериализация значения: {@link KafkaAvroDeserializer}</li>
+ *   <li>URL Schema Registry: {@code http://localhost:9091}</li>
+ *   <li>Используется specific Avro reader, чтобы получать {@link PasswordChangedEvent}, а не GenericRecord</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * После настройки фабрики consumer'ов, бин {@link ConcurrentKafkaListenerContainerFactory} позволяет
+ * аннотированным методам {@link org.springframework.kafka.annotation.KafkaListener} автоматически
+ * получать события и обрабатывать их.
+ * </p>
+ *
+ * author: Krasirskii Dmitrii
+ * date: 14.01.2026
+ */
 @Configuration
 public class KafkaConsumerConfig {
 
+    /**
+     * Адрес Kafka bootstrap-серверов, берется из application.properties
+     */
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
+    /**
+     * Создает фабрику consumerов для получения событий смены пароля.
+     * <p>
+     * ConsumerFactory настраивается на десериализацию ключа как String
+     * и значения как Avro-конкретный класс {@link PasswordChangedEvent}.
+     * </p>
+     *
+     * @return {@link ConsumerFactory} для {@code PasswordChangedEvent}
+     */
     @Bean
     public ConsumerFactory<String, PasswordChangedEvent> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
@@ -33,6 +73,16 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
+    /**
+     * Создает фабрику контейнеров для KafkaListener.
+     * <p>
+     * Использует {@link #consumerFactory()} для получения consumer'ов и
+     * позволяет аннотированным методам {@link org.springframework.kafka.annotation.KafkaListener}
+     * автоматически подписываться на топики и получать события.
+     * </p>
+     *
+     * @return {@link ConcurrentKafkaListenerContainerFactory} для {@link PasswordChangedEvent}
+     */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, PasswordChangedEvent> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, PasswordChangedEvent> factory =
