@@ -10,7 +10,13 @@ import org.springframework.context.event.EventListener;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import ru.katacademy.apigateway.dto.SwaggerEndpointResolver;
 
-
+/**
+ * Основной класс запуска Spring Boot приложения API Gateway.
+ *
+ * Логирует доступные Swagger UI endpoints downstream-сервисов после старта приложения.
+ * author: Krasitskii Dmitrii
+ * date: 17.01.2026
+ */
 @SpringBootApplication
 @EnableScheduling
 @ConfigurationPropertiesScan
@@ -29,6 +35,12 @@ public class ApiGatewayApplication {
         SpringApplication.run(ApiGatewayApplication.class, args);
     }
 
+    /**
+     * Логирует таблицу ссылок на Swagger UI всех downstream-сервисов
+     * после того, как приложение полностью стартовало.
+     *
+     * Формирует красивую таблицу с именами сервисов и их Swagger UI URL.
+     */
     @EventListener(ApplicationReadyEvent.class)
     public void logSwaggerEndpoints() {
         String swaggerUIDocker = "http://localhost";
