@@ -123,3 +123,8 @@ gateway:
         base-url: http://kyc-service:8080
       user-settings-service:
         base-url: http://user-settings-service:8080
+  swagger: # при необходимости отображения сервиса в логах и ссылки на SwaggerUI для сервиса при старте приложения добавить сервис сюда + его порт
+    services:
+      account-service: http://localhost:8088
+      kyc-service: http://localhost:8084
+      user-settings-service: http://localhost:8082

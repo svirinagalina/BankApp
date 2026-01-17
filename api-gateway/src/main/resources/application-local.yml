@@ -178,3 +178,13 @@ gateway:
         base-url: http://localhost:8084
       notification-service:
         base-url: http://localhost:8089
+  swagger: # при необходимости отображения сервиса в логах и ссылки на SwaggerUI для сервиса при старте приложения добавить сервис сюда + его порт
+    services:
+      account-service: http://localhost:8081
+      kyc-service: http://localhost:8086
+      user-settings-service: http://localhost:8091
+      audit-service: http://localhost:8082
+      security-service: http://localhost:8090
+      auth-statistics-service: http://localhost:8083
+      fraud-detection:  http://localhost:8084
+      notification-service: http://localhost:8089
