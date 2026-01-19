@@ -3,12 +3,12 @@ package ru.katacademy.bank_app.accountservice.infrastructure.messaging;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.katacademy.bank_app.accountservice.application.dto.PasswordUpdatedEventV2;
-import ru.katacademy.bank_shared.kafka.KafkaProducer;
+import ru.katacademy.bank_shared.kafka.KafkaAvroProducer;
 
 /**
  * Класс {@code PasswordChangeEventPublisher} отвечает за публикацию событий смены пароля пользователей.
  *
- * Использует {@link KafkaProducer} для отправки сообщений в Kafka brokers.
+ * Использует {@link } для отправки сообщений в Kafka brokers.
  * Когда происходит событие смены пароля, класс публикует соответствующее сообщение в заданный топик.
  *
  * <p>
@@ -26,12 +26,9 @@ import ru.katacademy.bank_shared.kafka.KafkaProducer;
 @RequiredArgsConstructor
 public class PasswordChangeEventPublisher {
 
-    private final KafkaProducer producer;
+    private final KafkaAvroProducer kafkaAvroProducer;
 
     public void publish(PasswordUpdatedEventV2 event) {
-        final String message = String.format("Была совершена смена пароля: %s", event);
-        producer.send("user-change-password-event", message);
+        kafkaAvroProducer.sendPasswordChangedEvent(String.valueOf(event.getUserId()));
     }
-
-
 }

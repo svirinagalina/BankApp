@@ -64,3 +64,5 @@ logging:
     org.hibernate: WARN
     org.apache.kafka: WARN
     feign: WARN
+    org.springdoc: DEBUG
+    io.swagger.v3: DEBUG

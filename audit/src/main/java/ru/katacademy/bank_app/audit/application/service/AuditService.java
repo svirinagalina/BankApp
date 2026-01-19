@@ -3,8 +3,13 @@ package ru.katacademy.bank_app.audit.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.katacademy.bank.events.password.v1.PasswordChangedEvent;
 import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
+import ru.katacademy.bank_app.audit.persistence.entity.AuditEvent;
+import ru.katacademy.bank_app.audit.persistence.repository.AuditEventRepository;
 import ru.katacademy.bank_app.audit.domain.repository.AuditRepository;
+
+import java.time.Instant;
 
 /**
  * Сервис для записи событий в аудит.
@@ -25,6 +30,7 @@ import ru.katacademy.bank_app.audit.domain.repository.AuditRepository;
 @RequiredArgsConstructor
 public class AuditService {
     private final AuditRepository auditRepository;
+    private final AuditEventRepository repository;
 
     /**
      * Записывает событие в аудит и логирует результат операции.
@@ -42,5 +48,16 @@ public class AuditService {
             log.error("Ошибка при записи события в аудит", e);
             throw new AuditServiceException("Не удалось записать событие в аудит", e);
         }
+    }
+
+    public void savePasswordChangeEvent(PasswordChangedEvent event) {
+        final AuditEvent audit = AuditEvent.builder()
+                .userId(Long.valueOf(event.getUserId()))
+                .eventType(event.getEventType())
+                .occurredAt(Instant.ofEpochMilli(event.getOccurredAt()))
+                .source(event.getSource())
+                .build();
+
+        repository.save(audit);
     }
 }

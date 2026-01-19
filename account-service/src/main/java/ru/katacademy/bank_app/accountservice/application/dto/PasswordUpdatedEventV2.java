@@ -31,15 +31,13 @@ import java.time.LocalDateTime;
 
 
 public class PasswordUpdatedEventV2 {
-    private Long userId;
-    private LocalDateTime timestamp;
-
-    public PasswordUpdatedEventV2() {
-        this.timestamp = LocalDateTime.now();
-    }
+    private final Long userId;
 
     public PasswordUpdatedEventV2(Long userId) {
-        this();
         this.userId = userId;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 }
