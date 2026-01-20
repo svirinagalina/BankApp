@@ -1,4 +1,4 @@
-package ru.katacademy.bank_shared.conventor;
+package ru.katacademy.bank_app.accountservice.infrastructure.persistence.conventor;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -12,7 +12,6 @@ import ru.katacademy.bank_shared.valueobject.Currency;
 @Converter(autoApply = false)
 public class CurrencyConverter implements AttributeConverter<Currency, String> {
 
-    // Пример хранения: "RUB:Russian Ruble:2"
     /**
      * Преобразует объект {@link Currency} в строку формата "код:название:число" для хранения в БД.
      *

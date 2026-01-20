@@ -9,38 +9,41 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import ru.katacademy.bank_app.accountservice.domain.events.LoginAttemptedEvent;
-import ru.katacademy.bank_shared.kafka.KafkaProducer;
+import ru.katacademy.bank_app.accountservice.infrastructure.messaging.StringKafkaProducer;
+import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Конфигурация Kafka: регистрирует в контексте Spring бин для отправки сообщений.
- */
 @Configuration
 public class KafkaConfig {
 
+    private static final String BOOTSTRAP_SERVERS = "kafka:9092";
+    private static final String KEY_SERIALIZER = StringSerializer.class.getName();
+
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
-        final Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        return new DefaultKafkaProducerFactory<>(props);
+    public ProducerFactory<String, String> stringProducerFactory() {
+        return createProducerFactory(StringSerializer.class);
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, String> stringKafkaTemplate() {
+        return new KafkaTemplate<>(stringProducerFactory());
+    }
+
+    @Bean
+    public ProducerFactory<String, PasswordChangedEvent> passwordChangedProducerFactory() {
+        return createProducerFactory(JsonSerializer.class);
+    }
+
+    @Bean
+    public KafkaTemplate<String, PasswordChangedEvent> passwordChangedKafkaTemplate() {
+        return new KafkaTemplate<>(passwordChangedProducerFactory());
     }
 
     @Bean
     public ProducerFactory<String, LoginAttemptedEvent> loginAttemptedProducerFactory() {
-        final Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(props);
+        return createProducerFactory(JsonSerializer.class);
     }
 
     @Bean
@@ -48,14 +51,22 @@ public class KafkaConfig {
         return new KafkaTemplate<>(loginAttemptedProducerFactory());
     }
 
-    /**
-     * Создаёт и настраивает бин {@link KafkaProducer} для работы с {@link KafkaTemplate}.
-     *
-     * @param kafkaTemplate автоматически сконфигурированный шаблон для работы с Kafka
-     * @return готовый к использованию продюсер сообщений
-     */
     @Bean
-    public KafkaProducer kafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
-        return new KafkaProducer(kafkaTemplate);
+    public StringKafkaProducer stringKafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
+        return new StringKafkaProducer(kafkaTemplate);
+    }
+
+    /**
+     * Создает ProducerFactory с общими настройками.
+     *
+     * @param valueSerializerClass класс для сериализации значения
+     * @return настроенный ProducerFactory
+     */
+    private <T> ProducerFactory<String, T> createProducerFactory(Class<?> valueSerializerClass) {
+        final Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KEY_SERIALIZER);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializerClass.getName());
+        return new DefaultKafkaProducerFactory<>(props);
     }
 }

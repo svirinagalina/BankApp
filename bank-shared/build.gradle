@@ -1,83 +1,64 @@
 plugins {
-	id 'java'
-    id 'org.springframework.boot' version '3.3.4'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id("com.github.spotbugs") version "6.1.11"
-    id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
+    id 'java'
+    id 'java-library'
+    id("com.github.spotbugs") version "6.1.11"
 }
 
 group = 'ru.katacademy.bank-app'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
-}
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.kafka:spring-kafka'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-    implementation 'org.apache.avro:avro:1.11.3'
-    implementation 'io.confluent:kafka-avro-serializer:7.7.1'
-    implementation 'io.confluent:kafka-schema-registry-client:7.7.1'
-
-	compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
-	annotationProcessor 'com.github.spotbugs:spotbugs-annotations:4.8.3'
-
-	testImplementation platform('org.junit:junit-bom:5.9.2')
-	testImplementation 'org.junit.jupiter:junit-jupiter'
-	testImplementation 'org.mockito:mockito-core:4.8.0'
-	testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
-	testImplementation 'org.junit.platform:junit-platform-launcher'
-
-	compileOnly 'org.springframework.boot:spring-boot-starter-aop'
-
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-}
-
-avro {
-    stringType = "String"
-    outputCharacterEncoding = "UTF-8"
-}
-
-test {
-	useJUnitPlatform()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
-	mavenCentral()
-	maven { url = 'https://repo.spring.io/milestone' }
-	maven { url = 'https://repo.spring.io/snapshot' }
-    maven { url = 'https://packages.confluent.io/maven/' }
+    mavenCentral()
+}
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
+
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
+    annotationProcessor 'com.github.spotbugs:spotbugs-annotations:4.8.3'
+
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+
+    compileOnly 'org.aspectj:aspectjrt:1.9.20'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.mockito:mockito-core:4.8.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
+    testImplementation 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 tasks.spotbugsMain {
-	reports.create("html") {
-		required = true
-		outputLocation = file("$rootDir/reports/spotbugs-bank-shared.html")
-		setStylesheet("fancy-hist.xsl")
-	}
+    reports.create("html") {
+        required = true
+        outputLocation = file("$rootDir/reports/spotbugs-bank-shared.html")
+        setStylesheet("fancy-hist.xsl")
+    }
     excludeFilter = file("config/spotbugs/exclude-filter.xml")
 }
 
 check.dependsOn spotbugsMain
-
 check.dependsOn spotbugsTest
 
-bootJar {
-	enabled = false
-}
-
 jar {
-	enabled = true
+    enabled = true
+    archiveClassifier = ''
 }

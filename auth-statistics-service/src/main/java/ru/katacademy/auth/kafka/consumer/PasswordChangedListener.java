@@ -3,7 +3,7 @@ package ru.katacademy.auth.kafka.consumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import ru.katacademy.bank.events.password.v1.PasswordChangedEvent;
+import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
 import ru.katacademy.auth.service.AuthStatisticService;
 
 @Component

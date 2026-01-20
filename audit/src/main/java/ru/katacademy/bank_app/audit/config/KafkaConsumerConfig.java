@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
-import ru.katacademy.bank.events.password.v1.PasswordChangedEvent;
+import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
 
 @Configuration
 public class KafkaConsumerConfig {

@@ -48,7 +48,7 @@ class AuditServiceTest {
      */
     @Test
     void record_ShouldSaveAuditEntrySuccessfully() {
-        auditService.record(testEntry);
+        auditService.recordAuditEntry(testEntry);
         verify(auditRepository, times(1)).save(testEntry);
     }
 
@@ -66,7 +66,7 @@ class AuditServiceTest {
 
         final AuditServiceException exception = assertThrows(
                 AuditServiceException.class,
-                () -> auditService.record(testEntry)
+                () -> auditService.recordAuditEntry(testEntry)
         );
 
         assertEquals("Не удалось записать событие в аудит", exception.getMessage());
@@ -86,7 +86,7 @@ class AuditServiceTest {
                 null
         );
 
-        auditService.record(systemEntry);
+        auditService.recordAuditEntry(systemEntry);
         verify(auditRepository).save(systemEntry);
         assertNull(systemEntry.getUserId());
     }
