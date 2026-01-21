@@ -1,7 +1,11 @@
 package ru.katacademy.bank_shared.event.notification;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * Событие, представляющее факт изменения пароля пользователем.
@@ -9,50 +13,18 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class PasswordChangedEvent {
-    /**
-     * -- GETTER --
-     *  Возвращает имя пользователя.
-     * -- SETTER --
-     *  Устанавливает имя пользователя.
+@NoArgsConstructor
+@AllArgsConstructor
+public class PasswordChangedEvent implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-     */
     private String username;
-    /**
-     * -- GETTER --
-     *  Возвращает ID пользователя.
-     * -- SETTER --
-     *  Устанавливает ID пользователя.
 
-     */
     private String userId;
-    /**
-     * -- GETTER --
-     *  Возвращает timestamp события в миллисекундах.
-     * -- SETTER --
-     *  Устанавливает timestamp события в миллисекундах.
 
-     */
     private Long occurredAt;
-    /**
-     * -- GETTER --
-     *  Возвращает источник события.
-     * -- SETTER --
-     *  Устанавливает источник события.
 
-     */
     private String source;
-    /**
-     * -- GETTER --
-     *  Возвращает тип события.
-     * -- SETTER --
-     *  Устанавливает тип события.
 
-     */
     private String eventType;
-
-    public PasswordChangedEvent() {
-        throw new UnsupportedOperationException("Use builder or parameterized constructor");
-    }
-
 }

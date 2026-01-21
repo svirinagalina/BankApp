@@ -19,6 +19,7 @@ java {
 }
 
 tasks.withType(Test).configureEach {
+    useJUnitPlatform()
     testLogging {
         events = ["FAILED", "SKIPPED", "STANDARD_ERROR"]
         exceptionFormat = "FULL"
@@ -64,12 +65,16 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        exclude group: 'junit', module: 'junit'
+    }
 }
 
 springBoot {
     mainClass = 'ru.katacademy.notification.NotificationServiceApplication'
 }
 
-tasks.named('test') {
+test {
     useJUnitPlatform()
 }
