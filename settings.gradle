@@ -11,7 +11,6 @@ rootProject.name = 'bank-app'
 
 include("bank-shared")
 include("user-settings-service")
-include("security-service")
 include("fraud-detection")
 include("audit")
 include("notification-service")
