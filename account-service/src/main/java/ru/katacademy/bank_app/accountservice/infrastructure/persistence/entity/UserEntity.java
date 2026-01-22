@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.katacademy.bank_app.accountservice.domain.entity.User;
 import ru.katacademy.bank_app.accountservice.domain.enumtype.UserRole;
-import ru.katacademy.bank_shared.conventor.EmailAttributeConverter;
+import ru.katacademy.bank_app.accountservice.infrastructure.persistence.conventor.EmailAttributeConverter;
 import ru.katacademy.bank_shared.valueobject.Email;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

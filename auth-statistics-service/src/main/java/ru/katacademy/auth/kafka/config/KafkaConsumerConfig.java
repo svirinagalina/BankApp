@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import ru.katacademy.bank.events.password.v1.PasswordChangedEvent;
+import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class KafkaConsumerConfig {
      */
     @Bean
     public ConsumerFactory<String, PasswordChangedEvent> consumerFactory() {
-        Map<String, Object> props = new HashMap<>();
+        final Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "auth-statistic-service-group");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -85,7 +85,7 @@ public class KafkaConsumerConfig {
      */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, PasswordChangedEvent> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, PasswordChangedEvent> factory =
+        final ConcurrentKafkaListenerContainerFactory<String, PasswordChangedEvent> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;

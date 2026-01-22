@@ -1,4 +1,4 @@
-package ru.katacademy.bank_shared.conventor;
+package ru.katacademy.bank_app.accountservice.infrastructure.persistence.conventor;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

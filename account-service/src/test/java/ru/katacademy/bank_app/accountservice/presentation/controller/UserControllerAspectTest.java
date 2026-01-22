@@ -20,7 +20,7 @@
 //import org.springframework.test.web.servlet.MvcResult;
 //import ru.katacademy.bank_app.accountservice.adapters.web.request.user.RegisterUserRequest;
 //import ru.katacademy.bank_app.accountservice.domain.service.UserService;
-//import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
+//import ru.katacademy.bank_app.accountservice.exception.GlobalExceptionHandler;
 //
 //import java.util.ArrayList;
 //import java.util.List;

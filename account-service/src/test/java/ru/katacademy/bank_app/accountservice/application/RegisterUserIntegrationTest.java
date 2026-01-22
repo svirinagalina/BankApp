@@ -10,10 +10,9 @@
 //import org.springframework.test.context.ActiveProfiles;
 //import org.springframework.test.web.servlet.MockMvc;
 //import ru.katacademy.bank_app.accountservice.adapters.web.request.kyc.UpdateKycStatusRequest;
+//import ru.katacademy.bank_app.accountservice.exception.AccountServiceExceptionHandler;
 //import ru.katacademy.bank_shared.enums.KycStatus;
 //import ru.katacademy.bank_app.accountservice.infrastructure.client.KycClient;
-//import ru.katacademy.bank_shared.exception.GlobalExceptionHandler;
-//
 //import static org.mockito.ArgumentMatchers.any;
 //import static org.mockito.Mockito.when;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -23,7 +22,7 @@
 //@ActiveProfiles("test")
 //@SpringBootTest
 //@AutoConfigureMockMvc(addFilters = false)
-//@Import(GlobalExceptionHandler.class)
+//@Import(AccountServiceExceptionHandler.class)
 //class RegisterUserIntegrationTest {
 //
 //    @Autowired

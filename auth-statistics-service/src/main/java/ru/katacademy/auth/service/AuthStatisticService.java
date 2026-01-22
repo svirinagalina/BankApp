@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.katacademy.auth.domain.entity.UserPasswordStats;
 import ru.katacademy.auth.domain.repository.UserPasswordStatsRepository;
-import ru.katacademy.bank.events.password.v1.PasswordChangedEvent;
+import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
 
 import java.time.Instant;
 

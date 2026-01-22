@@ -3,7 +3,7 @@ package ru.katacademy.bank_app.audit.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.katacademy.bank.events.password.v1.PasswordChangedEvent;
+import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
 import ru.katacademy.bank_app.audit.domain.entity.AuditEntry;
 import ru.katacademy.bank_app.audit.persistence.entity.AuditEvent;
 import ru.katacademy.bank_app.audit.persistence.repository.AuditEventRepository;
@@ -39,7 +39,7 @@ public class AuditService {
      * @param entry объект типа {@link AuditEntry}, который содержит информацию о событии для записи в аудит.
      * @throws AuditServiceException если произошла ошибка при сохранении события в аудит.
      */
-    public void record(AuditEntry entry) {
+    public void recordAuditEntry(AuditEntry entry) {
         log.debug("Начало записи события в аудит: {}", entry);
         try {
             auditRepository.save(entry);

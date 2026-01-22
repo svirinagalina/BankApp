@@ -3,7 +3,6 @@ package ru.katacademy.bank_app.accountservice.infrastructure.messaging;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import ru.katacademy.bank_shared.event.UserRegisterEvent;
-import ru.katacademy.bank_shared.kafka.KafkaProducer;
 
 import java.time.LocalDateTime;
 
@@ -15,13 +14,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Тест publish_ShouldSendMessageToKafkaTopic имитирует ситуацию, когда пользователь регистрируется в системе.
  * Проверяет, что метод send у KafkaProduсer вызывается с корректным топиком и сообщением.
  */
-public class KafkaUserRegisterEventPublisherTest {
-    // тест, проверяющий корректно отправляется событие о регистрации пользователя в Kafka
+class KafkaUserRegisterEventPublisherTest {
     @Test
     void publish_ShouldSendMessageToKafkaTopic() {
 
-        final KafkaProducer kafkaProducer = mock(KafkaProducer.class);
-        final KafkaUserRegisterEventPublisher publisher = new KafkaUserRegisterEventPublisher(kafkaProducer);
+        final StringKafkaProducer stringKafkaProducer = mock(StringKafkaProducer.class);
+        final KafkaUserRegisterEventPublisher publisher = new KafkaUserRegisterEventPublisher(stringKafkaProducer);
 
         final long userId = 1L;
         final String fullName = "Ivan Ivanov";
@@ -35,13 +33,14 @@ public class KafkaUserRegisterEventPublisherTest {
         final ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
         final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
 
-        verify(kafkaProducer).send(topicCaptor.capture(), messageCaptor.capture());
+        verify(stringKafkaProducer).send(topicCaptor.capture(), messageCaptor.capture());
 
         assertThat(topicCaptor.getValue()).isEqualTo("user-register-event");
         final String message = messageCaptor.getValue();
 
-        assertThat(message).contains(fullName);
-        assertThat(message).contains(email);
-        assertThat(message).contains(createdAt.toString());
+        assertThat(message)
+                .contains(fullName)
+                .contains(email)
+                .contains(createdAt.toString());
     }
 }

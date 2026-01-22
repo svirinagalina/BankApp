@@ -2,9 +2,8 @@ package ru.katacademy.bank_app.accountservice.infrastructure.messaging;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.katacademy.bank_shared.kafka.KafkaProducer;
-import ru.katacademy.bank_shared.event.UserRegisterEvent;
 import ru.katacademy.bank_app.accountservice.application.port.out.UserRegisterEventPublisher;
+import ru.katacademy.bank_shared.event.UserRegisterEvent;
 
 /**
  * Реализация публикатора событий регистрации пользователей через Kafka.
@@ -18,7 +17,7 @@ import ru.katacademy.bank_app.accountservice.application.port.out.UserRegisterEv
 @RequiredArgsConstructor
 public class KafkaUserRegisterEventPublisher implements UserRegisterEventPublisher {
 
-    private final KafkaProducer producer;
+    private final StringKafkaProducer producer;
 
     @Override
     public void publish(UserRegisterEvent event) {

@@ -36,7 +36,7 @@ public class AuditConsumer {
     public void consumeTransferEvent(String message) {
         log.info("Получено событие перевода: {}", message);
         final AuditEntry entry = auditEntryMapper.fromTransferCompletedEvent(message);
-        auditService.record(entry);
+        auditService.recordAuditEntry(entry);
     }
 
     /**
@@ -48,6 +48,6 @@ public class AuditConsumer {
     public void consumeUserRegisterEvent(String message) {
         log.info("Получено событие регистрации пользователя: {}", message);
         final AuditEntry entry = auditEntryMapper.fromUserRegisterEvent(message);
-        auditService.record(entry);
+        auditService.recordAuditEntry(entry);
     }
 }
