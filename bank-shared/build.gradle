@@ -1,5 +1,4 @@
 plugins {
-    id 'java'
     id 'java-library'
     id("com.github.spotbugs") version "6.1.11"
 }
@@ -16,29 +15,31 @@ java {
 repositories {
     mavenCentral()
 }
+
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
+    api platform(project(":bank-bom"))
 
-    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    annotationProcessor platform(project(":bank-bom"))
+    compileOnly platform(project(":bank-bom"))
+    testAnnotationProcessor platform(project(":bank-bom"))
 
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    api 'com.fasterxml.jackson.core:jackson-databind'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    api 'jakarta.validation:jakarta.validation-api'
+    api 'org.slf4j:slf4j-api'
 
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.3'
-    annotationProcessor 'com.github.spotbugs:spotbugs-annotations:4.8.3'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-    implementation 'org.slf4j:slf4j-api:2.0.9'
+    compileOnly 'com.github.spotbugs:spotbugs-annotations'
+    compileOnly 'org.aspectj:aspectjrt'
 
-    compileOnly 'org.aspectj:aspectjrt:1.9.20'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
-    testImplementation 'org.mockito:mockito-core:4.8.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
-    testImplementation 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'org.mockito:mockito-junit-jupiter'
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
@@ -50,13 +51,14 @@ tasks.spotbugsMain {
     reports.create("html") {
         required = true
         outputLocation = file("$rootDir/reports/spotbugs-bank-shared.html")
-        setStylesheet("fancy-hist.xsl")
+        stylesheet = 'fancy-hist.xsl'
     }
     excludeFilter = file("config/spotbugs/exclude-filter.xml")
 }
 
-check.dependsOn spotbugsMain
-check.dependsOn spotbugsTest
+check {
+    dependsOn tasks.spotbugsMain, tasks.spotbugsTest
+}
 
 jar {
     enabled = true
