@@ -1,0 +1,84 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '6.1.11'
+}
+
+group = 'ru.katacademy'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api platform(project(':bank-bom'))
+    testImplementation platform(project(':bank-bom'))
+    annotationProcessor platform(project(':bank-bom'))
+    compileOnly platform(project(':bank-bom'))
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    compileOnly 'com.github.spotbugs:spotbugs-annotations'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+checkstyle {
+    toolVersion = '10.12.3'
+    configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+}
+
+tasks.named('spotbugsMain') {
+    reports {
+        html {
+            required = true
+            outputLocation = file("${rootProject.projectDir}/reports/spotbugs-security-starter.html")
+            setStylesheet('fancy-hist.xsl')
+        }
+        xml.required = false
+    }
+    excludeFilter = file("config/spotbugs/exclude-filter.xml")
+}
+
+tasks.named('spotbugsTest') {
+    reports {
+        html {
+            required = true
+            outputLocation = file("${rootProject.projectDir}/reports/spotbugs-security-starter-test.html")
+            setStylesheet('fancy-hist.xsl')
+        }
+        xml.required = false
+    }
+    excludeFilter = file("config/spotbugs/exclude-filter.xml")
+}
+
+check {
+    dependsOn tasks.spotbugsMain, tasks.spotbugsTest
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId = 'ru.katacademy'
+            artifactId = 'security-starter'
+            version = '0.0.1-SNAPSHOT'
+        }
+    }
+}
