@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,17 +27,19 @@ import ru.katacademy.securitystarter.identity.UserIdentityResolver;
  * @since 2026-01-23
  */
 @AutoConfiguration
+@EnableWebSecurity
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnClass(SecurityFilterChain.class)
-@ConditionalOnMissingBean(SecurityFilterChain.class)
 public class SecurityAutoConfiguration {
 
     /**
      * Создает bean UserIdentityResolver для извлечения userId из заголовков.
+     * Используется только если сервис не предоставил свою реализацию.
      *
      * @return реализация HeaderUserIdentityResolver
      */
     @Bean
+    @ConditionalOnMissingBean(UserIdentityResolver.class)
     public UserIdentityResolver userIdentityResolver() {
         return new HeaderUserIdentityResolver();
     }
@@ -66,6 +69,7 @@ public class SecurityAutoConfiguration {
      * @throws Exception если конфигурация невалидна
      */
     @Bean
+    @ConditionalOnMissingBean(SecurityFilterChain.class)
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    AuthenticationFilter authenticationFilter) throws Exception {
 
