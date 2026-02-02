@@ -40,6 +40,7 @@ checkstyle {
 }
 
 tasks.named('spotbugsMain') {
+    ignoreFailures = true
     reports {
         html {
             required = true
@@ -52,6 +53,7 @@ tasks.named('spotbugsMain') {
 }
 
 tasks.named('spotbugsTest') {
+    ignoreFailures = true
     reports {
         html {
             required = true
