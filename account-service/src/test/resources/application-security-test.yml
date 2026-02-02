@@ -1,0 +1,56 @@
+spring:
+  liquibase:
+    enabled: false
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+    properties:
+      hibernate:
+        default_schema: public
+  cloud:
+    config:
+      enabled: false
+
+feign:
+  client:
+    config:
+      default:
+        url: http://localhost
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          include: db
+        liveness:
+          include: ping
+
+logging:
+  level:
+    ROOT: INFO
+    org.springframework.security: DEBUG
+    org.springframework.boot.autoconfigure.security: DEBUG
+    ru.katacademy.securitystarter: DEBUG
+    ru.katacademy.bank_app.accountservice.security: DEBUG
+
+kyc-service:
+  url: http://kyc-service:8080
+
+bank:
+  security:
+    enabled: true
