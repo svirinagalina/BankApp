@@ -1,8 +1,10 @@
 package ru.katacademy.securitystarter.config;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -14,30 +16,31 @@ import ru.katacademy.securitystarter.identity.UserIdentityResolver;
 
 /**
  * Автоматическая конфигурация security-starter.
- *
+ * <p>
  * Регистрирует необходимые компоненты для минимальной аутентификации:
  * - UserIdentityResolver (Header-based по умолчанию)
  * - AuthenticationFilter
  * - SecurityFilterChain с базовыми настройками
- *
- * Активируется автоматически при подключении security-starter как зависимости.
+ * <p>
  *
  * @author Galina
- * @date 2026-01-23
+ * @since 2026-01-23
  */
-@Configuration
+@AutoConfiguration
 @EnableWebSecurity
-@RequiredArgsConstructor
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@ConditionalOnClass(SecurityFilterChain.class)
 public class SecurityAutoConfiguration {
 
     /**
      * Создает bean UserIdentityResolver для извлечения userId из заголовков.
+     * Используется только если сервис не предоставил свою реализацию.
      *
      * @return реализация HeaderUserIdentityResolver
      */
     @Bean
+    @ConditionalOnMissingBean(UserIdentityResolver.class)
     public UserIdentityResolver userIdentityResolver() {
-        // TODO: Вернуть новый экземпляр HeaderUserIdentityResolver
         return new HeaderUserIdentityResolver();
     }
 
@@ -49,27 +52,26 @@ public class SecurityAutoConfiguration {
      */
     @Bean
     public AuthenticationFilter authenticationFilter(UserIdentityResolver userIdentityResolver) {
-        // TODO: Вернуть новый экземпляр AuthenticationFilter с resolver
         return new AuthenticationFilter(userIdentityResolver);
     }
 
     /**
      * Настраивает цепочку фильтров Spring Security.
-     *
+     * <p>
      * Конфигурация:
      * - Отключает CSRF (для упрощения в MVP)
      * - Разрешает все запросы (авторизация на уровне бизнес-логики)
      * - Добавляет AuthenticationFilter перед стандартным фильтром
      *
-     * @param http объект конфигурации безопасности
+     * @param http                 объект конфигурации безопасности
      * @param authenticationFilter наш кастомный фильтр
      * @return настроенная цепочка фильтров
      * @throws Exception если конфигурация невалидна
      */
     @Bean
+    @ConditionalOnMissingBean(SecurityFilterChain.class)
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    AuthenticationFilter authenticationFilter) throws Exception {
-        // TODO: Настроить HttpSecurity
 
         http.csrf(AbstractHttpConfigurer::disable);
 

@@ -4,8 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.katacademy.securitystarter.auth.UserAuthentication;
@@ -23,13 +23,17 @@ import java.io.IOException;
  * Если userId не найден, запрос проходит без аутентификации.
  *
  * @author Galina
- * @date 2026-01-23
+ * @since 2026-01-23
  */
-@Slf4j
-@RequiredArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationFilter.class);
+
     private final UserIdentityResolver userIdentityResolver;
+
+    public AuthenticationFilter(UserIdentityResolver userIdentityResolver) {
+        this.userIdentityResolver = userIdentityResolver;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -37,13 +41,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-     final Long userId = userIdentityResolver.resolve(request);
+        final Long userId = userIdentityResolver.resolve(request);
 
         if (userId != null) {
-        final UserPrincipal principal = new UserPrincipal(userId);
-        final UserAuthentication authentication = new UserAuthentication(principal);
+            final UserPrincipal principal = new UserPrincipal(userId);
+            final UserAuthentication authentication = new UserAuthentication(principal);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             log.debug("User authenticated: userId={}", userId);
         }
 
