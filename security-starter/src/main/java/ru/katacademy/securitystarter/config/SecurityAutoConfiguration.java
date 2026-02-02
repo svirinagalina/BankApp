@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import ru.katacademy.securitystarter.filter.AuthenticationFilter;
 import ru.katacademy.securitystarter.identity.HeaderUserIdentityResolver;
 import ru.katacademy.securitystarter.identity.UserIdentityResolver;
@@ -45,14 +47,28 @@ public class SecurityAutoConfiguration {
     }
 
     /**
+     * Создает bean SecurityContextRepository для хранения SecurityContext.
+     * Используется HttpSessionSecurityContextRepository для сохранения контекста в сессии.
+     *
+     * @return репозиторий для SecurityContext
+     */
+    @Bean
+    @ConditionalOnMissingBean(SecurityContextRepository.class)
+    public SecurityContextRepository securityContextRepository() {
+        return new HttpSessionSecurityContextRepository();
+    }
+
+    /**
      * Создает bean AuthenticationFilter для обработки аутентификации.
      *
      * @param userIdentityResolver resolver для извлечения userId
+     * @param securityContextRepository репозиторий для сохранения SecurityContext
      * @return настроенный фильтр аутентификации
      */
     @Bean
-    public AuthenticationFilter authenticationFilter(UserIdentityResolver userIdentityResolver) {
-        return new AuthenticationFilter(userIdentityResolver);
+    public AuthenticationFilter authenticationFilter(UserIdentityResolver userIdentityResolver,
+                                                     SecurityContextRepository securityContextRepository) {
+        return new AuthenticationFilter(userIdentityResolver, securityContextRepository);
     }
 
     /**
@@ -60,6 +76,7 @@ public class SecurityAutoConfiguration {
      * <p>
      * Конфигурация:
      * - Отключает CSRF (для упрощения в MVP)
+     * - Отключает anonymous authentication (используем только UserPrincipal)
      * - Разрешает все запросы (авторизация на уровне бизнес-логики)
      * - Добавляет AuthenticationFilter перед стандартным фильтром
      *
@@ -74,6 +91,8 @@ public class SecurityAutoConfiguration {
                                                    AuthenticationFilter authenticationFilter) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable);
+
+        http.anonymous(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 

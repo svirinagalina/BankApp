@@ -49,7 +49,8 @@ class SecurityStarterIntegrationTest {
     @Test
     @DisplayName("Should allow public endpoint without authentication")
     void shouldAllowPublicEndpoint() throws Exception {
-        mockMvc.perform(get("/actuator/health"))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/v1/accounts/health"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"));
     }
 }

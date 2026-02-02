@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.katacademy.securitystarter.auth.UserAuthentication;
 import ru.katacademy.securitystarter.auth.UserPrincipal;
@@ -30,9 +32,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     private final UserIdentityResolver userIdentityResolver;
+    private final SecurityContextRepository securityContextRepository;
 
-    public AuthenticationFilter(UserIdentityResolver userIdentityResolver) {
+    public AuthenticationFilter(UserIdentityResolver userIdentityResolver,
+                               SecurityContextRepository securityContextRepository) {
         this.userIdentityResolver = userIdentityResolver;
+        this.securityContextRepository = securityContextRepository;
     }
 
     @Override
@@ -41,13 +46,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-     final Long userId = userIdentityResolver.resolve(request);
+        final Long userId = userIdentityResolver.resolve(request);
 
         if (userId != null) {
-        final UserPrincipal principal = new UserPrincipal(userId);
-        final UserAuthentication authentication = new UserAuthentication(principal);
+            final UserPrincipal principal = new UserPrincipal(userId);
+            final UserAuthentication authentication = new UserAuthentication(principal);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            final SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+            securityContextRepository.saveContext(context, request, response);
+
             log.debug("User authenticated: userId={}", userId);
         }
 

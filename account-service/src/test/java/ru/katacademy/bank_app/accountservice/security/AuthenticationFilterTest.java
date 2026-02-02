@@ -9,6 +9,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import ru.katacademy.securitystarter.auth.UserPrincipal;
 import ru.katacademy.securitystarter.filter.AuthenticationFilter;
 
@@ -22,7 +24,8 @@ import static org.mockito.Mockito.verify;
 class AuthenticationFilterTest {
 
     private final AccountUserIdentityResolver resolver = new AccountUserIdentityResolver();
-    private final AuthenticationFilter filter = new AuthenticationFilter(resolver);
+    private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+    private final AuthenticationFilter filter = new AuthenticationFilter(resolver, securityContextRepository);
 
     @AfterEach
     void clearSecurityContext() {
