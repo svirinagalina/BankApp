@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.katacademy.securitystarter.auth.UserAuthentication;
-import ru.katacademy.securitystarter.auth.UserPrincipal;
+import ru.katacademy.securitystarter.identity.UserIdentity;
 import ru.katacademy.securitystarter.identity.UserIdentityResolver;
 
 import java.io.IOException;
@@ -19,10 +19,10 @@ import java.io.IOException;
 /**
  * Фильтр аутентификации для установки пользовательского контекста безопасности.
  *
- * Выполняется один раз для каждого HTTP-запроса. Извлекает userId через
+ * Выполняется один раз для каждого HTTP-запроса. Извлекает UserIdentity через
  * UserIdentityResolver и устанавливает Authentication в SecurityContext.
  *
- * Если userId не найден, запрос проходит без аутентификации.
+ * Если UserIdentity не найден, запрос проходит без аутентификации.
  *
  * @author Galina
  * @since 2026-01-23
@@ -35,7 +35,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private final SecurityContextRepository securityContextRepository;
 
     public AuthenticationFilter(UserIdentityResolver userIdentityResolver,
-                               SecurityContextRepository securityContextRepository) {
+                                SecurityContextRepository securityContextRepository) {
         this.userIdentityResolver = userIdentityResolver;
         this.securityContextRepository = securityContextRepository;
     }
@@ -46,18 +46,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        final Long userId = userIdentityResolver.resolve(request);
+        final UserIdentity identity = userIdentityResolver.resolve(request);
 
-        if (userId != null) {
-            final UserPrincipal principal = new UserPrincipal(userId);
-            final UserAuthentication authentication = new UserAuthentication(principal);
+        if (identity != null) {
+            final UserAuthentication authentication = new UserAuthentication(identity);
 
             final SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authentication);
             SecurityContextHolder.setContext(context);
             securityContextRepository.saveContext(context, request, response);
 
-            log.debug("User authenticated: userId={}", userId);
+            log.debug("User authenticated: userId={}", identity.userId());
         }
 
         filterChain.doFilter(request, response);

@@ -19,5 +19,5 @@ public interface UserIdentityResolver {
      * @param request HTTP-запрос
      * @return идентификатор пользователя или null, если не найден
      */
-    Long resolve(HttpServletRequest request);
+    UserIdentity resolve(HttpServletRequest request);
 }
