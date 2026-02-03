@@ -26,13 +26,12 @@ spring:
   kafka:
     bootstrap-servers: localhost:9094
     consumer:
-      group-id: audit-service-password-consumer
+      group-id: audit-service-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        schema.registry.url: http://localhost:9091
-        specific.avro.reader: true
+        spring.json.trusted.packages: "*"
 
   flyway:
     enabled: true

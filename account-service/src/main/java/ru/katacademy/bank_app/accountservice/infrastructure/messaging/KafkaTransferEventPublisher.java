@@ -13,7 +13,7 @@ public class KafkaTransferEventPublisher implements TransferEventPublisher {
     private static final Logger log = LoggerFactory.getLogger(KafkaTransferEventPublisher.class);
     private final StringKafkaProducer producer;
 
-    @Value("${spring.kafka.topic.transferCompleted:transfer-completed-events}")
+    @Value("${spring.kafka.topic.transferCompleted:transfer.completed}")
     private String topic;
 
     public KafkaTransferEventPublisher(StringKafkaProducer producer) {

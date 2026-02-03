@@ -29,7 +29,7 @@ spring:
   kafka:
     bootstrap-servers: localhost:9094
     topic:
-      transferCompleted: transfer-completed-events
+      transferCompleted: transfer.completed
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer

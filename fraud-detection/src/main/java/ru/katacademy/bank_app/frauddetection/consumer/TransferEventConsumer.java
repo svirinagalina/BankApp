@@ -14,7 +14,7 @@ public class TransferEventConsumer {
 
     private final FraudDetectionService fraudService;
 
-    @KafkaListener(topics = "transfer-completed-events", groupId = "fraud-detection-group")
+    @KafkaListener(topics = "transfer.completed", groupId = "fraud-detection-group")
     public void consume(FraudAnalysisMessage message) {
         fraudService.analyze(message.transferEvent(), message.accountDto());
     }

@@ -35,7 +35,7 @@ class KafkaTransferEventPublisherTest {
     @BeforeEach
     void setUp() {
         publisher = new KafkaTransferEventPublisher(stringKafkaProducer);
-        ReflectionTestUtils.setField(publisher, "topic", "transfer-completed-events");
+        ReflectionTestUtils.setField(publisher, "topic", "transfer.completed");
     }
 
     @Test
@@ -56,7 +56,7 @@ class KafkaTransferEventPublisherTest {
 
         verify(stringKafkaProducer, times(1)).send(topicCaptor.capture(), keyCaptor.capture(), valueCaptor.capture());
 
-        assertEquals("transfer-completed-events", topicCaptor.getValue());
+        assertEquals("transfer.completed", topicCaptor.getValue());
         assertEquals(event.eventId().toString(), keyCaptor.getValue());
         assertNotNull(valueCaptor.getValue());
         assertTrue(valueCaptor.getValue().contains(event.eventId().toString()));

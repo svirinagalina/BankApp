@@ -18,6 +18,6 @@ public class PasswordChangedEventProducer {
         event.setOccurredAt(System.currentTimeMillis());
         event.setSource("account-service");
 
-        kafkaTemplate.send("password-changed-topic", event);
+        kafkaTemplate.send("password.changed", event);
     }
 }

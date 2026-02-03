@@ -60,4 +60,32 @@ public class AuditService {
 
         repository.save(audit);
     }
+
+    public void saveUserRegisteredEvent(ru.katacademy.bank_shared.event.notification.UserRegisteredEvent event) {
+        final AuditEvent audit = AuditEvent.builder()
+                .userId(null) // UserRegisteredEvent doesn't have userId field
+                .eventType("USER_REGISTERED")
+                .occurredAt(Instant.now())
+                .source("user-service")
+                .build();
+
+        repository.save(audit);
+        log.info("User registered event saved: username={}", event.getUsername());
+    }
+
+    public void saveTransferCompletedEvent(ru.katacademy.bank_shared.event.TransferCompletedEvent event) {
+        final AuditEvent audit = AuditEvent.builder()
+                .userId(null) // TransferCompletedEvent doesn't have userId field
+                .eventType("TRANSFER_COMPLETED")
+                .occurredAt(Instant.now())
+                .source("transfer-service")
+                .build();
+
+        repository.save(audit);
+        log.info("Transfer completed event saved: eventId={}, from={}, to={}, amount={}",
+                event.eventId(),
+                event.accountNumberFrom().value(),
+                event.accountNumberTo().value(),
+                event.money().amount());
+    }
 }
