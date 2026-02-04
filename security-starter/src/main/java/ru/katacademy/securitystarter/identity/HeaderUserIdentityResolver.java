@@ -28,7 +28,7 @@ public class HeaderUserIdentityResolver implements UserIdentityResolver {
 
         try {
             final Long userId = Long.parseLong(headerValue);
-            return new UserIdentity(userId);
+            return UserIdentity.user(userId);
         } catch (NumberFormatException e) {
             log.warn("Invalid userId format in header {}: {}", USER_ID_HEADER, headerValue);
             return null;

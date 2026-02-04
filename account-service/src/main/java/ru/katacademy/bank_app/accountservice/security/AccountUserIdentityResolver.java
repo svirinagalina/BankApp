@@ -24,7 +24,7 @@ public class AccountUserIdentityResolver implements UserIdentityResolver {
         try {
             final Long userId = Long.parseLong(userIdHeader);
             log.debug("Resolved userId: {} from header. URI: {}", userId, request.getRequestURI());
-            return new UserIdentity(userId);
+            return UserIdentity.user(userId);
         } catch (NumberFormatException e) {
             log.warn("Invalid X-User-Id header value: '{}'. URI: {}",
                     userIdHeader, request.getRequestURI());
