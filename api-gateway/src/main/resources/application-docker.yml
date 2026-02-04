@@ -13,13 +13,15 @@ spring:
         - AddResponseHeader=Strict-Transport-Security, max-age=31536000; includeSubDomains
 
       routes:
-        - id: swagger-ui
+        # Основной Swagger UI (используем account-service как основной)
+        - id: swagger-ui-main
           uri: http://account-service:8080
           predicates:
             - Path=/,/swagger-ui.html
           filters:
             - SetPath=/swagger-ui.html
 
+        # Swagger ресурсы
         - id: swagger-resources
           uri: http://account-service:8080
           predicates:
@@ -27,6 +29,7 @@ spring:
           filters:
             - PreserveHostHeader
 
+        # API Docs для account-service
         - id: account-service-openapi
           uri: http://account-service:8080
           predicates:
@@ -34,6 +37,23 @@ spring:
           filters:
             - SetPath=/v3/api-docs
 
+        # Swagger UI для account-service
+        - id: account-service-swagger
+          uri: http://account-service:8080
+          predicates:
+            - Path=/account-service/swagger-ui.html
+          filters:
+            - SetPath=/swagger-ui.html
+
+        # Бизнес-маршрут account-service
+        - id: account-service
+          uri: http://account-service:8080
+          predicates:
+            - Path=/account-service/**
+          filters:
+            - StripPrefix=1
+
+        # Остальные сервисы оставь КАК ЕСТЬ
         - id: kyc-service-openapi
           uri: http://kyc-service:8080
           predicates:
@@ -47,14 +67,6 @@ spring:
             - Path=/user-settings-service/v3/api-docs
           filters:
             - SetPath=/v3/api-docs
-
-        #      БИЗНЕС-МАРШРУТЫ СЕРВИСОВ
-        - id: account-service
-          uri: http://account-service:8080
-          predicates:
-            - Path=/account-service/**
-          filters:
-            - StripPrefix=1
 
         - id: kyc-service
           uri: http://kyc-service:8080
