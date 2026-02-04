@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import ru.katacademy.bank_shared.event.TransferCompletedEvent;
+import ru.katacademy.bank.events.transfer.v1.TransferCompletedEvent;
 import ru.katacademy.bank_app.audit.application.service.AuditService;
 
 @Component
@@ -20,10 +20,10 @@ public class TransferCompletedAuditConsumer {
     )
     public void handle(TransferCompletedEvent event) {
         log.info("Transfer completed event received: eventId={}, from={}, to={}, amount={}",
-                event.eventId(),
-                event.accountNumberFrom().value(),
-                event.accountNumberTo().value(),
-                event.money().amount());
+                event.getEventId(),
+                event.getAccountNumberFrom(),
+                event.getAccountNumberTo(),
+                event.getAmount());
 
         auditService.saveTransferCompletedEvent(event);
     }

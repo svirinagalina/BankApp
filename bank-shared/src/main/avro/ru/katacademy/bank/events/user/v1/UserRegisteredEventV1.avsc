@@ -1,0 +1,11 @@
+{
+  "namespace": "ru.katacademy.bank.events.user.v1",
+  "type": "record",
+  "name": "UserRegisteredEvent",
+  "fields": [
+    {"name": "eventId", "type": "string"},
+    {"name": "username", "type": "string"},
+    {"name": "occurredAt", "type": "long"},
+    {"name": "source", "type": "string"}
+  ]
+}

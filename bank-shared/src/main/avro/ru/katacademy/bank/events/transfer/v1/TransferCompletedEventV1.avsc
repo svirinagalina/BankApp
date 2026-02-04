@@ -1,0 +1,14 @@
+{
+  "namespace": "ru.katacademy.bank.events.transfer.v1",
+  "type": "record",
+  "name": "TransferCompletedEvent",
+  "fields": [
+    {"name": "eventId", "type": "string"},
+    {"name": "accountNumberFrom", "type": "string"},
+    {"name": "accountNumberTo", "type": "string"},
+    {"name": "amount", "type": "string"},
+    {"name": "currency", "type": "string"},
+    {"name": "occurredAt", "type": "long"},
+    {"name": "source", "type": "string"}
+  ]
+}
