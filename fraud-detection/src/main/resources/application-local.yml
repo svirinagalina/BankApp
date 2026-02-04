@@ -2,6 +2,9 @@ server:
   port: 8084
 
 spring:
+  application:
+    name: fraud-detection
+
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
