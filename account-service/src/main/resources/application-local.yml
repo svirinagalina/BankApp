@@ -29,7 +29,7 @@ spring:
   kafka:
     bootstrap-servers: localhost:9094
     schema-registry:
-      url: http://localhost:8081
+      url: http://localhost:9091
     topic:
       transferCompleted: transfer.completed
     producer:
@@ -38,7 +38,7 @@ spring:
       retries: 3
       acks: all
       properties:
-        schema.registry.url: http://localhost:8081
+        schema.registry.url: http://localhost:9091
     consumer:
       group-id: account-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

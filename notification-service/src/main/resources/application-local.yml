@@ -34,13 +34,13 @@ spring:
   kafka:
     bootstrap-servers: localhost:9094
     schema-registry:
-      url: http://localhost:8081
+      url: http://localhost:9091
     consumer:
       group-id: notification-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       properties:
-        schema.registry.url: http://localhost:8081
+        schema.registry.url: http://localhost:9091
         specific.avro.reader: true
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
