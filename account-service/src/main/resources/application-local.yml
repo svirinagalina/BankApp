@@ -24,7 +24,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        default_schema: account_service_local
+        default_schema: account_db
 
   flyway:
     enabled: false
