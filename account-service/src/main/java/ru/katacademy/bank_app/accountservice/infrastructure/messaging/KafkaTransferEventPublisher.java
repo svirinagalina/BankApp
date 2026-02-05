@@ -28,9 +28,9 @@ public class KafkaTransferEventPublisher implements TransferEventPublisher {
                         .setAccountNumberFrom(event.accountNumberFrom().value())
                         .setAccountNumberTo(event.accountNumberTo().value())
                         .setAmount(event.money().amount().toString())
-                        .setCurrency(event.money().currency().getCurrencyCode())
-                        .setOccurredAt(event.occurredAt().toEpochMilli())
-                        .setSource(event.source())
+                        .setCurrency(event.money().currency().toString())
+                        .setOccurredAt(event.localDateTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli())
+                        .setSource("account-service")
                         .build();
 
         final String key = event.eventId().toString();

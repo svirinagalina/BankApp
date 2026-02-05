@@ -23,12 +23,12 @@ public class KafkaUserRegisterEventPublisher implements UserRegisterEventPublish
     public void publish(UserRegisterEvent event) {
         final ru.katacademy.bank.events.user.v1.UserRegisteredEvent avroEvent =
                 ru.katacademy.bank.events.user.v1.UserRegisteredEvent.newBuilder()
-                        .setEventId(event.eventId().toString())
-                        .setUsername(event.username())
-                        .setOccurredAt(event.occurredAt().toEpochMilli())
-                        .setSource(event.source())
+                        .setEventId(String.valueOf(event.userId()))
+                        .setUsername(event.fullName())
+                        .setOccurredAt(event.createdAt().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli())
+                        .setSource("account-service")
                         .build();
 
-        producer.send("user.registered", event.eventId().toString(), avroEvent);
+        producer.send("user.registered", String.valueOf(event.userId()), avroEvent);
     }
 }

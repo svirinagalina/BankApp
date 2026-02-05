@@ -61,31 +61,31 @@ public class AuditService {
         repository.save(audit);
     }
 
-    public void saveUserRegisteredEvent(ru.katacademy.bank_shared.event.notification.UserRegisteredEvent event) {
+    public void saveUserRegisteredEvent(ru.katacademy.bank.events.user.v1.UserRegisteredEvent event) {
         final AuditEvent audit = AuditEvent.builder()
                 .userId(null) // UserRegisteredEvent doesn't have userId field
                 .eventType("USER_REGISTERED")
-                .occurredAt(Instant.now())
-                .source("user-service")
+                .occurredAt(Instant.ofEpochMilli(event.getOccurredAt()))
+                .source(event.getSource())
                 .build();
 
         repository.save(audit);
         log.info("User registered event saved: username={}", event.getUsername());
     }
 
-    public void saveTransferCompletedEvent(ru.katacademy.bank_shared.event.TransferCompletedEvent event) {
+    public void saveTransferCompletedEvent(ru.katacademy.bank.events.transfer.v1.TransferCompletedEvent event) {
         final AuditEvent audit = AuditEvent.builder()
                 .userId(null) // TransferCompletedEvent doesn't have userId field
                 .eventType("TRANSFER_COMPLETED")
-                .occurredAt(Instant.now())
-                .source("transfer-service")
+                .occurredAt(Instant.ofEpochMilli(event.getOccurredAt()))
+                .source(event.getSource())
                 .build();
 
         repository.save(audit);
         log.info("Transfer completed event saved: eventId={}, from={}, to={}, amount={}",
-                event.eventId(),
-                event.accountNumberFrom().value(),
-                event.accountNumberTo().value(),
-                event.money().amount());
+                event.getEventId(),
+                event.getAccountNumberFrom(),
+                event.getAccountNumberTo(),
+                event.getAmount());
     }
 }

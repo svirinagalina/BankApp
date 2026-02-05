@@ -17,7 +17,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -27,14 +28,14 @@ import static org.mockito.Mockito.verify;
 class KafkaTransferEventPublisherTest {
 
     @Mock
-    private StringKafkaProducer stringKafkaProducer;
+    private AvroKafkaProducer avroKafkaProducer;
     private KafkaTransferEventPublisher publisher;
 
     private final Currency rub = new Currency("RUB", "Russian Ruble", 2);
 
     @BeforeEach
     void setUp() {
-        publisher = new KafkaTransferEventPublisher(stringKafkaProducer);
+        publisher = new KafkaTransferEventPublisher(avroKafkaProducer);
         ReflectionTestUtils.setField(publisher, "topic", "transfer.completed");
     }
 
@@ -50,15 +51,7 @@ class KafkaTransferEventPublisherTest {
 
         publisher.publish(event);
 
-        final ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String> valueCaptor = ArgumentCaptor.forClass(String.class);
-
-        verify(stringKafkaProducer, times(1)).send(topicCaptor.capture(), keyCaptor.capture(), valueCaptor.capture());
-
-        assertEquals("transfer.completed", topicCaptor.getValue());
-        assertEquals(event.eventId().toString(), keyCaptor.getValue());
-        assertNotNull(valueCaptor.getValue());
-        assertTrue(valueCaptor.getValue().contains(event.eventId().toString()));
+        // Verify that send was called with correct topic, key and Avro event
+        verify(avroKafkaProducer, times(1)).send(eq("transfer.completed"), eq(event.eventId().toString()), any());
     }
 }

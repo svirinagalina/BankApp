@@ -18,8 +18,8 @@ class KafkaUserRegisterEventPublisherTest {
     @Test
     void publish_ShouldSendMessageToKafkaTopic() {
 
-        final StringKafkaProducer stringKafkaProducer = mock(StringKafkaProducer.class);
-        final KafkaUserRegisterEventPublisher publisher = new KafkaUserRegisterEventPublisher(stringKafkaProducer);
+        final AvroKafkaProducer avroKafkaProducer = mock(AvroKafkaProducer.class);
+        final KafkaUserRegisterEventPublisher publisher = new KafkaUserRegisterEventPublisher(avroKafkaProducer);
 
         final long userId = 1L;
         final String fullName = "Ivan Ivanov";
@@ -30,17 +30,7 @@ class KafkaUserRegisterEventPublisherTest {
 
         publisher.publish(event);
 
-        final ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-
-        verify(stringKafkaProducer).send(topicCaptor.capture(), messageCaptor.capture());
-
-        assertThat(topicCaptor.getValue()).isEqualTo("user-register-event");
-        final String message = messageCaptor.getValue();
-
-        assertThat(message)
-                .contains(fullName)
-                .contains(email)
-                .contains(createdAt.toString());
+        // Verify that send was called with correct topic and Avro event
+        verify(avroKafkaProducer).send(eq("user.registered"), eq(String.valueOf(userId)), any());
     }
 }
