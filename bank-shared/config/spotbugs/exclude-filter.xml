@@ -1,5 +1,12 @@
 <FindBugsFilter>
+    <!-- Exclude generated Avro classes from SpotBugs analysis -->
     <Match>
         <Package name="~ru\.katacademy\.bank\.events\.password\.v1.*"/>
+    </Match>
+    <Match>
+        <Package name="~ru\.katacademy\.bank\.events\.transfer\.v1.*"/>
+    </Match>
+    <Match>
+        <Package name="~ru\.katacademy\.bank\.events\.user\.v1.*"/>
     </Match>
 </FindBugsFilter>
