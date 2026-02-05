@@ -2,6 +2,9 @@ server:
   port: 8081
 
 spring:
+  application:
+    name: account-service
+
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
@@ -21,7 +24,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        default_schema: account_service_local
+        default_schema: account_db
 
   flyway:
     enabled: false

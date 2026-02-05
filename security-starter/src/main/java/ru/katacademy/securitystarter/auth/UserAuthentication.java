@@ -2,14 +2,16 @@ package ru.katacademy.securitystarter.auth;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import ru.katacademy.securitystarter.identity.UserIdentity;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.stream.Collectors;
 
 /**
- * Реализация Spring Security Authentication для минимальной авторизации.
+ * Реализация Spring Security Authentication.
  * <p>
- * Хранит информацию о пользователе (UserPrincipal) без ролей и прав доступа.
+ * Хранит информацию о субъекте запроса (UserIdentity) — пользователь или сервис.
  * Всегда считается аутентифицированным (isAuthenticated = true).
  *
  * @author Galina
@@ -17,16 +19,18 @@ import java.util.Collections;
  */
 public class UserAuthentication implements Authentication {
 
-    private final UserPrincipal principal;
+    private final UserIdentity identity;
     private boolean authenticated = true;
 
-    public UserAuthentication(UserPrincipal principal) {
-        this.principal = principal;
+    public UserAuthentication(UserIdentity identity) {
+        this.identity = identity;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return identity.roles().stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -41,7 +45,7 @@ public class UserAuthentication implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return principal;
+        return identity;
     }
 
     @Override
@@ -56,6 +60,14 @@ public class UserAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        return principal.userId().toString();
+        if (identity.userId() != null) {
+            return identity.userId().toString();
+        }
+        // Для сервисов — берём имя из attributes
+        final Object serviceName = identity.attributes().get("serviceName");
+        if (serviceName != null) {
+            return serviceName.toString();
+        }
+        return "unknown";
     }
 }

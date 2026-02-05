@@ -3,10 +3,10 @@ package ru.katacademy.securitystarter.identity;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * Контракт для извлечения идентификатора пользователя из HTTP-запроса.
+ * Контракт для извлечения идентичности (user или service) из HTTP-запроса.
  *
- * Предоставляет стратегию получения userId, не зависящую от конкретного
- * механизма аутентификации (заголовок, JWT-токен и т.д.).
+ * Предоставляет стратегию получения UserIdentity, не зависящую от конкретного
+ * механизма аутентификации (заголовок X-User-Id, X-Service-Name, JWT-токен и т.д.).
  *
  * @author Galina
  * @date 2026-01-23
@@ -14,10 +14,10 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface UserIdentityResolver {
 
     /**
-     * Извлекает идентификатор пользователя из HTTP-запроса.
+     * Извлекает идентичность из HTTP-запроса.
      *
      * @param request HTTP-запрос
-     * @return идентификатор пользователя или null, если не найден
+     * @return UserIdentity (USER или SERVICE) или null, если не найдена
      */
-    Long resolve(HttpServletRequest request);
+    UserIdentity resolve(HttpServletRequest request);
 }

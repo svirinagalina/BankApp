@@ -3,6 +3,7 @@ package ru.katacademy.bank_app.accountservice.security;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import ru.katacademy.securitystarter.identity.UserIdentity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,9 +19,10 @@ class AccountUserIdentityResolverTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-User-Id", "12345");
 
-        final Long userId = resolver.resolve(request);
+        final UserIdentity userIdentity = resolver.resolve(request);
 
-        assertThat(userId).isEqualTo(12345L);
+        assertThat(userIdentity).isNotNull();
+        assertThat(userIdentity.userId()).isEqualTo(12345L);
     }
 
     @Test
@@ -28,9 +30,9 @@ class AccountUserIdentityResolverTest {
     void shouldReturnNullWhenHeaderMissing() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
-        final Long userId = resolver.resolve(request);
+        final UserIdentity userIdentity = resolver.resolve(request);
 
-        assertThat(userId).isNull();
+        assertThat(userIdentity).isNull();
     }
 
     @Test
@@ -39,10 +41,10 @@ class AccountUserIdentityResolverTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-User-Id", "   ");
 
-        final Long userId = resolver.resolve(request);
+        final UserIdentity userIdentity = resolver.resolve(request);
 
 
-        assertThat(userId).isNull();
+        assertThat(userIdentity).isNull();
     }
 
     @Test
@@ -51,10 +53,10 @@ class AccountUserIdentityResolverTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-User-Id", "not-a-number");
 
-        final Long userId = resolver.resolve(request);
+        final UserIdentity userIdentity = resolver.resolve(request);
 
 
-        assertThat(userId).isNull();
+        assertThat(userIdentity).isNull();
     }
 
     @Test
@@ -63,9 +65,10 @@ class AccountUserIdentityResolverTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-User-Id", "-999");
 
-        final Long userId = resolver.resolve(request);
+        final UserIdentity userIdentity = resolver.resolve(request);
 
-        assertThat(userId).isEqualTo(-999L);
+        assertThat(userIdentity).isNotNull();
+        assertThat(userIdentity.userId()).isEqualTo(-999L);
     }
 
     @Test
@@ -74,8 +77,9 @@ class AccountUserIdentityResolverTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-User-Id", String.valueOf(Long.MAX_VALUE));
 
-        final Long userId = resolver.resolve(request);
+        final UserIdentity userIdentity = resolver.resolve(request);
 
-        assertThat(userId).isEqualTo(Long.MAX_VALUE);
+        assertThat(userIdentity).isNotNull();
+        assertThat(userIdentity.userId()).isEqualTo(Long.MAX_VALUE);
     }
 }
