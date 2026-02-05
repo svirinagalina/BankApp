@@ -17,11 +17,18 @@ import ru.katacademy.bank_shared.event.UserRegisterEvent;
 @RequiredArgsConstructor
 public class KafkaUserRegisterEventPublisher implements UserRegisterEventPublisher {
 
-    private final StringKafkaProducer producer;
+    private final AvroKafkaProducer producer;
 
     @Override
     public void publish(UserRegisterEvent event) {
-        final String message = String.format("Была совершена регистрация пользователя: %s", event);
-        producer.send("user-register-event", message);
+        final ru.katacademy.bank.events.user.v1.UserRegisteredEvent avroEvent =
+                ru.katacademy.bank.events.user.v1.UserRegisteredEvent.newBuilder()
+                        .setEventId(event.eventId().toString())
+                        .setUsername(event.username())
+                        .setOccurredAt(event.occurredAt().toEpochMilli())
+                        .setSource(event.source())
+                        .build();
+
+        producer.send("user.registered", event.eventId().toString(), avroEvent);
     }
 }

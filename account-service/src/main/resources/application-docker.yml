@@ -23,11 +23,17 @@ spring:
 
   kafka:
     bootstrap-servers: kafka:9092
+    schema-registry:
+      url: http://schema-registry:8081
     topic:
       transferCompleted: transfer.completed
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      retries: 3
+      acks: all
+      properties:
+        schema.registry.url: http://schema-registry:8081
     consumer:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer

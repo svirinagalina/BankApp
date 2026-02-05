@@ -1,8 +1,8 @@
 package ru.katacademy.notification.application.service;
 
-import ru.katacademy.bank_shared.event.TransferCompletedEvent;
+import ru.katacademy.bank.events.transfer.v1.TransferCompletedEvent;
+import ru.katacademy.bank.events.user.v1.UserRegisteredEvent;
 import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
-import ru.katacademy.bank_shared.event.notification.UserRegisteredEvent;
 
 /**
  * Сервис для обработки событий и генерации уведомлений пользователям.

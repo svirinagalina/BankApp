@@ -4,6 +4,7 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'jacoco'
+    id 'com.github.davidmc24.gradle.plugin.avro' version '1.9.1'
 }
 
 group = 'ru.katacademy.bank_app'
@@ -17,6 +18,7 @@ java {
 
 repositories {
     mavenCentral()
+    maven { url = 'https://packages.confluent.io/maven/' }
 }
 
 dependencies {
@@ -35,6 +37,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"
     implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'io.confluent:kafka-avro-serializer'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.liquibase:liquibase-core'
     implementation(project(":bank-shared"))
@@ -70,4 +73,21 @@ test {
 
 jacoco {
     toolVersion = "0.8.11"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += "${buildDir}/generated-main-avro-java"
+        }
+    }
+}
+
+avro {
+    stringType = "String"
+    fieldVisibility = "PRIVATE"
+}
+
+tasks.withType(JavaCompile) {
+    dependsOn tasks.generateAvroJava
 }

@@ -11,20 +11,30 @@ import ru.katacademy.bank_shared.event.TransferCompletedEvent;
 public class KafkaTransferEventPublisher implements TransferEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaTransferEventPublisher.class);
-    private final StringKafkaProducer producer;
+    private final AvroKafkaProducer producer;
 
     @Value("${spring.kafka.topic.transferCompleted:transfer.completed}")
     private String topic;
 
-    public KafkaTransferEventPublisher(StringKafkaProducer producer) {
+    public KafkaTransferEventPublisher(AvroKafkaProducer producer) {
         this.producer = producer;
     }
 
     @Override
     public void publish(TransferCompletedEvent event) {
+        final ru.katacademy.bank.events.transfer.v1.TransferCompletedEvent avroEvent =
+                ru.katacademy.bank.events.transfer.v1.TransferCompletedEvent.newBuilder()
+                        .setEventId(event.eventId().toString())
+                        .setAccountNumberFrom(event.accountNumberFrom().value())
+                        .setAccountNumberTo(event.accountNumberTo().value())
+                        .setAmount(event.money().amount().toString())
+                        .setCurrency(event.money().currency().getCurrencyCode())
+                        .setOccurredAt(event.occurredAt().toEpochMilli())
+                        .setSource(event.source())
+                        .build();
+
         final String key = event.eventId().toString();
-        final String message = String.format("Был совершен перевод: %s", event);
-        producer.send(topic, key, message);
+        producer.send(topic, key, avroEvent);
         log.info("Transfer event опубликован: id={} topic={} key={}", event.eventId(), topic, key);
     }
 }
