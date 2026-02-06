@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.katacademy.securitystarter.auth.UserPrincipal;
+import ru.katacademy.securitystarter.identity.UserIdentity;
 
 import java.util.Map;
 
@@ -32,15 +32,15 @@ public class AccountSecurityController {
             return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
         }
 
-        if (!(authentication.getPrincipal() instanceof UserPrincipal userPrincipal)) {
+        if (!(authentication.getPrincipal() instanceof UserIdentity userIdentity)) {
             log.error("Invalid principal type: {}", authentication.getPrincipal().getClass());
             return ResponseEntity.status(401).body(Map.of("error", "Invalid principal"));
         }
 
-        log.info("User accessed: userId={}", userPrincipal.userId());
+        log.info("User accessed: userId={}", userIdentity.userId());
 
         return ResponseEntity.ok(Map.of(
-                "userId", userPrincipal.userId(),
+                "userId", userIdentity.userId(),
                 "authenticated", true
         ));
     }

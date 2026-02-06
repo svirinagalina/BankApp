@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Реализация UserIdentityResolver для извлечения userId из HTTP-заголовка.
  *
- * Читает значение из заголовка X-User-Id и преобразует его в Long.
+ * Читает значение из заголовка X-User-Id и преобразует его в UserIdentity.
  * Если заголовок отсутствует или невалиден, возвращает null.
  *
  * @author Galina
@@ -19,7 +19,7 @@ public class HeaderUserIdentityResolver implements UserIdentityResolver {
     private static final String USER_ID_HEADER = "X-User-Id";
 
     @Override
-    public Long resolve(HttpServletRequest request) {
+    public UserIdentity resolve(HttpServletRequest request) {
         final String headerValue = request.getHeader(USER_ID_HEADER);
 
         if (headerValue == null || headerValue.isEmpty()) {
@@ -27,7 +27,8 @@ public class HeaderUserIdentityResolver implements UserIdentityResolver {
         }
 
         try {
-            return Long.parseLong(headerValue);
+            final Long userId = Long.parseLong(headerValue);
+            return UserIdentity.user(userId);
         } catch (NumberFormatException e) {
             log.warn("Invalid userId format in header {}: {}", USER_ID_HEADER, headerValue);
             return null;

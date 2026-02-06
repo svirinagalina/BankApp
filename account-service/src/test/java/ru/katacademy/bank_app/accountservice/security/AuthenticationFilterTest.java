@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-import ru.katacademy.securitystarter.auth.UserPrincipal;
+import ru.katacademy.securitystarter.identity.UserIdentity;
 import ru.katacademy.securitystarter.filter.AuthenticationFilter;
 
 import java.io.IOException;
@@ -47,8 +47,8 @@ class AuthenticationFilterTest {
         assertThat(authentication).isNotNull();
         assertThat(authentication.isAuthenticated()).isTrue();
 
-        final UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-        assertThat(principal.userId()).isEqualTo(12345L);
+        final UserIdentity userIdentity = (UserIdentity) authentication.getPrincipal();
+        assertThat(userIdentity.userId()).isEqualTo(12345L);
 
         verify(filterChain).doFilter(request, response);
     }

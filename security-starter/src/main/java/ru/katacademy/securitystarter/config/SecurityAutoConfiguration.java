@@ -13,8 +13,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import ru.katacademy.securitystarter.filter.AuthenticationFilter;
+import ru.katacademy.securitystarter.identity.CompositeUserIdentityResolver;
 import ru.katacademy.securitystarter.identity.HeaderUserIdentityResolver;
+import ru.katacademy.securitystarter.identity.ServiceIdentityResolver;
 import ru.katacademy.securitystarter.identity.UserIdentityResolver;
+
+import java.util.List;
 
 /**
  * Автоматическая конфигурация security-starter.
@@ -35,15 +39,21 @@ import ru.katacademy.securitystarter.identity.UserIdentityResolver;
 public class SecurityAutoConfiguration {
 
     /**
-     * Создает bean UserIdentityResolver для извлечения userId из заголовков.
+     * Создает bean UserIdentityResolver (composite) для извлечения идентичности.
      * Используется только если сервис не предоставил свою реализацию.
+     * Приоритет: SERVICE (X-Service-Name) затем USER (X-User-Id).
      *
-     * @return реализация HeaderUserIdentityResolver
+     * @return composite resolver с приоритетом service > user
      */
     @Bean
     @ConditionalOnMissingBean(UserIdentityResolver.class)
     public UserIdentityResolver userIdentityResolver() {
-        return new HeaderUserIdentityResolver();
+        return new CompositeUserIdentityResolver(
+            List.of(
+                new ServiceIdentityResolver(),
+                new HeaderUserIdentityResolver()
+            )
+        );
     }
 
     /**
