@@ -2,9 +2,9 @@ package ru.katacademy.notification.infrastructure.kafka;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import ru.katacademy.bank.events.password.v1.PasswordChangedEvent;
 import ru.katacademy.bank.events.transfer.v1.TransferCompletedEvent;
 import ru.katacademy.bank.events.user.v1.UserRegisteredEvent;
-import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
 import ru.katacademy.notification.application.service.NotificationService;
 
 /**

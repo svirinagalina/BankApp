@@ -18,6 +18,7 @@ import ru.katacademy.bank_app.accountservice.domain.mapper.UserMapper;
 import ru.katacademy.bank_app.accountservice.domain.service.UserService;
 import ru.katacademy.bank_app.accountservice.infrastructure.client.KycClient;
 import ru.katacademy.bank_app.accountservice.infrastructure.messaging.PasswordChangeEventPublisher;
+import ru.katacademy.bank_app.accountservice.application.port.out.UserRegisterEventPublisher;
 import ru.katacademy.bank_app.accountservice.infrastructure.persistence.entity.UserEntity;
 import ru.katacademy.bank_app.accountservice.infrastructure.repository.UserJpaRepository;
 import ru.katacademy.bank_app.audit.annotation.Auditable;
@@ -53,6 +54,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordChangeEventPublisher passwordChangeEventPublisher;
     private final KycClient kycClient;
     private final UserJpaRepository userJpaRepository;
+    private final UserRegisterEventPublisher userRegisterEventPublisher;
 
     @Autowired
     public UserServiceImpl(
@@ -60,13 +62,15 @@ public class UserServiceImpl implements UserService {
             UserMapper userMapper,
             PasswordChangeEventPublisher passwordChangeEventPublisher,
             KycClient kycClient,
-            UserJpaRepository userJpaRepository
+            UserJpaRepository userJpaRepository,
+            UserRegisterEventPublisher userRegisterEventPublisher
     ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordChangeEventPublisher = passwordChangeEventPublisher;
         this.kycClient = kycClient;
         this.userJpaRepository = userJpaRepository;
+        this.userRegisterEventPublisher = userRegisterEventPublisher;
     }
 
     /**
@@ -100,6 +104,21 @@ public class UserServiceImpl implements UserService {
 
         final User newUser = UserFactory.create(cmd);
         final User savedUser = userRepository.save(newUser);
+
+        // Отправляем событие регистрации в Kafka
+        try {
+            userRegisterEventPublisher.publish(
+                new ru.katacademy.bank_shared.event.UserRegisterEvent(
+                    savedUser.getId(),
+                    new String(savedUser.getFullName()),
+                    savedUser.getEmail().toString(),
+                    savedUser.getCreatedAt()
+                )
+            );
+            log.info("User registration event published for user {}", savedUser.getId());
+        } catch (Exception e) {
+            log.error("Failed to publish user registration event for user {}: {}", savedUser.getId(), e.getMessage(), e);
+        }
 
         try {
             kycClient.startKyc(savedUser.getId());

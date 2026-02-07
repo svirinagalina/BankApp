@@ -1,23 +1,31 @@
 package ru.katacademy.bank_app.accountservice.infrastructure.messaging;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
+
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class PasswordChangedEventProducer {
 
-    private final KafkaTemplate<String, PasswordChangedEvent> kafkaTemplate;
+    private static final Logger log = LoggerFactory.getLogger(PasswordChangedEventProducer.class);
+    private final AvroKafkaProducer producer;
 
     public void sendPasswordChangedEvent(Long userId) {
-        final PasswordChangedEvent event = new PasswordChangedEvent();
-        event.setUserId(userId.toString());
-        event.setEventType("PASSWORD_CHANGED");
-        event.setOccurredAt(System.currentTimeMillis());
-        event.setSource("account-service");
+        final ru.katacademy.bank.events.password.v1.PasswordChangedEvent avroEvent =
+                ru.katacademy.bank.events.password.v1.PasswordChangedEvent.newBuilder()
+                        .setEventId(UUID.randomUUID().toString())
+                        .setUserId(userId.toString())
+                        .setUsername(null) // Username не доступен в текущем контексте
+                        .setEventType("PASSWORD_CHANGED")
+                        .setOccurredAt(System.currentTimeMillis())
+                        .setSource("account-service")
+                        .build();
 
-        kafkaTemplate.send("password.changed", event);
+        producer.send("password.changed", userId.toString(), avroEvent);
+        log.info("Password changed event published: userId={}", userId);
     }
 }

@@ -72,7 +72,7 @@ services:
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka:9092"
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:9091
       SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: WARN
       SCHEMA_REGISTRY_COMPATIBILITY_LEVEL: BACKWARD
     volumes:
@@ -82,24 +82,25 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:9091/subjects || exit 1" ]
       interval: 10s
-      retries: 10
-      start_period: 20s
-#
-#  kafdrop:
-#    image: obsidiandynamics/kafdrop:4.0.1
-#    container_name: kafdrop
-#    restart: "no"
-#    ports:
-#      - "9090:9000"
-#    environment:
-#      KAFKA_BROKERCONNECT: "kafka:9092"
-#      JVM_OPTS: "-XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
-#      SCHEMAREGISTRY_URL: "http://schema-registry:8081"
-#    depends_on:
-#      kafka:
-#        condition: service_healthy
-#      schema-registry:
-#        condition: service_healthy
+      timeout: 5s
+      retries: 15
+      start_period: 40s
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:4.0.1
+    container_name: kafdrop
+    restart: "no"
+    ports:
+      - "9090:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      JVM_OPTS: "-XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+      SCHEMAREGISTRY_URL: "http://schema-registry:9091"
+    depends_on:
+      kafka:
+        condition: service_healthy
+      schema-registry:
+        condition: service_healthy
 
   minio:
     image: minio/minio

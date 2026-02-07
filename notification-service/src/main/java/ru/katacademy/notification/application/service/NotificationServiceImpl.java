@@ -1,9 +1,9 @@
 package ru.katacademy.notification.application.service;
 
 import org.springframework.stereotype.Service;
+import ru.katacademy.bank.events.password.v1.PasswordChangedEvent;
 import ru.katacademy.bank.events.transfer.v1.TransferCompletedEvent;
 import ru.katacademy.bank.events.user.v1.UserRegisteredEvent;
-import ru.katacademy.bank_shared.event.notification.PasswordChangedEvent;
 import ru.katacademy.notification.application.sender.NotificationSender;
 import ru.katacademy.notification.application.template.PasswordChangedTemplate;
 import ru.katacademy.notification.application.template.TransferNotificationTemplate;
@@ -46,7 +46,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void handlePasswordChangedEvent(PasswordChangedEvent event) {
-        String text = passwordChangedTemplate.passwordChangedMessage(event.getUsername());
+        // Используем username если доступен, иначе userId
+        String identifier = event.getUsername() != null ? event.getUsername() : "User " + event.getUserId();
+        String text = passwordChangedTemplate.passwordChangedMessage(identifier);
         notificationSender.send(text);
 
     }
