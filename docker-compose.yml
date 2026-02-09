@@ -86,21 +86,21 @@ services:
       retries: 15
       start_period: 40s
 
-  kafdrop:
-    image: obsidiandynamics/kafdrop:4.0.1
-    container_name: kafdrop
-    restart: "no"
-    ports:
-      - "9090:9000"
-    environment:
-      KAFKA_BROKERCONNECT: "kafka:9092"
-      JVM_OPTS: "-XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
-      SCHEMAREGISTRY_URL: "http://schema-registry:9091"
-    depends_on:
-      kafka:
-        condition: service_healthy
-      schema-registry:
-        condition: service_healthy
+    # kafdrop:
+    # image: obsidiandynamics/kafdrop:4.0.1
+    # container_name: kafdrop
+    # restart: "no"
+    # ports:
+    #     - "9090:9000"
+      #environment:
+      #KAFKA_BROKERCONNECT: "kafka:9092"
+      #JVM_OPTS: "-XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+      #SCHEMAREGISTRY_URL: "http://schema-registry:9091"
+      #depends_on:
+        #kafka:
+      #condition: service_healthy
+        #schema-registry:
+      #condition: service_healthy
 
   minio:
     image: minio/minio
